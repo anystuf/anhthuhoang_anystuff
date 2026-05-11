@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hoàng Anh Thư – Giảng viên Tiếng Anh &amp; Tâm lý học đường</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&amp;family=DM+Sans:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBSAd2sYf8xBfSaHmyfugoWWONC3qBA2-U",
+    authDomain: "nutrio-app-jarvis-2025.firebaseapp.com",
+    projectId: "nutrio-app-jarvis-2025",
+    storageBucket: "nutrio-app-jarvis-2025.firebasestorage.app",
+    messagingSenderId: "292691810008",
+    appId: "1:292691810008:web:b61b6922a4b032618829ad"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const functions = getFunctions(app);
+
+  window._db = db;
+  window._fb = { collection, addDoc, getDocs, query, orderBy, serverTimestamp };
+  window._functions = functions;
+  window._httpsCallable = httpsCallable;
+
+  async function loadStats() {
+    try {
+      const snap = await getDocs(collection(db, "letters"));
+      const el = document.getElementById("letter-count");
+      if (el) el.textContent = snap.size + "+";
+    } catch(e) {}
+  }
+
+  window.addEventListener("DOMContentLoaded", loadStats);
+
+  function withTimeout(promise, ms = 15000) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Firebase request timeout. Please check Firestore Rules, network connection, or Firebase project config.")), ms))
+    ]);
+  }
+
+  function getCurrentLanguage() {
+    return localStorage.getItem("siteLang") || document.documentElement.lang || "vi";
+  }
+
+  window.submitContact = async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById("contact-btn");
+    const name = document.getElementById("c-name").value.trim();
+    const email = document.getElementById("c-email").value.trim();
+    const interest = document.getElementById("c-interest")?.value || "";
+    const message = document.getElementById("c-msg").value.trim();
+    const originalText = btn.textContent || "Gửi đăng ký";
+
+    if (!name || !email || !message) {
+      showToast("Vui lòng nhập đầy đủ họ tên, email và lời nhắn.");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Đang gửi...";
+
+    try {
+      await withTimeout(window._fb.addDoc(window._fb.collection(window._db, "contacts"), {
+        name,
+        email,
+        interest,
+        message,
+        source: "website_contact_form",
+        language: getCurrentLanguage(),
+        status: "new",
+        ts: window._fb.serverTimestamp()
+      }), 15000);
+
+      btn.textContent = "Đã gửi ✓";
+      document.getElementById("contact-form").reset();
+      showToast("Tin nhắn đã được gửi thành công!");
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }, 1800);
+    } catch(err) {
+      console.error("Contact form submit error:", err);
+      btn.disabled = false;
+      btn.textContent = originalText;
+      const msg = err?.code === "permission-denied"
+        ? "Firebase từ chối ghi dữ liệu. Hãy kiểm tra Firestore Rules cho collection contacts."
+        : "Chưa gửi được dữ liệu. Hãy kiểm tra Console/Firebase Rules rồi thử lại.";
+      showToast(msg);
+    }
+  };
+
+  window.submitLetter = async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById("letter-btn");
+    const content = document.getElementById("letter-content").value.trim();
+    if (!content) return;
+    btn.disabled = true;
+    btn.textContent = "Đang gửi...";
+    try {
+      await withTimeout(window._fb.addDoc(window._fb.collection(window._db, "letters"), {
+        content,
+        source: "website_secret_letter",
+        language: getCurrentLanguage(),
+        status: "new",
+        isAnonymous: true,
+        ts: window._fb.serverTimestamp()
+      }), 15000);
+      btn.textContent = "Đã gửi ✓";
+      document.getElementById("letter-form").reset();
+      showToast("Tâm thư đã được gửi ẩn danh. Cô sẽ đọc và trả lời sớm nhất có thể 💚");
+      setTimeout(() => { btn.disabled = false; btn.textContent = "Gửi tâm thư"; }, 3000);
+    } catch(err) {
+      console.error("Secret letter submit error:", err);
+      btn.disabled = false;
+      btn.textContent = "Gửi tâm thư";
+      showToast("Chưa gửi được tâm thư. Hãy kiểm tra Firebase Rules hoặc kết nối mạng.");
+    }
+  };
+</script>
+<style>
+:root {
+  --green-deep:   #0d3320;
+  --green-main:   #1a5c35;
+  --green-mid:    #2e7d52;
+  --green-light:  #4aad74;
+  --gold:         #d4a847;
+  --gold-light:   #f0c96a;
+  --cream:        #f5f0e8;
+  --cream-dark:   #ede6d6;
+  --white:        #ffffff;
+  --text-dark:    #0d1f0f;
+  --text-mid:     #2c4a32;
+  --text-muted:   #6b8c72;
+  
+  --accent-purple: #625aa5;
+  --accent-brown:  #9b482b;
+
+  --ff-serif:     'Playfair Display', Georgia, serif;
+  --ff-sans:      'DM Sans', sans-serif;
+  --radius-pill:  999px;
+  --radius-lg:    16px;
+  --radius-md:    10px;
+  --transition:   0.35s cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+/* ─── CHATBOT STYLES ─── */
+.chat-msg { max-width: 80%; padding: 0.8rem 1.2rem; border-radius: 16px; font-size: 0.9rem; line-height: 1.5; word-wrap: break-word; }
+.ai-msg { background: var(--white); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.user-msg { background: var(--green-main); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+.loading-msg { font-style: italic; color: var(--text-muted); font-size: 0.8rem; align-self: flex-start; }
+
+.page { display: none; animation: fadeInPage 0.4s ease forwards; }
+.page.active { display: block; min-height: 80vh; }
+@keyframes fadeInPage {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+body {
+  font-family: var(--ff-sans);
+  background: var(--cream);
+  color: var(--text-dark);
+  line-height: 1.7;
+  overflow-x: hidden;
+  padding-left: 0;
+}
+
+.page, footer { margin-left: 280px; width: calc(100% - 280px); }
+
+/* ─── NAVBAR ─── */
+nav {
+  position: fixed; top: 0; left: 0; bottom: 0; width: 280px; z-index: 999;
+  background: var(--green-deep); display: flex; flex-direction: column; 
+  align-items: flex-start; justify-content: flex-start; padding: 3rem 2rem;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.nav-brand { font-family: var(--ff-serif); font-size: 1.5rem; color: var(--cream); text-decoration: none; letter-spacing: .03em; display: flex; flex-direction: column; line-height: 1.3; margin-bottom: 3rem; width: 100%; }
+.nav-brand span { font-size: .65rem; font-family: var(--ff-sans); color: var(--gold-light); letter-spacing: .15em; text-transform: uppercase; margin-top: 0.5rem; }
+.nav-links { display: flex; flex-direction: column; gap: 0.5rem; list-style: none; width: 100%; }
+.nav-links a { display: block; color: rgba(255,255,255,.7); text-decoration: none; font-size: 0.95rem; font-weight: 500; letter-spacing: .04em; transition: all var(--transition); padding: 1rem 1.5rem; border-radius: var(--radius-md); border-left: 3px solid transparent; }
+.nav-links a:hover, .nav-links a.active { color: var(--cream); background: rgba(255,255,255,.05); border-left-color: var(--gold); padding-left: 2rem; }
+.nav-cta { margin-top: 1.5rem; border: 1px solid var(--gold); color: var(--gold-light) !important; text-align: center; border-left-color: var(--gold) !important; }
+.nav-cta:hover { background: var(--gold) !important; color: var(--green-deep) !important; padding-left: 1.5rem !important; }
+
+
+/* ─── LANGUAGE SWITCHER & BILINGUAL ROLES ─── */
+.role-lines span { display: block; line-height: 1.45; }
+.hero-title.role-lines span { display: block; }
+.language-switch { display: flex; align-items: center; gap: .4rem; padding: .3rem; border: 1px solid rgba(212,168,71,.45); border-radius: 999px; background: rgba(13,51,32,.82); backdrop-filter: blur(12px); box-shadow: 0 10px 28px rgba(0,0,0,.18); }
+.header-language-switch { position: fixed; top: 1.25rem; right: 1.5rem; z-index: 1200; width: 116px; }
+.lang-btn { flex: 1; border: 0; border-radius: 999px; padding: .45rem .75rem; cursor: pointer; background: transparent; color: rgba(245,240,232,.8); font-family: var(--ff-sans); font-size: .72rem; font-weight: 800; letter-spacing: .08em; transition: all var(--transition); }
+.lang-btn.active, .lang-btn:hover { background: var(--gold); color: var(--green-deep); }
+@media (max-width: 900px) { .header-language-switch { top: .82rem; right: .9rem; width: 108px; } .lang-btn { padding: .35rem .55rem; } }
+
+/* ─── HERO ─── */
+#hero { min-height: 100vh; background: var(--green-deep); display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .85fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; padding: 60px clamp(3rem, 6vw, 6rem); position: relative; overflow: hidden; }
+#hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 50%, rgba(74,173,116,.12) 0%, transparent 65%); pointer-events: none; }
+.hero-deco { position: absolute; top: -80px; right: -80px; width: 480px; height: 480px; border: 1px solid rgba(212,168,71,.12); border-radius: 50%; }
+.hero-left { position: relative; z-index: 2; min-width: 0; max-width: 720px; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: .6rem; font-size: .75rem; letter-spacing: .18em; text-transform: uppercase; color: var(--green-light); margin-bottom: 1.5rem; }
+.hero-name { font-family: var(--ff-serif); font-size: clamp(3rem, 4.8vw, 4.4rem); font-weight: 700; color: var(--cream); line-height: 1.15; margin-bottom: .5rem; white-space: normal; }
+.hero-title { font-size: .95rem; color: rgba(245,240,232,.65); letter-spacing: .06em; margin-bottom: 2rem; font-weight: 300; }
+.hero-slogan { font-family: var(--ff-serif); font-size: 1.25rem; color: rgba(245,240,232,.9); font-style: italic; margin-bottom: 2.5rem; padding-left: 1.2rem; border-left: 3px solid var(--gold); line-height: 1.6; }
+.hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+.btn-primary { background: var(--gold); color: var(--green-deep); padding: .75rem 1.8rem; border-radius: var(--radius-pill); font-weight: 500; font-size: .9rem; text-decoration: none; border: none; cursor: pointer; transition: all var(--transition); display: inline-flex; align-items: center; gap: .5rem; }
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,168,71,.3); }
+.btn-outline { border: 1.5px solid rgba(245,240,232,.35); color: var(--cream); padding: .75rem 1.8rem; border-radius: var(--radius-pill); font-size: .9rem; text-decoration: none; cursor: pointer; transition: all var(--transition); display: inline-flex; align-items: center; gap: .5rem; background: transparent; }
+.btn-outline:hover { border-color: var(--cream); background: rgba(245,240,232,.08); }
+.hero-stats { display: flex; gap: 2.5rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,.1); }
+.hero-stat-num { font-family: var(--ff-serif); font-size: 2rem; color: var(--gold-light); font-weight: 600; }
+.hero-stat-lbl { font-size: .75rem; color: rgba(245,240,232,.55); letter-spacing: .05em; margin-top: .2rem; }
+.hero-right { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; min-width: 0; }
+.avatar-frame { width: 320px; height: 400px; border-radius: 120px; background: var(--green-main); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,.18); border: 1px solid rgba(212,168,71,.22); }
+.avatar-photo { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.avatar-initials { font-family: var(--ff-serif); font-size: 5rem; color: var(--gold); font-style: italic; z-index: 1; }
+
+/* ─── SECTION BASE ─── */
+section { padding: 6rem 6rem; }
+.section-eyebrow { font-size: .7rem; letter-spacing: .15em; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: .6rem; margin-bottom: 1rem; }
+.section-eyebrow::before { content: ''; display: block; width: 24px; height: 1.5px; }
+.eyebrow-center { justify-content: center; }
+.eyebrow-center::before { display: none !important; }
+.eyebrow-center-line { display: inline-block; width: 24px; height: 1.5px; background: currentColor; }
+.eyebrow-purple { color: var(--accent-purple); }
+.eyebrow-purple::before { background: var(--accent-purple); }
+.eyebrow-purple-light { color: #a49cdb; }
+.eyebrow-purple-light::before { background: #a49cdb; }
+.eyebrow-brown { color: var(--accent-brown); }
+.eyebrow-brown::before { background: var(--accent-brown); }
+.section-title { font-family: var(--ff-serif); font-size: clamp(2rem, 3vw, 2.8rem); color: var(--text-dark); line-height: 1.25; margin-bottom: 1rem; }
+.section-title.light { color: var(--cream); }
+.section-sub { font-size: .95rem; color: var(--text-muted); max-width: 540px; line-height: 1.75; }
+
+/* ─── ABOUT ME ─── */
+#about { background: var(--green-deep); padding: 5rem 6rem; }
+.about-tabs { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 3rem; }
+.tab-pill { border: 1.5px solid rgba(245,240,232,.3); color: rgba(245,240,232,.7); padding: .55rem 1.4rem; border-radius: var(--radius-pill); font-size: .82rem; letter-spacing: .06em; cursor: pointer; background: transparent; transition: all var(--transition); font-family: var(--ff-sans); text-transform: uppercase; }
+.tab-pill:hover, .tab-pill.active { background: var(--gold); border-color: var(--gold); color: var(--green-deep); font-weight: 500; }
+.tab-panel { display: none; }
+.tab-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; animation: fadeIn .5s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.tab-text { color: rgba(245,240,232,.85); font-size: .95rem; line-height: 1.85; }
+.tab-text h3 { font-family: var(--ff-serif); color: var(--gold-light); font-size: 1.4rem; margin-bottom: 1rem; font-style: italic; }
+.cred-list { list-style: none; display: flex; flex-direction: column; gap: .75rem; }
+.cred-list li { display: flex; align-items: flex-start; gap: .75rem; color: rgba(245,240,232,.8); font-size: .88rem; }
+.cred-list li::before { content: '◆'; color: var(--gold); font-size: .5rem; margin-top: .5rem; flex-shrink: 0; }
+.partner-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; margin-top: 1.5rem; }
+.partner-card { border: 1px solid rgba(212,168,71,.2); border-radius: var(--radius-md); padding: 1rem 1.25rem; background: rgba(255,255,255,.04); }
+.partner-card .name { color: var(--gold-light); font-size: .88rem; font-weight: 500; }
+.partner-card .role { color: rgba(245,240,232,.5); font-size: .78rem; margin-top: .2rem; }
+
+/* ─── ESP TREE ─── */
+.esp-tree-wrap {
+  margin-top: 5rem; padding: 5rem 3rem; background: var(--white);
+  border-radius: 24px; border: 1px solid rgba(13,51,32,.05); text-align: center; overflow: hidden; 
+}
+.esp-tree-container {
+  position: relative; width: 100%; max-width: 1000px;
+  aspect-ratio: 1000 / 900; margin: 3rem auto 0 auto;
+}
+.tree-svg-trunk { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; }
+.leaf-cluster {
+  position: absolute; width: 250px; height: 130px; transform: translate(-50%, -50%);
+  display: flex; align-items: center; justify-content: center; z-index: 5;
+  filter: drop-shadow(0 15px 20px rgba(0,0,0,0.25)); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+}
+.leaf-cluster:hover { transform: translate(-50%, -50%) scale(1.05); z-index: 10; }
+.leaf-cluster div { background: inherit; }
+.lc-base { position: absolute; width: 100%; height: 100%; border-radius: 60px; z-index: 1; }
+.lc-c1, .lc-c2, .lc-c3, .lc-c4, .lc-c5 { position: absolute; border-radius: 50%; z-index: 1; }
+.lc-c1 { width: 110px; height: 110px; top: -35px; left: 20px; }
+.lc-c2 { width: 130px; height: 130px; top: -45px; right: 20px; }
+.lc-c3 { width: 90px; height: 90px; bottom: -20px; left: 30px; }
+.lc-c4 { width: 120px; height: 120px; bottom: -30px; right: 30px; }
+.lc-c5 { width: 80px; height: 80px; top: 10px; left: -20px; } 
+.lc-text { position: relative; z-index: 2; color: #111; font-family: var(--ff-sans); font-weight: 700; font-size: 1.15rem; line-height: 1.3; text-align: center; padding: 0 1rem; }
+.shield-badge {
+  position: absolute; top: 65%; left: 50%; transform: translate(-50%, -50%);
+  background: #fdfbf7; border: 4px solid #111; border-radius: 10px 10px 45px 45px;
+  padding: 15px 25px; text-align: center; z-index: 10; box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+}
+.shield-icon { font-size: 1.8rem; color: #111; line-height: 1; }
+.shield-text { font-family: var(--ff-serif); font-size: 1.05rem; font-weight: 700; color: #111; line-height: 1.3; }
+
+/* ─── CẬP NHẬT: SURVEY FORM WRAPPER (GIÃN KHUNG TỐI ĐA) ─── */
+.survey-wrapper { 
+    width: 100%; 
+    max-width: 1100px; 
+    margin: 4rem auto; 
+    background: var(--white); 
+    border-radius: 24px; 
+    box-shadow: 0 15px 45px rgba(13, 51, 32, 0.08); 
+    overflow: hidden; 
+    border: 1px solid rgba(13, 51, 32, 0.05); 
+}
+
+.survey-wrapper iframe { 
+    width: 100%; 
+    height: 750px; /* Thu gọn chiều cao để cắt bỏ khoảng trắng thừa ở trang đầu */
+    border: none; 
+    display: block; 
+}
+
+
+/* ─── ESP WRITING EVALUATOR ─── */
+.esp-ai-lab { margin-top: 5rem; background: var(--white); border: 1px solid rgba(13,51,32,.08); border-radius: 28px; overflow: hidden; box-shadow: 0 20px 55px rgba(13,51,32,.08); }
+.esp-ai-header { padding: 3rem; background: radial-gradient(circle at top right, rgba(212,168,71,.16), transparent 34%), linear-gradient(135deg, var(--green-deep), var(--green-main)); color: var(--cream); }
+.esp-ai-header h3 { font-family: var(--ff-serif); font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1.25; margin-bottom: .85rem; }
+.esp-ai-header p { max-width: 780px; color: rgba(245,240,232,.78); font-size: .95rem; }
+.esp-ai-disclaimer { margin-top: 1.25rem; padding: .85rem 1rem; border: 1px solid rgba(240,201,106,.32); border-radius: 14px; color: rgba(245,240,232,.86); font-size: .82rem; background: rgba(255,255,255,.06); }
+.esp-ai-body { display: grid; grid-template-columns: minmax(320px, .9fr) minmax(420px, 1.1fr); gap: 0; }
+.esp-ai-panel { padding: 2rem; }
+.esp-ai-panel.input-panel { border-right: 1px solid rgba(13,51,32,.08); background: #fbfaf7; }
+.esp-ai-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.esp-field { margin-bottom: 1rem; }
+.esp-field label { display: block; margin-bottom: .45rem; color: var(--text-muted); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.esp-field input, .esp-field select, .esp-field textarea { width: 100%; border: 1px solid rgba(13,51,32,.14); border-radius: 14px; background: var(--white); color: var(--text-dark); font-family: var(--ff-sans); font-size: .9rem; padding: .85rem 1rem; outline: none; transition: all var(--transition); }
+.esp-field textarea { resize: vertical; min-height: 115px; }
+.esp-field textarea.essay-box { min-height: 220px; }
+.esp-field input:focus, .esp-field select:focus, .esp-field textarea:focus { border-color: var(--accent-purple); box-shadow: 0 0 0 3px rgba(98,85,165,.10); }
+.mode-switch { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-bottom: 1rem; }
+.mode-card { position: relative; border: 1px solid rgba(13,51,32,.12); border-radius: 16px; padding: .9rem; cursor: pointer; background: var(--white); transition: all var(--transition); }
+.mode-card input { position: absolute; opacity: 0; pointer-events: none; }
+.mode-card strong { display: block; color: var(--text-dark); font-size: .88rem; margin-bottom: .2rem; }
+.mode-card span { display: block; color: var(--text-muted); font-size: .75rem; line-height: 1.45; }
+.mode-card:has(input:checked) { border-color: var(--gold); background: rgba(212,168,71,.10); box-shadow: 0 10px 24px rgba(212,168,71,.14); }
+.esp-actions { display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; margin-top: 1.25rem; }
+.esp-secondary-btn { border: 1px solid rgba(13,51,32,.16); background: transparent; color: var(--text-dark); padding: .75rem 1.35rem; border-radius: var(--radius-pill); font-size: .86rem; cursor: pointer; transition: all var(--transition); }
+.esp-secondary-btn:hover { background: rgba(13,51,32,.06); }
+.esp-status { color: var(--text-muted); font-size: .82rem; }
+.result-empty { min-height: 500px; border: 1px dashed rgba(13,51,32,.18); border-radius: 20px; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-muted); padding: 2rem; background: rgba(245,240,232,.35); }
+.result-card { border: 1px solid rgba(13,51,32,.08); border-radius: 20px; background: var(--white); padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 8px 24px rgba(13,51,32,.045); }
+.result-card h4 { font-family: var(--ff-serif); font-size: 1.15rem; margin-bottom: .65rem; color: var(--green-deep); }
+.level-badge-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: .75rem; }
+.level-badge { display: inline-flex; align-items: center; gap: .4rem; padding: .45rem .85rem; border-radius: var(--radius-pill); background: var(--green-deep); color: var(--gold-light); font-weight: 800; font-size: .82rem; }
+.confidence-badge { display: inline-flex; padding: .4rem .75rem; border-radius: var(--radius-pill); background: rgba(98,85,165,.10); color: var(--accent-purple); font-weight: 700; font-size: .75rem; }
+.rubric-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; }
+.rubric-item { border: 1px solid rgba(13,51,32,.08); border-radius: 14px; padding: .85rem; background: #fbfaf7; }
+.rubric-top { display: flex; justify-content: space-between; gap: 1rem; font-size: .82rem; font-weight: 800; color: var(--text-dark); }
+.rubric-weight { color: var(--accent-purple); white-space: nowrap; }
+.rubric-item p { margin-top: .45rem; color: var(--text-muted); font-size: .8rem; line-height: 1.55; }
+.error-item { border-left: 3px solid var(--gold); padding: .75rem 0 .75rem 1rem; margin-bottom: .8rem; }
+.error-item .tag { display: inline-block; background: rgba(212,168,71,.14); color: #6b4d16; border-radius: 999px; padding: .2rem .55rem; font-size: .7rem; font-weight: 800; margin-bottom: .4rem; }
+.error-item p { font-size: .84rem; color: var(--text-mid); margin: .25rem 0; }
+.revised-version { white-space: pre-wrap; font-size: .9rem; color: var(--text-mid); line-height: 1.75; background: #fbfaf7; border-radius: 14px; padding: 1rem; }
+@media (max-width: 900px) { .esp-ai-header, .esp-ai-panel { padding: 1.5rem; } .esp-ai-body, .esp-ai-grid, .rubric-grid, .mode-switch { grid-template-columns: 1fr; } .esp-ai-panel.input-panel { border-right: none; border-bottom: 1px solid rgba(13,51,32,.08); } }
+
+/* ─── ACADEMICS (Học thuật) ─── */
+#academics { background: var(--cream); }
+.courses-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
+.course-card { background: var(--white); border: 1px solid rgba(13,51,32,.08); border-radius: var(--radius-lg); padding: 1.75rem; transition: all var(--transition); position: relative; overflow: hidden; }
+.course-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent-purple); transform: scaleX(0); transform-origin: left; transition: transform var(--transition); }
+.course-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(13,51,32,.1); }
+.course-card:hover::before { transform: scaleX(1); }
+.course-level { display: inline-block; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent-purple); background: rgba(98,85,165,.1); border-radius: var(--radius-pill); padding: .25rem .75rem; margin-bottom: 1rem; font-weight: 600; }
+.course-title { font-family: var(--ff-serif); font-size: 1.2rem; color: var(--text-dark); margin-bottom: .5rem; }
+.course-desc { font-size: .85rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.25rem; }
+
+
+/* ─── ACADEMIC INFO STRIPS ─── */
+.info-strip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 3rem; }
+.info-strip-card { background: var(--white); border: 1px solid rgba(13,51,32,.08); border-radius: 22px; padding: 2rem; box-shadow: 0 12px 34px rgba(13,51,32,.06); display: flex; flex-direction: column; gap: .85rem; }
+.info-strip-card h3 { font-family: var(--ff-serif); color: var(--text-dark); font-size: 1.35rem; line-height: 1.3; }
+.info-strip-card p { color: var(--text-muted); font-size: .9rem; line-height: 1.7; }
+.info-strip-card a { align-self: flex-start; margin-top: .3rem; color: var(--accent-purple); font-weight: 700; text-decoration: none; font-size: .86rem; }
+.info-strip-card a:hover { text-decoration: underline; }
+@media (max-width: 900px) { .info-strip-grid { grid-template-columns: 1fr; } }
+
+/* Lịch học & Thư viện Sách/Video */
+.calendar-wrap { margin-top: 5rem; }
+.calendar-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;}
+.calendar-item { display: flex; align-items: center; background: var(--white); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid rgba(13,51,32,.08); transition: transform 0.3s;}
+.calendar-item:hover { transform: translateX(5px); box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+.cal-date { background: var(--green-deep); color: var(--gold-light); padding: 1rem; border-radius: var(--radius-md); text-align: center; min-width: 100px; margin-right: 1.5rem;}
+.cal-date span { display: block; font-size: 1.5rem; font-weight: 700; line-height: 1; }
+.cal-date small { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; }
+.cal-details h4 { font-family: var(--ff-serif); font-size: 1.15rem; color: var(--text-dark); margin-bottom: 0.25rem; }
+.cal-details p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+
+.resource-wrap { margin-top: 5rem; }
+.resource-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 2rem;}
+.res-card { display: flex; gap: 1.25rem; background: var(--white); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid rgba(13,51,32,.08); transition: transform var(--transition);}
+.res-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(13,51,32,.06); }
+.res-icon { font-size: 2rem; background: rgba(212,168,71,.1); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-md); flex-shrink: 0;}
+.res-info h4 { font-size: 1.05rem; font-family: var(--ff-serif); font-weight: 700; color: var(--text-dark); margin-bottom: 0.3rem; }
+.res-info p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 0.75rem; }
+.res-link { font-size: 0.82rem; color: var(--accent-purple); font-weight: 600; text-decoration: none; }
+.res-link:hover { text-decoration: underline; }
+
+/* ─── COUNSELING (Tâm lý học đường) ─── */
+#counseling { background: var(--cream-dark); padding: 6rem; }
+.counseling-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-top: 3rem; }
+.c-card { background: var(--white); border-radius: var(--radius-lg); padding: 2rem; border: 1px solid rgba(13,51,32,.07); transition: all var(--transition); border-top: 3px solid transparent; }
+.c-card:hover { box-shadow: 0 12px 40px rgba(13,51,32,.08); transform: translateY(-3px); border-top-color: var(--accent-brown); }
+.c-card-icon { width: 48px; height: 48px; background: rgba(155,72,43,.1); color: var(--accent-brown); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.25rem; }
+.c-card h3 { font-family: var(--ff-serif); font-size: 1.15rem; color: var(--text-dark); margin-bottom: .5rem; }
+.c-card p { font-size: .85rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 1.25rem; }
+.c-card-link { font-size: .82rem; color: var(--accent-brown); font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: .3rem; }
+
+/* ─── MODAL ─── */
+.letter-backdrop { position: fixed; inset: 0; background: rgba(13,51,32,.7); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+.letter-backdrop.open { display: flex; }
+.letter-modal { background: var(--white); border-radius: var(--radius-lg); padding: 2.5rem; max-width: 520px; width: 90%; position: relative; animation: slideUp .3s ease; }
+@keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+.modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text-muted); }
+
+/* ─── BLOG & INSIGHTS ─── */
+#blog { background: var(--green-deep); padding: 6rem; }
+.blog-filters { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
+.blog-filter { padding: .4rem 1.2rem; border-radius: var(--radius-pill); font-size: .8rem; background: rgba(255,255,255,.05); color: var(--cream); border: 1px solid rgba(255,255,255,.1); }
+.blog-filter.active { background: var(--accent-purple); border-color: var(--accent-purple); font-weight: 500; }
+.blog-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+.blog-card { background: rgba(255,255,255,.04); border: 1px solid rgba(212,168,71,.12); border-radius: var(--radius-lg); padding: 1.75rem; transition: all var(--transition); cursor: pointer; }
+.blog-card:hover { background: rgba(255,255,255,.08); border-color: rgba(212,168,71,.3); }
+.blog-cat { font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-light); margin-bottom: .75rem; display: block; }
+.blog-card h3 { font-family: var(--ff-serif); color: var(--cream); font-size: 1.1rem; line-height: 1.4; margin-bottom: .75rem; }
+.blog-card p { font-size: .83rem; color: rgba(245,240,232,.55); line-height: 1.65; }
+.blog-card.featured h3 { font-size: 1.5rem; }
+.blog-card.featured p { font-size: .9rem; }
+
+/* ─── CONTACT (Liên hệ) ─── */
+#contact { background: var(--cream); }
+.contact-wrap { display: grid; grid-template-columns: 1fr 1.2fr; gap: 5rem; align-items: start; margin-top: 3rem; }
+.contact-info h3 { font-family: var(--ff-serif); font-size: 1.3rem; color: var(--text-dark); margin-bottom: 1.5rem; }
+.info-item { display: flex; gap: 1rem; align-items: flex-start; margin-bottom: 1.5rem; }
+.info-icon { width: 40px; height: 40px; background: rgba(98,85,165,.1); color: var(--accent-purple); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+.info-label { font-size: .75rem; color: var(--text-muted); letter-spacing: .05em; text-transform: uppercase; }
+.info-val { font-size: .9rem; color: var(--text-dark); margin-top: .2rem; }
+.social-row { display: flex; gap: .75rem; margin-top: 2rem; flex-wrap: wrap; }
+.social-btn { border: 1.5px solid rgba(13,51,32,.15); border-radius: var(--radius-pill); padding: .45rem 1.1rem; font-size: .8rem; color: var(--text-dark); text-decoration: none; transition: all var(--transition); display: flex; align-items: center; gap: .4rem; }
+.social-btn:hover { background: var(--accent-purple); color: var(--cream); border-color: var(--accent-purple); }
+
+/* Form */
+.form-group { margin-bottom: 1.25rem; }
+.form-group label { font-size: .78rem; color: var(--text-muted); letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: .5rem; }
+.form-group input, .form-group textarea, .form-group select { width: 100%; background: var(--white); border: 1px solid rgba(13,51,32,.14); border-radius: var(--radius-md); padding: .75rem 1rem; font-size: .9rem; font-family: var(--ff-sans); color: var(--text-dark); transition: border-color var(--transition); outline: none; }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent-purple); box-shadow: 0 0 0 3px rgba(98,85,165,.1); }
+.form-group textarea { resize: vertical; min-height: 130px; }
+
+/* ─── FOOTER ─── */
+footer { background: var(--green-deep); padding: 3rem 6rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,.06); }
+.footer-brand { font-family: var(--ff-serif); color: var(--cream); font-size: 1.1rem; }
+.footer-brand span { display: block; font-size: .7rem; font-family: var(--ff-sans); color: var(--text-muted); margin-top: .25rem; letter-spacing: .08em; }
+.footer-copy { font-size: .78rem; color: rgba(245,240,232,.35); }
+.toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; background: var(--green-main); color: var(--cream); padding: 1rem 1.5rem; border-radius: var(--radius-md); font-size: .88rem; transform: translateY(100px); opacity: 0; transition: all .4s cubic-bezier(.4,0,.2,1); max-width: 340px; box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ─── ANIMATIONS & RESPONSIVE ─── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.in { opacity: 1; transform: translateY(0); }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cream-dark); }
+::-webkit-scrollbar-thumb { background: var(--green-mid); border-radius: 3px; }
+
+@media (max-width: 900px) {
+  body { padding-left: 0; }
+  .page, footer { margin-left: 0; width: 100%; } 
+  nav { width: 100%; height: 64px; bottom: auto; flex-direction: row; align-items: center; padding: 0 2rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .nav-brand { margin-bottom: 0; font-size: 1.15rem; }
+  .nav-brand span { display: none; } 
+  footer { flex-direction: column; text-align: center; gap: 1rem; padding: 3rem 2rem;}
+  
+  section, #hero, #about, #counseling, #blog { padding: 4rem 2rem; }
+  #hero { grid-template-columns: 1fr; padding-top: 100px; }
+  .hero-right { display: none; }
+  .tab-panel.active { grid-template-columns: 1fr; gap: 2rem; }
+  .courses-grid, .counseling-grid, .blog-grid, .contact-wrap, .resource-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  
+  /* CẬP NHẬT CHIỀU CAO CHO MOBILE */
+  .survey-wrapper iframe { height: 850px; } /* Đã thu gọn lại cho cân đối trên điện thoại */
+
+  /* Responsive Cây ESP */
+  .tree-svg-trunk, .shield-badge { display: none; }
+  .esp-tree-container { display: flex; flex-direction: column; align-items: center; gap: 2rem; height: auto; aspect-ratio: auto; min-height: unset; padding-bottom: 2rem;}
+  .leaf-cluster { position: relative; top: auto !important; left: auto !important; transform: none !important; width: 100%; max-width: 300px; }
+  .leaf-cluster:hover { transform: scale(1.02) !important; }
+}
+
+
+/* ─── RESPONSIVE NAVIGATION: PHONE + IPAD ─── */
+.mobile-menu-btn {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(212,168,71,.45);
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  transition: all var(--transition);
+}
+.mobile-menu-btn span {
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--gold-light);
+  transition: transform var(--transition), opacity var(--transition);
+}
+.mobile-menu-btn:hover { background: rgba(212,168,71,.12); }
+nav.open .mobile-menu-btn span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+nav.open .mobile-menu-btn span:nth-child(2) { opacity: 0; }
+nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 1100px) {
+  body { padding-left: 0; }
+  .page,
+  footer {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .page { padding-top: 72px; }
+
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    width: 100%;
+    height: 72px;
+    padding: 0 1.25rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 10px 30px rgba(0,0,0,.12);
+  }
+
+  .nav-brand {
+    width: auto;
+    margin-bottom: 0;
+    font-size: 1.25rem;
+    max-width: calc(100% - 190px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .nav-brand span { display: none; }
+  .mobile-menu-btn { display: inline-flex; margin-left: auto; }
+
+  .nav-links {
+    position: fixed;
+    top: 72px;
+    left: 0;
+    right: 0;
+    display: flex !important;
+    flex-direction: column;
+    gap: .55rem;
+    width: 100%;
+    padding: 1rem 1.25rem 1.25rem;
+    background: rgba(13,51,32,.98);
+    border-bottom: 1px solid rgba(212,168,71,.18);
+    box-shadow: 0 24px 55px rgba(0,0,0,.24);
+    transform: translateY(-130%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform .35s cubic-bezier(.4,0,.2,1), opacity .25s ease;
+    z-index: 998;
+  }
+
+  nav.open .nav-links {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nav-links a {
+    padding: .95rem 1rem;
+    border-left: 3px solid transparent;
+    background: rgba(255,255,255,.035);
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    padding-left: 1.25rem;
+  }
+
+  .nav-cta { margin-top: .35rem; }
+
+  .header-language-switch {
+    top: 1rem;
+    right: 4.8rem;
+    width: 106px;
+    z-index: 1201;
+  }
+
+  #hero {
+    min-height: calc(100vh - 72px);
+    grid-template-columns: 1fr;
+    padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem);
+    gap: 2.5rem;
+  }
+
+  .hero-right {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .avatar-frame {
+    width: min(300px, 68vw);
+    height: min(370px, 82vw);
+    border-radius: 96px;
+  }
+
+  section,
+  #about,
+  #counseling,
+  #blog {
+    padding: clamp(4rem, 7vw, 5rem) clamp(1.5rem, 5vw, 3rem);
+  }
+
+  .courses-grid,
+  .info-strip-grid,
+  .counseling-grid,
+  .contact-wrap,
+  .resource-grid,
+  .blog-grid,
+  .tab-panel.active,
+  .esp-ai-body,
+  .esp-ai-grid,
+  .rubric-grid,
+  .mode-switch {
+    grid-template-columns: 1fr !important;
+  }
+
+  .esp-ai-panel.input-panel {
+    border-right: none;
+    border-bottom: 1px solid rgba(13,51,32,.08);
+  }
+
+  .calendar-item {
+    align-items: flex-start;
+  }
+
+  .tree-svg-trunk,
+  .shield-badge { display: none; }
+
+  .esp-tree-wrap { padding: 3.5rem 1.25rem; }
+  .esp-tree-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    height: auto;
+    aspect-ratio: auto;
+    min-height: unset;
+    padding-bottom: 2rem;
+  }
+  .leaf-cluster {
+    position: relative;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 320px;
+  }
+  .leaf-cluster:hover { transform: scale(1.02) !important; }
+
+  footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    padding: 3rem 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .page { padding-top: 66px; }
+
+  nav {
+    height: 66px;
+    padding: 0 1rem;
+  }
+
+  .nav-brand {
+    font-size: 1.05rem;
+    max-width: calc(100% - 170px);
+  }
+
+  .mobile-menu-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .header-language-switch {
+    top: .82rem;
+    right: 4rem;
+    width: 96px;
+    padding: .22rem;
+  }
+
+  .lang-btn {
+    padding: .32rem .45rem;
+    font-size: .68rem;
+  }
+
+  .nav-links { top: 66px; }
+
+  #hero {
+    padding: 3.25rem 1.25rem 4rem;
+  }
+
+  .hero-name { font-size: clamp(2.35rem, 13vw, 3.4rem); }
+  .hero-title { font-size: .84rem; }
+  .hero-slogan { font-size: 1.05rem; margin-bottom: 1.5rem; }
+  .hero-btns { flex-direction: column; align-items: stretch; }
+  .btn-primary,
+  .btn-outline { justify-content: center; }
+  .hero-stats {
+    gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .hero-stat-num { font-size: 1.45rem; }
+  .hero-stat-lbl { font-size: .68rem; }
+
+  .hero-right { justify-content: center; }
+  .avatar-frame {
+    width: min(255px, 78vw);
+    height: min(315px, 96vw);
+    border-radius: 82px;
+  }
+
+  section,
+  #about,
+  #counseling,
+  #blog {
+    padding: 3.5rem 1.25rem;
+  }
+
+  .course-card,
+  .c-card,
+  .info-strip-card,
+  .res-card,
+  .blog-card,
+  .esp-ai-header,
+  .esp-ai-panel {
+    padding: 1.35rem;
+  }
+
+  .calendar-item {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .cal-date { margin-right: 0; }
+  .survey-wrapper iframe { height: 820px; }
+  .toast { left: 1rem; right: 1rem; bottom: 1rem; max-width: none; }
+}
+
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+<div class="letter-backdrop" id="letter-modal" onclick="closeModal(event)">
+<div class="letter-modal">
+<button class="modal-close" onclick="document.getElementById('letter-modal').classList.remove('open')">✕</button>
+<div class="modal-title" data-i18n="letter_title">Hộp thư bí mật 💌</div>
+<p class="modal-sub" data-i18n="letter_sub">Nơi học sinh có thể gửi tâm thư ẩn danh để chia sẻ áp lực, bối rối hoặc những điều khó nói thành lời.</p>
+<form id="letter-form" onsubmit="submitLetter(event)">
+<div class="form-group">
+<label data-i18n="letter_label">Tâm thư của bạn *</label>
+<textarea data-i18n-placeholder="letter_placeholder" id="letter-content" placeholder="Hãy chia sẻ điều bạn đang cảm thấy, những áp lực học tập..." required="" style="min-height: 160px;"></textarea>
+</div>
+<button class="btn-primary" data-i18n="letter_btn" id="letter-btn" style="width:100%; justify-content:center; background:var(--accent-brown); color:white;" type="submit">Viết thư cho cô</button>
+</form>
+</div>
+</div>
+<!-- CHATBOT MODAL -->
+<div class="letter-backdrop" id="chat-modal" onclick="closeChatModal(event)">
+<div class="letter-modal" style="display: flex; flex-direction: column; height: 80vh; max-height: 600px; padding: 1.5rem;">
+<button class="modal-close" onclick="document.getElementById('chat-modal').classList.remove('open')">✕</button>
+<div class="modal-title" style="margin-bottom: 0.5rem; font-size: 1.3rem;">Phòng tư vấn AI 🤖</div>
+<p class="modal-sub" style="margin-bottom: 1rem; font-size: 0.85rem;">Trợ lý AI hỗ trợ bước đầu để học sinh chia sẻ cảm xúc, đặt câu hỏi và nhận định hướng phù hợp.</p>
+<!-- Khu vực hiển thị tin nhắn -->
+<div id="chat-box" style="flex: 1; overflow-y: auto; background: var(--cream-dark); border-radius: var(--radius-md); padding: 1rem; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem;">
+<div class="chat-msg ai-msg">Chào bạn, mình là trợ lý AI của cô Thư. Bạn có thể chia sẻ cảm xúc, áp lực học tập, hoặc câu hỏi về việc học tiếng Anh. Nếu vấn đề nghiêm trọng, hãy tìm sự hỗ trợ trực tiếp từ giáo viên, phụ huynh hoặc chuyên gia.</div>
+</div>
+<!-- Khu vực nhập tin nhắn -->
+<div style="display: flex; gap: 0.5rem;">
+<input id="chat-input" onkeypress="handleChatEnter(event)" placeholder="Nhập tin nhắn của bạn..." style="flex: 1; padding: 0.75rem 1rem; border: 1px solid rgba(13,51,32,.14); border-radius: var(--radius-pill); outline: none; font-family: var(--ff-sans);" type="text"/>
+<button class="btn-primary" id="chat-send-btn" onclick="sendChatMessage()" style="padding: 0.75rem 1.5rem;">Gửi</button>
+</div>
+</div>
+</div>
+<nav id="navbar">
+<a class="nav-brand" href="#whoami">
+    Hoàng Anh Thư
+    <span class="role-lines" data-i18n-html="nav_roles"><span>Nhà giáo dục ngôn ngữ</span><span>Giảng viên tiếng Anh chuyên ngành</span><span>Cố vấn học đường</span><span>Cố vấn định hướng nghề nghiệp</span></span>
+</a>
+<button class="mobile-menu-btn" aria-label="Mở menu" aria-expanded="false" onclick="toggleMobileMenu()" type="button">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+<ul class="nav-links">
+<li><a data-i18n="nav_who" href="#whoami">Tôi là ai</a></li>
+<li><a data-i18n="nav_academics" href="#academics">Học thuật</a></li>
+<li><a data-i18n="nav_counseling" href="#counseling">Tâm lý học đường</a></li>
+<li><a data-i18n="nav_blog" href="#blog">Blog &amp; Góc nhìn</a></li>
+<li><a class="nav-cta" data-i18n="nav_contact" href="#contact">Liên hệ</a></li>
+</ul>
+</nav>
+<div aria-label="Language switcher" class="language-switch header-language-switch"><button class="lang-btn active" data-lang-btn="vi" onclick="setLanguage('vi')" type="button">VI</button><button class="lang-btn" data-lang-btn="en" onclick="setLanguage('en')" type="button">EN</button></div>
+<div class="page active" id="page-whoami">
+<section id="hero">
+<div class="hero-deco"></div>
+<div class="hero-left reveal">
+<div class="hero-eyebrow" data-i18n="nav_who">Tôi là ai</div>
+<h1 class="hero-name">Hoàng Anh Thư</h1>
+<div class="hero-title role-lines" data-i18n-html="hero_roles"><span>Nhà giáo dục ngôn ngữ</span><span>Giảng viên tiếng Anh chuyên ngành</span><span>Cố vấn học đường</span><span>Cố vấn định hướng nghề nghiệp</span><span>M.A. TESOL</span></div>
+<blockquote class="hero-slogan" data-i18n="hero_slogan">“Luyện Anh ngữ, rèn cách sống.”</blockquote>
+<div class="hero-btns">
+<a class="btn-primary" data-i18n="hero_cta_courses" href="#academics">Xem khóa học →</a>
+<a class="btn-outline" data-i18n="hero_cta_counseling" href="#counseling">Góc tâm lý học đường</a>
+</div>
+<div class="hero-stats">
+<div>
+<div class="hero-stat-num">10.000+</div>
+<div class="hero-stat-lbl" data-i18n="stat_learners">Học viên</div>
+</div>
+<div>
+<div class="hero-stat-num">20+</div>
+<div class="hero-stat-lbl" data-i18n="stat_years">Năm kinh nghiệm</div>
+</div>
+<div>
+<div class="hero-stat-num" id="letter-count">200+</div>
+<div class="hero-stat-lbl" data-i18n="stat_hours">Giờ tư vấn</div>
+</div>
+</div>
+</div>
+<div class="hero-right">
+<div class="avatar-frame">
+<img class="avatar-photo" src="https://raw.githubusercontent.com/anystuf/anhthuhoang_anystuff/main/HAT.png" alt="Chân dung cô Hoàng Anh Thư" loading="lazy"/>
+</div>
+</div>
+</section>
+<section id="about">
+<div class="reveal">
+<div class="section-eyebrow eyebrow-purple-light" data-i18n="about_eyebrow">Giới thiệu</div>
+<h2 class="section-title light" data-i18n-html="about_heading" style="margin-bottom:2.5rem;">Hành trình của một người<br/><em style="font-style:italic; color:var(--gold-light);">dạy bằng trái tim</em></h2>
+</div>
+<div class="about-tabs reveal">
+<button class="tab-pill active" data-i18n="about_tab_1" onclick="switchTab(0)">Hành trình học thuật</button>
+<button class="tab-pill" data-i18n="about_tab_2" onclick="switchTab(1)">Triết lý giáo dục</button>
+<button class="tab-pill" data-i18n="about_tab_3" onclick="switchTab(2)">Thành tựu &amp; Đối tác</button>
+</div>
+<div class="tab-panel active" id="tab-0">
+<div class="tab-text">
+<h3 data-i18n="about_bg_heading">Nền tảng học thuật &amp; Chuyên môn</h3>
+<p data-i18n="about_p1">Tôi được đào tạo bài bản trong cả hai lĩnh vực: giảng dạy ngôn ngữ và tâm lý học ứng dụng. Sự kết hợp này cho phép tôi tiếp cận người học một cách toàn diện, không chỉ về năng lực ngôn ngữ mà còn về cảm xúc và động lực học tập.</p>
+<p data-i18n="about_p2" style="margin-top:1rem;">Các mối quan tâm học thuật của tôi tập trung vào lo âu ngôn ngữ, bộ lọc cảm xúc trong học tập, và mối liên hệ giữa sức khỏe tinh thần với kết quả học tập.</p>
+</div>
+<div>
+<ul class="cred-list">
+<li data-i18n="cred_1">M.A. TESOL - Đại học Canberra, Úc</li>
+<li data-i18n="cred_2">Chứng chỉ Tâm lý học đường</li>
+<li data-i18n="cred_3">IELTS 8.0</li>
+<li data-i18n="cred_4">Nghiên cứu: “Language Anxiety in Vietnamese EFL Learners”</li>
+<li data-i18n="cred_5">Hơn 20 năm giảng dạy tiếng Anh chuyên ngữ và tiếng Anh chuyên ngành</li>
+</ul>
+</div>
+</div>
+<div class="tab-panel" id="tab-1">
+<div class="tab-text">
+<h3 data-i18n="about_phil_heading">Tại sao kết hợp Tiếng Anh và Tâm lý?</h3>
+<p data-i18n="about_phil_p">Tôi tin rằng một môi trường học tập an toàn về mặt tâm lý là điều kiện tiên quyết để người học dám thử, dám sai và dần tiến bộ. Ngôn ngữ không chỉ được học bằng trí nhớ, mà còn bằng sự tự tin và cảm giác được thấu hiểu.</p>
+</div>
+<div class="tab-text">
+<h3 data-i18n="about_principles_heading">3 nguyên tắc cốt lõi</h3>
+<ul class="cred-list">
+<li data-i18n-html="principle_1"><strong style="color:var(--gold-light);">An toàn tâm lý trước tiên:</strong> Tạo ra không gian không phán xét.</li>
+<li data-i18n-html="principle_2"><strong style="color:var(--gold-light);">Học tập toàn diện con người:</strong> Chăm sóc cả trí tuệ lẫn cảm xúc.</li>
+<li data-i18n-html="principle_3"><strong style="color:var(--gold-light);">Tiếp cận dựa trên điểm mạnh:</strong> Khích lệ sự phát triển cá nhân.</li>
+</ul>
+</div>
+</div>
+<div class="tab-panel" id="tab-2">
+<div class="tab-text">
+<h3 data-i18n="about_ach_heading">Dấu ấn hợp tác</h3>
+<p data-i18n="about_ach_p">Trong hành trình nghề nghiệp, tôi có cơ hội cộng tác với các trường học, tổ chức giáo dục và cộng đồng học thuật nhằm lan tỏa các giá trị giáo dục tích cực và hỗ trợ phát triển người học bền vững.</p>
+</div>
+<div>
+<div class="partner-grid">
+<div class="partner-card"><div class="name">ĐHQG TP.HCM</div><div class="role">Giảng viên thỉnh giảng</div></div>
+<div class="partner-card"><div class="name">British Council VN</div><div class="role">Đối tác đào tạo</div></div>
+<div class="partner-card"><div class="name">IDP Education</div><div class="role">Giám khảo mô phỏng</div></div>
+<div class="partner-card"><div class="name">Hội thảo IATEFL</div><div class="role">Diễn giả khách mời</div></div>
+</div>
+</div>
+</div>
+<div class="esp-tree-wrap reveal">
+<div class="section-eyebrow eyebrow-brown eyebrow-center" data-i18n="esp_eyebrow" style="margin-bottom: 1rem;">Hệ sinh thái ESP</div>
+<h3 class="section-title" data-i18n="esp_title">Cây Tri Thức Tiếng Anh Chuyên Ngành</h3>
+<p class="section-sub" data-i18n="esp_sub" style="margin: 0 auto;">Mô hình đào tạo toàn diện kết nối nền tảng ngôn ngữ vững chắc với hệ thống tri thức đa lĩnh vực.</p>
+<div class="esp-tree-container">
+<svg class="tree-svg-trunk" preserveaspectratio="xMidYMid slice" viewbox="0 0 1000 900">
+<path d="
+               M 400 900
+               Q 450 800 450 700
+               L 450 600
+               Q 350 620 250 650 L 240 630 Q 350 600 460 550
+               L 460 450
+               Q 300 430 200 380 L 190 360 Q 300 400 470 380
+               L 470 250
+               Q 380 220 300 180 L 290 160 Q 380 200 480 200
+               L 480 100
+               Q 500 80 520 100
+               L 520 200
+               Q 620 180 700 150 L 710 170 Q 620 200 530 250
+               L 530 380
+               Q 680 370 820 360 L 830 380 Q 680 390 540 420
+               L 540 520
+               Q 680 560 780 600 L 770 620 Q 680 580 540 570
+               L 540 600
+               Q 600 650 680 700 L 670 720 Q 600 670 540 650
+               L 540 700
+               Q 540 800 600 900
+               Z
+            " fill="#111"></path>
+<defs>
+<path d="M 230 390 Q 340 430 465 415" id="txt-engaging"></path>
+<path d="M 270 650 Q 350 620 455 585" id="txt-timing"></path>
+<path d="M 535 400 Q 650 380 790 375" id="txt-supportive"></path>
+<path d="M 545 550 Q 650 580 740 610" id="txt-interactive"></path>
+<path d="M 525 250 Q 535 320 525 380" id="txt-experiential"></path>
+<path d="M 545 635 Q 600 680 670 715" id="txt-linking"></path>
+</defs>
+<text dy="-6" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="bold" letter-spacing="2">
+<textpath href="#txt-engaging" startoffset="50%" text-anchor="middle">ENGAGING</textpath>
+</text>
+<text dy="-6" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="bold" letter-spacing="2">
+<textpath href="#txt-timing" startoffset="50%" text-anchor="middle">TIMING</textpath>
+</text>
+<text dy="-6" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="bold" letter-spacing="2">
+<textpath href="#txt-supportive" startoffset="40%" text-anchor="middle">SUPPORTIVE</textpath>
+</text>
+<text dy="-6" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="bold" letter-spacing="2">
+<textpath href="#txt-interactive" startoffset="40%" text-anchor="middle">INTERACTIVE</textpath>
+</text>
+<text dy="-6" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="bold" letter-spacing="2">
+<textpath href="#txt-experiential" startoffset="50%" text-anchor="middle">EXPERIENTIAL</textpath>
+</text>
+<text dy="-6" fill="#ffffff" font-family="Arial, sans-serif" font-size="16" font-weight="bold" letter-spacing="2">
+<textpath href="#txt-linking" startoffset="40%" text-anchor="middle">LINKING</textpath>
+</text>
+</svg>
+<div class="leaf-cluster" style="top: 18%; left: 30%; background: #62C04B;">
+<div class="lc-base"></div><div class="lc-c1"></div><div class="lc-c2"></div><div class="lc-c3"></div><div class="lc-c4"></div><div class="lc-c5"></div>
+<span class="lc-text">Civil Engineering &amp;<br/>Construction</span>
+</div>
+<div class="leaf-cluster" style="top: 15%; left: 70%; background: #8BC83F; width: 220px;">
+<div class="lc-base"></div><div class="lc-c1"></div><div class="lc-c2"></div><div class="lc-c3"></div><div class="lc-c4"></div>
+<span class="lc-text">Business Law &amp;<br/>Law</span>
+</div>
+<div class="leaf-cluster" style="top: 40%; left: 20%; background: #3E9946;">
+<div class="lc-base"></div><div class="lc-c1"></div><div class="lc-c2"></div><div class="lc-c3"></div><div class="lc-c4"></div><div class="lc-c5"></div>
+<span class="lc-text">Academic Writing &amp;<br/>Research</span>
+</div>
+<div class="leaf-cluster" style="top: 38%; left: 82%; background: #4CAF50;">
+<div class="lc-base"></div><div class="lc-c1"></div><div class="lc-c2"></div><div class="lc-c3"></div><div class="lc-c4"></div>
+<span class="lc-text">Accounting &amp;<br/>Auditing</span>
+</div>
+<div class="leaf-cluster" style="top: 70%; left: 25%; background: #5DB947; width: 280px; height: 150px;">
+<div class="lc-base"></div><div class="lc-c1"></div><div class="lc-c2"></div><div class="lc-c3"></div><div class="lc-c4"></div>
+<span class="lc-text">Business Admin &amp;<br/>Marketing</span>
+</div>
+<div class="leaf-cluster" style="top: 65%; left: 78%; background: #368E3E;">
+<div class="lc-base"></div><div class="lc-c1"></div><div class="lc-c2"></div><div class="lc-c3"></div><div class="lc-c4"></div>
+<span class="lc-text">Finance &amp;<br/>Banking</span>
+</div>
+<div class="shield-badge">
+<div class="shield-icon">📚</div>
+<div class="shield-text">Mastering English<br/>Nurturing Souls</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<div class="page" id="page-academics">
+<section id="academics">
+<div class="reveal">
+<div class="section-eyebrow eyebrow-purple" data-i18n="acad_eyebrow">Học thuật</div>
+<h2 class="section-title" data-i18n="acad_heading">Hệ thống đào tạo</h2>
+<p class="section-sub" data-i18n="acad_intro">Thiết kế bài bản giúp nâng cao năng lực ngôn ngữ, tư duy học thuật và sự tự tin trong học tập.</p>
+</div>
+<div class="courses-grid reveal">
+<div class="course-card">
+<span class="course-level" data-i18n="course_tag_1">Giao tiếp</span>
+<div class="course-title" data-i18n="course_title_1">Tiếng Anh Giao Tiếp Tự Tin</div>
+<p class="course-desc" data-i18n="course_desc_1">Phát triển phản xạ ngôn ngữ tự nhiên, cải thiện sự tự tin và giảm áp lực khi nói tiếng Anh.</p>
+</div>
+<div class="course-card">
+<span class="course-level" data-i18n="course_tag_2">Luyện thi</span>
+<div class="course-title" data-i18n="course_title_2">Các kỳ thi học thuật</div>
+<p class="course-desc" data-i18n="course_desc_2">Cung cấp và cá nhân hóa kế hoạch học tập, định hướng nghề nghiệp, và hỗ trợ tâm lý trong quá trình học tập và ôn thi.</p>
+</div>
+<div class="course-card">
+<span class="course-level" data-i18n="course_tag_3">Đại học</span>
+<div class="course-title" data-i18n="course_title_3">Viết học thuật &amp; Nghiên cứu</div>
+<p class="course-desc" data-i18n="course_desc_3">Rèn luyện kỹ năng viết học thuật, đọc tài liệu, xây dựng lập luận và trình bày nghiên cứu rõ ràng.</p>
+</div>
+</div>
+<div class="info-strip-grid reveal">
+<div class="info-strip-card">
+<div class="section-eyebrow eyebrow-purple" style="margin-bottom:.2rem;">Tài nguyên</div>
+<h3>Tài liệu học tập miễn phí</h3>
+<p>Ebook, template viết học thuật và bài tập được biên soạn để hỗ trợ người học tự học hiệu quả hơn.</p>
+<a href="#contact">Truy cập kho tài liệu →</a>
+</div>
+<div class="info-strip-card">
+<div class="section-eyebrow eyebrow-brown" style="margin-bottom:.2rem;">Lịch học</div>
+<h3>Lịch khai giảng &amp; Giảng dạy</h3>
+<p>Cập nhật lịch lớp sắp khai giảng và các lựa chọn học 1-1 linh hoạt theo nhu cầu cá nhân.</p>
+<a href="#academics">Xem chi tiết lịch →</a>
+</div>
+</div>
+<!-- ESP AI WRITING EVALUATOR -->
+<div class="esp-ai-lab reveal" id="esp-writing-evaluator">
+<div class="esp-ai-header">
+<div class="section-eyebrow eyebrow-purple-light" data-i18n="ai_lab" style="color: var(--gold-light); margin-bottom: .8rem;">Phòng thí nghiệm AI</div>
+<h3 data-i18n="ai_title">Công cụ đánh giá bài viết ESP-XAI</h3>
+<p data-i18n="ai_desc">Công cụ thử nghiệm hỗ trợ đánh giá bài viết tiếng Anh chuyên ngành theo định hướng VSTEP, đồng thời so sánh hai chế độ phản hồi: AI hộp đen và AI có giải thích.</p>
+<div class="esp-ai-disclaimer" data-i18n="ai_note">Lưu ý: Kết quả chỉ phục vụ học tập và nghiên cứu, không thay thế điểm VSTEP chính thức hoặc đánh giá của giảng viên. Các góp ý chuyên ngành nên được kiểm tra lại bởi người có chuyên môn.</div>
+</div>
+<div class="esp-ai-body">
+<div class="esp-ai-panel input-panel">
+<div class="esp-ai-grid">
+<div class="esp-field">
+<label>Participant ID</label>
+<input id="esp-participant" placeholder="VD: P001" type="text"/>
+</div>
+<div class="esp-field">
+<label>Lĩnh vực ESP</label>
+<select id="esp-domain">
+<option value="law">Law</option>
+<option value="finance">Finance</option>
+<option value="accounting">Accounting</option>
+<option value="economics">Economics</option>
+</select>
+</div>
+</div>
+<div class="esp-field">
+<label>Chế độ phản hồi</label>
+<div class="mode-switch">
+<label class="mode-card">
+<input checked="" name="esp-mode" type="radio" value="blackbox"/>
+<strong>Black-box AI</strong>
+<span>Chỉ nhận bậc ước lượng và bản viết cải thiện.</span>
+</label>
+<label class="mode-card">
+<input name="esp-mode" type="radio" value="xai"/>
+<strong>XAI Feedback</strong>
+<span>Giải thích lỗi, lý do sửa và thuật ngữ chuyên ngành.</span>
+</label>
+</div>
+</div>
+<div class="esp-field">
+<label>Writing Task / Prompt</label>
+<textarea id="esp-task" placeholder="Dán đề bài viết hoặc yêu cầu viết tại đây..."></textarea>
+</div>
+<div class="esp-field">
+<label>Student Essay</label>
+<textarea class="essay-box" id="esp-essay" placeholder="Dán bài viết tiếng Anh chuyên ngành tại đây..."></textarea>
+</div>
+<div class="esp-actions">
+<button class="btn-primary" id="esp-analyze-btn" onclick="evaluateEspWriting()">Đánh giá bài viết</button>
+<button class="esp-secondary-btn" onclick="resetEspEvaluator()">Xóa nội dung</button>
+<span class="esp-status" id="esp-status"></span>
+</div>
+</div>
+<div class="esp-ai-panel result-panel">
+<div class="result-empty" id="esp-result">
+<div><strong>Kết quả đánh giá sẽ hiển thị tại đây.</strong><br/>Hệ thống sẽ trả về bậc VSTEP ước lượng, điểm theo rubric và phản hồi theo chế độ bạn chọn.</div>
+</div>
+</div>
+</div>
+</div>
+<div class="calendar-wrap reveal">
+<div class="section-eyebrow eyebrow-brown" data-i18n="calendar_eyebrow">Lịch học</div>
+<h3 class="section-title" data-i18n="calendar_heading">Các lớp học kỳ này</h3>
+<div class="calendar-list">
+<div class="calendar-item">
+<div class="cal-date"><span>12</span><small>Tháng 9</small></div>
+<div class="cal-details">
+<h4>Academic Examinations (Intensive)</h4>
+<p>Thứ 3 - 5 - 7 | 19:00 - 21:00 | Hình thức: Online qua Zoom</p>
+</div>
+</div>
+<div class="calendar-item">
+<div class="cal-date"><span>20</span><small>Tháng 9</small></div>
+<div class="cal-details">
+<h4>Tiếng Anh Giao Tiếp Tự Tin</h4>
+<p>Thứ 2 - 4 | 18:30 - 20:30 | Hình thức: Offline (Quận 1, TP.HCM)</p>
+</div>
+</div>
+<div class="calendar-item">
+<div class="cal-date"><span>05</span><small>Tháng 10</small></div>
+<div class="cal-details">
+<h4>Academic Writing &amp; Research</h4>
+<p>Chủ Nhật | 09:00 - 11:30 | Hình thức: Online qua Zoom</p>
+</div>
+</div>
+</div>
+</div>
+<div class="resource-wrap reveal">
+<div class="section-eyebrow eyebrow-purple-light" data-i18n="res_eyebrow">Thư viện</div>
+<h3 class="section-title" data-i18n="res_heading">Sách &amp; Video tham khảo</h3>
+<div class="resource-grid">
+<div class="res-card">
+<div class="res-icon">📘</div>
+<div class="res-info">
+<h4>Cẩm nang Academic Writing</h4>
+<p>Ebook, template viết học thuật và bài tập được biên soạn để hỗ trợ người học tự học hiệu quả hơn.</p>
+<a class="res-link" href="#contact">Truy cập kho tài liệu →</a>
+</div>
+</div>
+<div class="res-card">
+<div class="res-icon">🎥</div>
+<div class="res-info">
+<h4>Video: Phá vỡ Language Anxiety</h4>
+<p>Bài giảng 45 phút chia sẻ cách vượt qua nỗi sợ tâm lý khi giao tiếp tiếng Anh.</p>
+<a class="res-link" href="#">Xem trên YouTube →</a>
+</div>
+</div>
+<div class="res-card">
+<div class="res-icon">📚</div>
+<div class="res-info">
+<h4>Sách: Tâm lý học tuổi teen</h4>
+<p>Đầu sách khuyên đọc dành cho phụ huynh muốn thấu hiểu tâm lý con trẻ.</p>
+<a class="res-link" href="#">Xem chi tiết →</a>
+</div>
+</div>
+<div class="res-card">
+<div class="res-icon">🎧</div>
+<div class="res-info">
+<h4>Podcast: Tiếng Anh Mỗi Ngày</h4>
+<p>Series chia sẻ kinh nghiệm tự học tiếng Anh và kiểm soát áp lực thi cử.</p>
+<a class="res-link" href="#">Nghe trên Spotify →</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="research-survey" style="background: var(--cream-dark);">
+<div class="reveal">
+<div class="section-eyebrow eyebrow-purple eyebrow-center" style="margin-bottom: 1rem;">
+<span class="eyebrow-center-line" style="margin-right: 0.6rem;"></span>
+          Nghiên cứu học thuật
+          <span class="eyebrow-center-line" style="margin-left: 0.6rem;"></span>
+</div>
+<h2 class="section-title" style="text-align: center;">Khảo sát cảm xúc người học ESP</h2>
+<p style="text-align: center; color: var(--text-muted); max-width: 800px; margin: 0 auto; margin-bottom: 2rem;">Cảm ơn bạn đã dành thời gian tham gia khảo sát. Vui lòng hoàn thành các mục bên dưới để phục vụ công tác nghiên cứu XAI.</p>
+</div>
+<div class="survey-wrapper">
+<iframe frameborder="0" marginheight="0" marginwidth="0" src="https://docs.google.com/forms/d/e/1FAIpQLSegQM04c-FAjJZ7vQTWgV4azBNtQXdkTe4r_aTPHCVQeJHtXg/viewform?embedded=true">Đang tải…</iframe>
+</div>
+</section>
+</div>
+<div class="page" id="page-counseling">
+<section id="counseling">
+<div class="reveal">
+<div class="section-eyebrow eyebrow-brown" data-i18n="psy_eyebrow">Tâm lý học đường</div>
+<h2 class="section-title" data-i18n="psy_heading">Góc lắng nghe &amp; đồng hành</h2>
+<p class="section-sub" data-i18n="psy_intro">Nơi học sinh có thể nói thật, cảm thật và được hỗ trợ bằng sự lắng nghe, tôn trọng và thấu hiểu.</p>
+</div>
+<div class="counseling-grid reveal">
+<div class="c-card">
+<div class="c-card-icon">🤖</div>
+<h3 data-i18n="psy_card1_title">Phòng tư vấn AI</h3>
+<p data-i18n="psy_card1_desc">Công cụ hỗ trợ ban đầu giúp học sinh chia sẻ cảm xúc, đặt câu hỏi và nhận định hướng phù hợp trước khi cần hỗ trợ sâu hơn.</p>
+<a class="c-card-link" data-i18n="psy_card1_cta" href="#" onclick="document.getElementById('chat-modal').classList.add('open'); return false;">Trò chuyện ngay →</a>
+</div>
+<div class="c-card">
+<div class="c-card-icon">💌</div>
+<h3 data-i18n="psy_card2_title">Hộp thư bí mật</h3>
+<p data-i18n="psy_card2_desc">Nơi học sinh có thể gửi tâm thư ẩn danh để chia sẻ áp lực, bối rối hoặc những điều khó nói thành lời.</p>
+<a class="c-card-link" data-i18n="psy_card2_cta" href="#" onclick="document.getElementById('letter-modal').classList.add('open'); return false;">Viết thư cho cô →</a>
+</div>
+<div class="c-card">
+<div class="c-card-icon">📖</div>
+<h3 data-i18n="psy_card3_title">Blog sức khỏe tinh thần</h3>
+<p data-i18n="psy_card3_desc">Chia sẻ kiến thức gần gũi về cảm xúc, căng thẳng học tập, tự tin, lo âu và cách chăm sóc bản thân ở tuổi học đường.</p>
+<a class="c-card-link" data-i18n="psy_card3_cta" href="#blog">Đọc bài viết →</a>
+</div>
+<div class="c-card">
+<div class="c-card-icon">👨‍👩‍👧</div>
+<h3 data-i18n="psy_card4_title">Góc phụ huynh</h3>
+<p data-i18n="psy_card4_desc">Tài liệu và chia sẻ giúp phụ huynh hiểu hơn về tâm lý tuổi teen, cách giao tiếp và đồng hành cùng con tích cực hơn.</p>
+<a class="c-card-link" data-i18n="psy_card4_cta" href="#">Dành cho phụ huynh →</a>
+</div>
+</div>
+</section>
+</div>
+<div class="page" id="page-blog">
+<section id="blog">
+<div class="reveal">
+<div class="section-eyebrow eyebrow-purple-light" data-i18n="blog_eyebrow">Blog &amp; Góc nhìn</div>
+<h2 class="section-title light" data-i18n="blog_heading">Chia sẻ &amp; Góc nhìn</h2>
+<div class="blog-filters">
+<div class="blog-filter active" data-i18n="filter_all">Tất cả</div>
+<div class="blog-filter" data-i18n="filter_tips">Mẹo học tiếng Anh</div>
+<div class="blog-filter" data-i18n="filter_journal">Nhật ký &amp; Câu chuyện</div>
+<div class="blog-filter" data-i18n="filter_research">Nghiên cứu</div>
+</div>
+</div>
+<div class="blog-grid reveal">
+<div class="blog-card featured">
+<span class="blog-cat" data-i18n="blog_feat_cat">Nghiên cứu</span>
+<h3 data-i18n="blog_feat_title">Tại sao người Việt sợ nói tiếng Anh? Góc nhìn tâm lý học</h3>
+<p data-i18n="blog_feat_excerpt">Phân tích hiện tượng lo âu ngôn ngữ và những cách tiếp cận giúp người học vượt qua rào cản tâm lý khi nói.</p>
+</div>
+<div class="blog-card">
+<span class="blog-cat" data-i18n="blog_1_cat">Mẹo học tiếng Anh</span>
+<h3 data-i18n="blog_1_title">5 thói quen giúp từ vựng bám rễ vào trí nhớ</h3>
+<p data-i18n="blog_1_excerpt">Các nguyên tắc đơn giản để biến việc học từ vựng thành một quá trình đều đặn và ít áp lực hơn.</p>
+</div>
+<div class="blog-card">
+<span class="blog-cat" data-i18n="blog_2_cat">Nhật ký &amp; Câu chuyện</span>
+<h3 data-i18n="blog_2_title">Nhật ký lớp học: Khi một học sinh khóc trong giờ Speaking</h3>
+<p data-i18n="blog_2_excerpt">Một câu chuyện nhỏ về sự mong manh, lòng tin và cách một môi trường học an toàn có thể chữa lành.</p>
+</div>
+</div>
+</section>
+</div>
+<div class="page" id="page-contact">
+<section id="contact">
+<div class="reveal">
+<div class="section-eyebrow eyebrow-purple" data-i18n="contact_eyebrow">Liên hệ</div>
+<h2 class="section-title" data-i18n="contact_heading">Kết nối với cô Thư</h2>
+</div>
+<div class="contact-wrap reveal">
+<div class="contact-info">
+<h3 data-i18n="contact_info_heading">Thông tin &amp; Mạng xã hội</h3>
+<div class="info-item">
+<div class="info-icon">✉️</div>
+<div>
+<div class="info-label" data-i18n="email_label">Email công việc</div>
+<div class="info-val">sandra.hoang80@gmail.com</div>
+</div>
+</div>
+<div class="info-item">
+<div class="info-icon">📍</div>
+<div>
+<div class="info-label" data-i18n="office_label">Văn phòng tư vấn</div>
+<div class="info-val" data-i18n="office_value">Quận 1, TP. Hồ Chí Minh</div>
+</div>
+</div>
+<div class="social-row">
+<a class="social-btn" href="#">📘 Fanpage</a>
+<a class="social-btn" href="#">💼 LinkedIn</a>
+<a class="social-btn" href="#">🎵 TikTok (English Tips)</a>
+</div>
+</div>
+<form id="contact-form" onsubmit="submitContact(event)">
+<h3 data-i18n="form_title" style="font-family:var(--ff-serif); font-size:1.3rem; margin-bottom:1.5rem;">Form đăng ký / Đặt lịch</h3>
+<div class="form-group">
+<label data-i18n="name_label">Họ và tên *</label>
+<input data-i18n-placeholder="placeholder_name" id="c-name" placeholder="Ví dụ: Nguyễn Văn A" required="" type="text"/>
+</div>
+<div class="form-group">
+<label data-i18n="email_form_label">Email *</label>
+<input id="c-email" placeholder="email@example.com" required="" type="email"/>
+</div>
+<div class="form-group">
+<label data-i18n="interest_label">Bạn quan tâm đến</label>
+<select id="c-interest">
+<option data-i18n="choose_option" value="">Chọn lĩnh vực...</option>
+<option data-i18n="opt_course">Đăng ký khóa học Tiếng Anh</option>
+<option data-i18n="opt_counseling">Đặt lịch tư vấn tâm lý</option>
+<option data-i18n="opt_resources">Xin nhận tài liệu miễn phí</option>
+<option data-i18n="opt_other">Khác</option>
+</select>
+</div>
+<div class="form-group">
+<label data-i18n="msg_label">Lời nhắn của bạn *</label>
+<textarea data-i18n-placeholder="placeholder_msg" id="c-msg" placeholder="Hãy chia sẻ nhu cầu, mục tiêu hoặc điều bạn mong muốn được hỗ trợ." required=""></textarea>
+</div>
+<button class="btn-primary" data-i18n="submit_btn" id="contact-btn" style="width:100%; justify-content:center; background:var(--accent-purple); color:white;" type="submit">Gửi đăng ký</button>
+</form>
+</div>
+</section>
+</div>
+<footer>
+<div class="footer-brand">
+    Hoàng Anh Thư
+    <span data-i18n="footer_roles">Nhà giáo dục ngôn ngữ &amp; Cố vấn học đường</span>
+</div>
+<div class="footer-copy">© 2026 Hoàng Anh Thư</div>
+</footer>
+<script>
+// ─── BILINGUAL CONTENT SWITCHER ───
+const I18N = {
+  "title": {
+    "vi": "Hoàng Anh Thư – Giảng viên Tiếng Anh & Tâm lý học đường",
+    "en": "Hoang Anh Thu – Language Educator & School Counselor"
+  },
+  "nav_roles": {
+    "vi": "<span>Nhà giáo dục ngôn ngữ</span><span>Giảng viên tiếng Anh chuyên ngành</span><span>Cố vấn học đường</span><span>Cố vấn định hướng nghề nghiệp</span>",
+    "en": "<span>Language Educator</span><span>ESP Practitioner</span><span>School Counselor</span><span>Career Counselor</span>"
+  },
+  "hero_roles": {
+    "vi": "<span>Nhà giáo dục ngôn ngữ</span><span>Giảng viên tiếng Anh chuyên ngành</span><span>Cố vấn học đường</span><span>Cố vấn định hướng nghề nghiệp</span><span>M.A. TESOL</span>",
+    "en": "<span>Language Educator</span><span>ESP Practitioner</span><span>School Counselor</span><span>Career Counselor</span><span>M.A. TESOL</span>"
+  },
+  "hero_slogan": {
+    "vi": "“Luyện Anh ngữ, rèn cách sống.”",
+    "en": "“Mastering English, Nurturing Souls.”"
+  },
+  "nav_who": {
+    "vi": "Tôi là ai",
+    "en": "About"
+  },
+  "nav_academics": {
+    "vi": "Học thuật",
+    "en": "Academics"
+  },
+  "nav_counseling": {
+    "vi": "Tâm lý học đường",
+    "en": "Counseling Hub"
+  },
+  "nav_blog": {
+    "vi": "Blog & Góc nhìn",
+    "en": "Blog & Insights"
+  },
+  "nav_contact": {
+    "vi": "Liên hệ",
+    "en": "Contact"
+  },
+  "hero_cta_courses": {
+    "vi": "Xem khóa học →",
+    "en": "View Courses →"
+  },
+  "hero_cta_counseling": {
+    "vi": "Góc tâm lý học đường",
+    "en": "Counseling Hub"
+  },
+  "stat_learners": {
+    "vi": "Học viên",
+    "en": "Learners"
+  },
+  "stat_years": {
+    "vi": "Năm kinh nghiệm",
+    "en": "Years of experience"
+  },
+  "stat_hours": {
+    "vi": "Giờ tư vấn",
+    "en": "Counseling hours"
+  },
+  "about_eyebrow": {
+    "vi": "Giới thiệu",
+    "en": "About Me"
+  },
+  "about_heading": {
+    "vi": "Hành trình của một người<br><em style=\"font-style:italic; color:var(--gold-light);\">dạy bằng trái tim</em>",
+    "en": "The journey of a teacher<br><em style=\"font-style:italic; color:var(--gold-light);\">who teaches with heart</em>"
+  },
+  "about_tab_1": {
+    "vi": "Hành trình học thuật",
+    "en": "Academic Journey"
+  },
+  "about_tab_2": {
+    "vi": "Triết lý giáo dục",
+    "en": "Philosophy of Education"
+  },
+  "about_tab_3": {
+    "vi": "Thành tựu & Đối tác",
+    "en": "Achievements & Partners"
+  },
+  "about_bg_heading": {
+    "vi": "Nền tảng học thuật & Chuyên môn",
+    "en": "Academic Background & Expertise"
+  },
+  "about_p1": {
+    "vi": "Tôi được đào tạo bài bản trong cả hai lĩnh vực: giảng dạy ngôn ngữ và tâm lý học ứng dụng. Sự kết hợp này cho phép tôi tiếp cận người học một cách toàn diện, không chỉ về năng lực ngôn ngữ mà còn về cảm xúc và động lực học tập.",
+    "en": "I was formally trained in both language education and applied psychology. This combination allows me to support learners holistically, addressing not only language development but also emotions and motivation."
+  },
+  "about_p2": {
+    "vi": "Các mối quan tâm học thuật của tôi tập trung vào lo âu ngôn ngữ, bộ lọc cảm xúc trong học tập, và mối liên hệ giữa sức khỏe tinh thần với kết quả học tập.",
+    "en": "My academic interests focus on language anxiety, the affective filter in learning, and the relationship between mental well-being and academic performance."
+  },
+  "cred_1": {
+    "vi": "M.A. TESOL - Đại học Canberra, Úc",
+    "en": "M.A. TESOL - Canberra University, Australia"
+  },
+  "cred_2": {
+    "vi": "Chứng chỉ Tâm lý học đường",
+    "en": "School Counseling Certificate"
+  },
+  "cred_3": {
+    "vi": "IELTS 8.0",
+    "en": "IELTS 8.0"
+  },
+  "cred_4": {
+    "vi": "Nghiên cứu: “Language Anxiety in Vietnamese EFL Learners”",
+    "en": "Research: “Language Anxiety in Vietnamese EFL Learners”"
+  },
+  "cred_5": {
+    "vi": "Hơn 20 năm giảng dạy tiếng Anh chuyên ngữ và tiếng Anh chuyên ngành",
+    "en": "Over 20 years of experience teaching specialized English and English for Specific Purposes"
+  },
+  "about_phil_heading": {
+    "vi": "Tại sao kết hợp Tiếng Anh và Tâm lý?",
+    "en": "Why combine English and psychology?"
+  },
+  "about_phil_p": {
+    "vi": "Tôi tin rằng một môi trường học tập an toàn về mặt tâm lý là điều kiện tiên quyết để người học dám thử, dám sai và dần tiến bộ. Ngôn ngữ không chỉ được học bằng trí nhớ, mà còn bằng sự tự tin và cảm giác được thấu hiểu.",
+    "en": "I believe a psychologically safe learning environment is essential for learners to take risks, make mistakes, and grow. Language is learned not only through memory, but also through confidence and emotional safety."
+  },
+  "about_principles_heading": {
+    "vi": "3 nguyên tắc cốt lõi",
+    "en": "3 Core Principles"
+  },
+  "principle_1": {
+    "vi": "<strong style=\"color:var(--gold-light);\">An toàn tâm lý trước tiên:</strong> Tạo ra không gian không phán xét.",
+    "en": "<strong style=\"color:var(--gold-light);\">Psychological Safety First:</strong> Creating a non-judgmental learning space."
+  },
+  "principle_2": {
+    "vi": "<strong style=\"color:var(--gold-light);\">Học tập toàn diện con người:</strong> Chăm sóc cả trí tuệ lẫn cảm xúc.",
+    "en": "<strong style=\"color:var(--gold-light);\">Whole-Person Learning:</strong> Supporting both intellectual and emotional growth."
+  },
+  "principle_3": {
+    "vi": "<strong style=\"color:var(--gold-light);\">Tiếp cận dựa trên điểm mạnh:</strong> Khích lệ sự phát triển cá nhân.",
+    "en": "<strong style=\"color:var(--gold-light);\">Strength-Based Approach:</strong> Encouraging personal growth through individual strengths."
+  },
+  "about_ach_heading": {
+    "vi": "Dấu ấn hợp tác",
+    "en": "Professional Collaborations"
+  },
+  "about_ach_p": {
+    "vi": "Trong hành trình nghề nghiệp, tôi có cơ hội cộng tác với các trường học, tổ chức giáo dục và cộng đồng học thuật nhằm lan tỏa các giá trị giáo dục tích cực và hỗ trợ phát triển người học bền vững.",
+    "en": "Throughout my professional journey, I have collaborated with schools, educational organizations, and academic communities to promote positive education and sustainable learner development."
+  },
+  "esp_eyebrow": {
+    "vi": "Hệ sinh thái ESP",
+    "en": "ESP Ecosystem"
+  },
+  "esp_title": {
+    "vi": "Cây Tri Thức Tiếng Anh Chuyên Ngành",
+    "en": "English for Specific Purposes Knowledge Tree"
+  },
+  "esp_sub": {
+    "vi": "Mô hình đào tạo toàn diện kết nối nền tảng ngôn ngữ vững chắc với hệ thống tri thức đa lĩnh vực.",
+    "en": "A holistic learning model that connects language foundations with multidisciplinary knowledge systems."
+  },
+  "acad_eyebrow": {
+    "vi": "Học thuật",
+    "en": "Academics"
+  },
+  "acad_heading": {
+    "vi": "Hệ thống đào tạo",
+    "en": "Academic Programs"
+  },
+  "acad_intro": {
+    "vi": "Thiết kế bài bản giúp nâng cao năng lực ngôn ngữ, tư duy học thuật và sự tự tin trong học tập.",
+    "en": "Structured learning programs designed to build language competence, academic thinking, and learner confidence."
+  },
+  "course_tag_1": {
+    "vi": "Giao tiếp",
+    "en": "Communication"
+  },
+  "course_title_1": {
+    "vi": "Tiếng Anh Giao Tiếp Tự Tin",
+    "en": "Confident English Communication"
+  },
+  "course_desc_1": {
+    "vi": "Phát triển phản xạ ngôn ngữ tự nhiên, cải thiện sự tự tin và giảm áp lực khi nói tiếng Anh.",
+    "en": "Build natural speaking reflexes, strengthen confidence, and reduce speaking anxiety."
+  },
+  "course_tag_2": {
+    "vi": "Luyện thi",
+    "en": "Test Preparation"
+  },
+  "course_title_2": {
+    "vi": "Các kỳ thi học thuật",
+    "en": "Academic Examinations"
+  },
+  "course_desc_2": {
+    "vi": "Cung cấp và cá nhân hóa kế hoạch học tập, định hướng nghề nghiệp, và hỗ trợ tâm lý trong quá trình học tập và ôn thi.",
+    "en": "Provide personalized study planning, career-oriented guidance, and emotional support throughout learning and exam preparation."
+  },
+  "course_tag_3": {
+    "vi": "Đại học",
+    "en": "University"
+  },
+  "course_title_3": {
+    "vi": "Viết học thuật & Nghiên cứu",
+    "en": "Academic Writing & Research"
+  },
+  "course_desc_3": {
+    "vi": "Rèn luyện kỹ năng viết học thuật, đọc tài liệu, xây dựng lập luận và trình bày nghiên cứu rõ ràng.",
+    "en": "Develop academic writing, reading, argumentation, and clear research presentation skills."
+  },
+  "ai_lab": {
+    "vi": "Phòng thí nghiệm AI",
+    "en": "AI Writing Lab"
+  },
+  "ai_title": {
+    "vi": "Công cụ đánh giá bài viết ESP-XAI",
+    "en": "ESP-XAI Writing Evaluator"
+  },
+  "ai_desc": {
+    "vi": "Công cụ thử nghiệm hỗ trợ đánh giá bài viết tiếng Anh chuyên ngành theo định hướng VSTEP, đồng thời so sánh hai chế độ phản hồi: AI hộp đen và AI có giải thích.",
+    "en": "An experimental tool for evaluating ESP writing with a VSTEP-oriented framework while comparing Black-box AI and Explainable AI feedback."
+  },
+  "ai_note": {
+    "vi": "Lưu ý: Kết quả chỉ phục vụ học tập và nghiên cứu, không thay thế điểm VSTEP chính thức hoặc đánh giá của giảng viên. Các góp ý chuyên ngành nên được kiểm tra lại bởi người có chuyên môn.",
+    "en": "Note: Results are for learning and research purposes only. They do not replace official VSTEP scores or teacher assessment. Domain-specific feedback should be reviewed by a qualified instructor or subject-matter expert."
+  },
+  "calendar_eyebrow": {
+    "vi": "Lịch học",
+    "en": "Schedule"
+  },
+  "calendar_heading": {
+    "vi": "Các lớp học kỳ này",
+    "en": "Current Classes"
+  },
+  "res_eyebrow": {
+    "vi": "Thư viện",
+    "en": "Resources"
+  },
+  "res_heading": {
+    "vi": "Sách & Video tham khảo",
+    "en": "Books & Videos"
+  },
+  "psy_eyebrow": {
+    "vi": "Tâm lý học đường",
+    "en": "Counseling Hub"
+  },
+  "psy_heading": {
+    "vi": "Góc lắng nghe & đồng hành",
+    "en": "A Space to Be Heard and Supported"
+  },
+  "psy_intro": {
+    "vi": "Nơi học sinh có thể nói thật, cảm thật và được hỗ trợ bằng sự lắng nghe, tôn trọng và thấu hiểu.",
+    "en": "A space where students can speak honestly, feel safe, and receive support through listening, respect, and empathy."
+  },
+  "psy_card1_title": {
+    "vi": "Phòng tư vấn AI",
+    "en": "AI Counseling Assistant"
+  },
+  "psy_card1_desc": {
+    "vi": "Công cụ hỗ trợ ban đầu giúp học sinh chia sẻ cảm xúc, đặt câu hỏi và nhận định hướng phù hợp trước khi cần hỗ trợ sâu hơn.",
+    "en": "An initial support tool where students can express feelings, ask questions, and receive guidance before deeper support is needed."
+  },
+  "psy_card1_cta": {
+    "vi": "Trò chuyện ngay →",
+    "en": "Start Chat →"
+  },
+  "psy_card2_title": {
+    "vi": "Hộp thư bí mật",
+    "en": "Confidential Letter Box"
+  },
+  "psy_card2_desc": {
+    "vi": "Nơi học sinh có thể gửi tâm thư ẩn danh để chia sẻ áp lực, bối rối hoặc những điều khó nói thành lời.",
+    "en": "A confidential space for students to send anonymous letters about stress, confusion, or emotions that are hard to say out loud."
+  },
+  "psy_card2_cta": {
+    "vi": "Viết thư cho cô →",
+    "en": "Write a Letter →"
+  },
+  "psy_card3_title": {
+    "vi": "Blog sức khỏe tinh thần",
+    "en": "Mental Health Blog"
+  },
+  "psy_card3_desc": {
+    "vi": "Chia sẻ kiến thức gần gũi về cảm xúc, căng thẳng học tập, tự tin, lo âu và cách chăm sóc bản thân ở tuổi học đường.",
+    "en": "Practical articles on emotions, academic stress, confidence, anxiety, and self-care for students."
+  },
+  "psy_card3_cta": {
+    "vi": "Đọc bài viết →",
+    "en": "Read Articles →"
+  },
+  "psy_card4_title": {
+    "vi": "Góc phụ huynh",
+    "en": "Parent Corner"
+  },
+  "psy_card4_desc": {
+    "vi": "Tài liệu và chia sẻ giúp phụ huynh hiểu hơn về tâm lý tuổi teen, cách giao tiếp và đồng hành cùng con tích cực hơn.",
+    "en": "Resources for parents to better understand teenage psychology, communication, and supportive parenting."
+  },
+  "psy_card4_cta": {
+    "vi": "Dành cho phụ huynh →",
+    "en": "For Parents →"
+  },
+  "blog_eyebrow": {
+    "vi": "Blog & Góc nhìn",
+    "en": "Blog & Insights"
+  },
+  "blog_heading": {
+    "vi": "Chia sẻ & Góc nhìn",
+    "en": "Reflections & Insights"
+  },
+  "filter_all": {
+    "vi": "Tất cả",
+    "en": "All"
+  },
+  "filter_tips": {
+    "vi": "Mẹo học tiếng Anh",
+    "en": "English Tips"
+  },
+  "filter_journal": {
+    "vi": "Nhật ký & Câu chuyện",
+    "en": "Journal & Stories"
+  },
+  "filter_research": {
+    "vi": "Nghiên cứu",
+    "en": "Research"
+  },
+  "blog_feat_cat": {
+    "vi": "Nghiên cứu",
+    "en": "Research"
+  },
+  "blog_feat_title": {
+    "vi": "Tại sao người Việt sợ nói tiếng Anh? Góc nhìn tâm lý học",
+    "en": "Why do Vietnamese learners fear speaking English? A psychological perspective"
+  },
+  "blog_feat_excerpt": {
+    "vi": "Phân tích hiện tượng lo âu ngôn ngữ và những cách tiếp cận giúp người học vượt qua rào cản tâm lý khi nói.",
+    "en": "An exploration of language anxiety and practical ways learners can overcome speaking-related psychological barriers."
+  },
+  "blog_1_cat": {
+    "vi": "Mẹo học tiếng Anh",
+    "en": "English Tips"
+  },
+  "blog_1_title": {
+    "vi": "5 thói quen giúp từ vựng bám rễ vào trí nhớ",
+    "en": "5 habits that help vocabulary stick"
+  },
+  "blog_1_excerpt": {
+    "vi": "Các nguyên tắc đơn giản để biến việc học từ vựng thành một quá trình đều đặn và ít áp lực hơn.",
+    "en": "Simple principles to make vocabulary learning more consistent and less stressful."
+  },
+  "blog_2_cat": {
+    "vi": "Nhật ký & Câu chuyện",
+    "en": "Journal & Stories"
+  },
+  "blog_2_title": {
+    "vi": "Nhật ký lớp học: Khi một học sinh khóc trong giờ Speaking",
+    "en": "Classroom journal: When a student cried during speaking class"
+  },
+  "blog_2_excerpt": {
+    "vi": "Một câu chuyện nhỏ về sự mong manh, lòng tin và cách một môi trường học an toàn có thể chữa lành.",
+    "en": "A short story about vulnerability, trust, and how a safe classroom can become healing."
+  },
+  "contact_eyebrow": {
+    "vi": "Liên hệ",
+    "en": "Contact"
+  },
+  "contact_heading": {
+    "vi": "Kết nối với cô Thư",
+    "en": "Get in Touch with Ms. Thu"
+  },
+  "contact_info_heading": {
+    "vi": "Thông tin & Mạng xã hội",
+    "en": "Information & Social Channels"
+  },
+  "email_label": {
+    "vi": "Email công việc",
+    "en": "Work Email"
+  },
+  "office_label": {
+    "vi": "Văn phòng tư vấn",
+    "en": "Counseling Office"
+  },
+  "office_value": {
+    "vi": "Quận 1, TP. Hồ Chí Minh",
+    "en": "District 1, Ho Chi Minh City"
+  },
+  "form_title": {
+    "vi": "Form đăng ký / Đặt lịch",
+    "en": "Registration / Booking Form"
+  },
+  "name_label": {
+    "vi": "Họ và tên *",
+    "en": "Full Name *"
+  },
+  "email_form_label": {
+    "vi": "Email *",
+    "en": "Email *"
+  },
+  "interest_label": {
+    "vi": "Bạn quan tâm đến",
+    "en": "What are you interested in?"
+  },
+  "choose_option": {
+    "vi": "Chọn lĩnh vực...",
+    "en": "Choose an option..."
+  },
+  "opt_course": {
+    "vi": "Đăng ký khóa học Tiếng Anh",
+    "en": "English Course Registration"
+  },
+  "opt_counseling": {
+    "vi": "Đặt lịch tư vấn tâm lý",
+    "en": "Counseling Appointment"
+  },
+  "opt_resources": {
+    "vi": "Xin nhận tài liệu miễn phí",
+    "en": "Request Free Resources"
+  },
+  "opt_other": {
+    "vi": "Khác",
+    "en": "Other"
+  },
+  "msg_label": {
+    "vi": "Lời nhắn của bạn *",
+    "en": "Your Message *"
+  },
+  "submit_btn": {
+    "vi": "Gửi đăng ký",
+    "en": "Submit"
+  },
+  "footer_roles": {
+    "vi": "Nhà giáo dục ngôn ngữ & Cố vấn học đường",
+    "en": "Language Educator & School Counselor"
+  },
+  "placeholder_name": {
+    "vi": "Ví dụ: Nguyễn Văn A",
+    "en": "Example: Nguyen Van A"
+  },
+  "placeholder_msg": {
+    "vi": "Hãy chia sẻ nhu cầu, mục tiêu hoặc điều bạn mong muốn được hỗ trợ.",
+    "en": "Please share your needs, goals, or the support you are looking for."
+  },
+  "letter_title": {
+    "vi": "Hộp thư bí mật 💌",
+    "en": "Confidential Letter Box 💌"
+  },
+  "letter_sub": {
+    "vi": "Nơi học sinh có thể gửi tâm thư ẩn danh để chia sẻ áp lực, bối rối hoặc những điều khó nói thành lời.",
+    "en": "A confidential space for students to send anonymous letters about stress, confusion, or emotions that are hard to say out loud."
+  },
+  "letter_label": {
+    "vi": "Tâm thư của bạn *",
+    "en": "Your letter *"
+  },
+  "letter_btn": {
+    "vi": "Viết thư cho cô",
+    "en": "Send a letter"
+  },
+  "letter_placeholder": {
+    "vi": "Hãy chia sẻ điều bạn đang cảm thấy, những áp lực học tập...",
+    "en": "Share what you are feeling, academic pressure, or anything difficult to say out loud..."
+  }
+};
+
+window.setLanguage = function(lang) {
+  const safeLang = lang === 'en' ? 'en' : 'vi';
+  document.documentElement.lang = safeLang;
+  localStorage.setItem('siteLang', safeLang);
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (I18N[key] && I18N[key][safeLang]) el.textContent = I18N[key][safeLang];
+  });
+
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.getAttribute('data-i18n-html');
+    if (I18N[key] && I18N[key][safeLang]) el.innerHTML = I18N[key][safeLang];
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (I18N[key] && I18N[key][safeLang]) el.setAttribute('placeholder', I18N[key][safeLang]);
+  });
+
+  document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-lang-btn') === safeLang);
+  });
+
+  document.title = I18N.title[safeLang];
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  setLanguage(localStorage.getItem('siteLang') || 'vi');
+});
+
+
+
+// ─── RESPONSIVE MOBILE MENU ───
+window.toggleMobileMenu = function() {
+  const nav = document.getElementById('navbar');
+  const btn = document.querySelector('.mobile-menu-btn');
+  const isOpen = nav.classList.toggle('open');
+  if (btn) btn.setAttribute('aria-expanded', String(isOpen));
+};
+
+window.closeMobileMenu = function() {
+  const nav = document.getElementById('navbar');
+  const btn = document.querySelector('.mobile-menu-btn');
+  if (nav) nav.classList.remove('open');
+  if (btn) btn.setAttribute('aria-expanded', 'false');
+};
+
+document.addEventListener('click', (event) => {
+  const nav = document.getElementById('navbar');
+  if (!nav || !nav.classList.contains('open')) return;
+  if (!nav.contains(event.target)) closeMobileMenu();
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', closeMobileMenu);
+});
+
+// Tab switching (About Me)
+function switchTab(idx) {
+  document.querySelectorAll('.tab-pill').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-panel').forEach((p, i) => p.classList.toggle('active', i === idx));
+}
+
+// Modal handling
+function closeModal(e) {
+  if (e.target === e.currentTarget) document.getElementById('letter-modal').classList.remove('open');
+}
+
+// Scroll Reveal
+const ro = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('in'), i * 80);
+      ro.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+// ─── ROUTER (MÔ PHỎNG ĐA TRANG SPA) ───
+function router() {
+  let hash = window.location.hash;
+  if (!hash) hash = '#whoami';
+  
+  const targetId = 'page-' + hash.replace('#', '');
+  const targetPage = document.getElementById(targetId);
+  
+  if (targetPage) {
+    // Ẩn tất cả
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    // Hiện trang đích
+    targetPage.classList.add('active');
+    // Cuộn lên đầu trang
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    
+    // Cập nhật trạng thái menu
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === hash);
+    });
+
+    // Kích hoạt lại hiệu ứng animation khi chuyển trang
+    setTimeout(() => {
+      targetPage.querySelectorAll('.reveal').forEach(el => {
+        el.classList.remove('in');
+        ro.observe(el);
+      });
+    }, 50);
+  }
+}
+
+window.addEventListener('hashchange', () => { closeMobileMenu(); router(); });
+window.addEventListener('DOMContentLoaded', router);
+
+// ─── ESP WRITING EVALUATOR LOGIC ───
+const ESP_RUBRIC = [
+  { key: 'task_achievement', label: 'Task Achievement', weight: 20 },
+  { key: 'organization_coherence', label: 'Organization & Coherence', weight: 15 },
+  { key: 'grammar_accuracy', label: 'Grammar Range & Accuracy', weight: 15 },
+  { key: 'lexical_resource', label: 'Lexical Resource', weight: 20 },
+  { key: 'esp_domain_accuracy', label: 'ESP Domain Accuracy', weight: 20 },
+  { key: 'professional_tone', label: 'Professional Tone', weight: 10 }
+];
+
+window.evaluateEspWriting = async function() {
+  const participantId = document.getElementById('esp-participant').value.trim() || 'anonymous';
+  const domain = document.getElementById('esp-domain').value;
+  const mode = document.querySelector('input[name="esp-mode"]:checked').value;
+  const taskPrompt = document.getElementById('esp-task').value.trim();
+  const essayText = document.getElementById('esp-essay').value.trim();
+  const btn = document.getElementById('esp-analyze-btn');
+  const status = document.getElementById('esp-status');
+
+  if (!essayText || essayText.length < 80) {
+    showToast('Vui lòng nhập bài viết đủ dài hơn trước khi đánh giá.');
+    return;
+  }
+
+  btn.disabled = true;
+  status.textContent = 'Đang phân tích...';
+  document.getElementById('esp-result').className = 'result-empty';
+  document.getElementById('esp-result').innerHTML = '<div><strong>AI đang đánh giá bài viết...</strong><br>Quá trình này có thể mất vài giây.</div>';
+
+  try {
+    const evaluateEssay = window._httpsCallable(window._functions, 'evaluateEspWriting');
+    const response = await evaluateEssay({ participantId, domain, mode, taskPrompt, essayText });
+    renderEspResult(response.data, mode);
+    status.textContent = 'Đã hoàn tất.';
+  } catch (error) {
+    console.warn('Using demo fallback because backend is not ready:', error);
+    const demoResult = buildDemoEspResult(domain, mode, essayText);
+    renderEspResult(demoResult, mode);
+    status.textContent = 'Đang hiển thị bản demo. Cần kết nối Cloud Function để chạy AI thật.';
+  } finally {
+    btn.disabled = false;
+  }
+};
+
+window.resetEspEvaluator = function() {
+  document.getElementById('esp-task').value = '';
+  document.getElementById('esp-essay').value = '';
+  document.getElementById('esp-status').textContent = '';
+  document.getElementById('esp-result').className = 'result-empty';
+  document.getElementById('esp-result').innerHTML = '<div><strong>Kết quả đánh giá sẽ hiển thị tại đây.</strong><br>Hệ thống sẽ trả về bậc VSTEP ước lượng, điểm theo rubric và phản hồi theo chế độ bạn chọn.</div>';
+};
+
+window.renderEspResult = function(result, mode) {
+  const container = document.getElementById('esp-result');
+  container.className = '';
+  const rubric = result.rubric_scores || {};
+  const errors = result.error_explanations || [];
+  const learningNotes = result.learning_notes || [];
+  const rubricHtml = ESP_RUBRIC.map(item => {
+    const data = rubric[item.key] || {};
+    const score = data.score ?? '-';
+    const comment = data.comment || 'Chưa có nhận xét.';
+    return `<div class="rubric-item"><div class="rubric-top"><span>${item.label}</span><span class="rubric-weight">${score}/${item.weight}</span></div><p>${escapeHtml(comment)}</p></div>`;
+  }).join('');
+
+  const xaiHtml = mode === 'xai' ? `<div class="result-card"><h4>Giải thích lỗi chi tiết</h4>${errors.length ? errors.map(err => `<div class="error-item"><span class="tag">${escapeHtml(err.error_type || 'Writing issue')}</span><p><strong>Câu gốc:</strong> ${escapeHtml(err.original_sentence || '')}</p><p><strong>Câu sửa:</strong> ${escapeHtml(err.corrected_sentence || '')}</p><p><strong>Vì sao sửa:</strong> ${escapeHtml(err.why_correction_is_better || err.explanation || '')}</p>${err.domain_note ? `<p><strong>Ghi chú chuyên ngành:</strong> ${escapeHtml(err.domain_note)}</p>` : ''}${err.vstep_impact ? `<p><strong>Tác động đến VSTEP:</strong> ${escapeHtml(err.vstep_impact)}</p>` : ''}</div>`).join('') : '<p style="color: var(--text-muted);">Chưa có lỗi chi tiết được trả về.</p>'}</div><div class="result-card"><h4>Learning Notes</h4>${learningNotes.length ? `<ul style="padding-left: 1.1rem; color: var(--text-mid); font-size: .9rem; line-height: 1.75;">${learningNotes.map(note => `<li>${escapeHtml(note)}</li>`).join('')}</ul>` : '<p style="color: var(--text-muted);">Chưa có ghi chú học tập.</p>'}</div>` : '';
+
+  container.innerHTML = `<div class="result-card"><h4>VSTEP Level Estimate</h4><div class="level-badge-row"><span class="level-badge">${escapeHtml(result.estimated_vstep_level || 'Pending')}</span><span class="confidence-badge">Confidence: ${escapeHtml(result.confidence || 'medium')}</span><span class="confidence-badge">Total: ${escapeHtml(String(result.total_score ?? '-'))}/100</span></div><p style="color: var(--text-muted); font-size: .88rem; line-height: 1.65;">${escapeHtml(result.overall_comment || 'Đây là đánh giá ước lượng phục vụ học tập và nghiên cứu.')}</p></div><div class="result-card"><h4>Rubric Breakdown</h4><div class="rubric-grid">${rubricHtml}</div></div>${xaiHtml}<div class="result-card"><h4>Suggested Revised Version</h4><div class="revised-version">${escapeHtml(result.revised_version || 'Chưa có bản chỉnh sửa.')}</div></div><div class="result-card" style="background: rgba(212,168,71,.08);"><h4>Research Note</h4><p style="color: var(--text-mid); font-size: .86rem; line-height: 1.65;">Teacher review recommended: <strong>${result.teacher_review_recommended === false ? 'No' : 'Yes'}</strong>. Kết quả này nên được dùng như phản hồi hỗ trợ, không phải kết luận chấm điểm chính thức.</p></div>`;
+};
+
+window.buildDemoEspResult = function(domain, mode, essayText) {
+  const domainName = { law: 'Law', finance: 'Finance', accounting: 'Accounting', economics: 'Economics' }[domain] || 'ESP';
+  const baseRevised = essayText.replace(/got a lot of money/gi, 'generated substantial revenue').replace(/company must obey with/gi, 'company must comply with').replace(/very good/gi, 'highly effective');
+  return {
+    estimated_vstep_level: 'Bậc 4 / B2', confidence: 'medium', total_score: 72,
+    overall_comment: `Bài viết có nền tảng lập luận tương đối rõ, nhưng cần cải thiện độ chính xác thuật ngữ ${domainName} và văn phong học thuật/chuyên nghiệp.`,
+    rubric_scores: {
+      task_achievement: { score: 15, comment: 'Bài nhìn chung đáp ứng yêu cầu, nhưng cần làm rõ luận điểm chính và phạm vi phân tích.' },
+      organization_coherence: { score: 11, comment: 'Bố cục có thể theo dõi được, nhưng liên kết giữa các đoạn cần mạch lạc hơn.' },
+      grammar_accuracy: { score: 10, comment: 'Có một số lỗi cấu trúc câu và collocation ảnh hưởng đến độ tự nhiên.' },
+      lexical_resource: { score: 14, comment: 'Từ vựng học thuật ở mức khá, nhưng vẫn còn một số cách diễn đạt chung chung.' },
+      esp_domain_accuracy: { score: 14, comment: `Thuật ngữ ${domainName} cần chính xác và nhất quán hơn trong bối cảnh chuyên ngành.` },
+      professional_tone: { score: 8, comment: 'Văn phong tương đối phù hợp, nhưng nên giảm các cụm từ thân mật hoặc quá đơn giản.' }
+    },
+    error_explanations: mode === 'xai' ? [
+      { error_type: 'ESP collocation', original_sentence: 'The company got a lot of money.', corrected_sentence: 'The company generated substantial revenue.', why_correction_is_better: '“Generated substantial revenue” là cách diễn đạt chuyên nghiệp hơn trong văn cảnh kinh doanh/tài chính.', domain_note: 'Trong ESP, collocation đúng giúp bài viết đáng tin cậy hơn về mặt chuyên ngành.', vstep_impact: 'Ảnh hưởng đến Lexical Resource và Professional Tone.' },
+      { error_type: 'Professional register', original_sentence: 'This solution is very good.', corrected_sentence: 'This solution is highly effective.', why_correction_is_better: '“Highly effective” trang trọng và phù hợp với academic/professional writing hơn “very good”.', domain_note: 'Tránh dùng từ quá khẩu ngữ trong báo cáo chuyên ngành.', vstep_impact: 'Ảnh hưởng đến Professional Tone.' }
+    ] : [],
+    revised_version: baseRevised,
+    learning_notes: mode === 'xai' ? ['Ưu tiên dùng collocation chuyên ngành thay vì từ vựng đời thường.', 'Mỗi đoạn nên có topic sentence rõ ràng.', 'Khi chưa chắc thuật ngữ chuyên ngành, cần kiểm tra lại với giảng viên hoặc tài liệu đáng tin cậy.'] : [],
+    teacher_review_recommended: true
+  };
+};
+
+window.escapeHtml = function(str) { return String(str).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;'); };
+
+
+// Toast Notifications
+window.showToast = function(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+};
+
+// ─── CHATBOT LOGIC ───
+let chatHistory = [];
+
+window.closeChatModal = function(e) {
+  if (e.target === e.currentTarget) {
+    document.getElementById('chat-modal').classList.remove('open');
+  }
+};
+
+window.handleChatEnter = function(e) {
+  if (e.key === 'Enter') sendChatMessage();
+};
+
+window.sendChatMessage = async function() {
+  const inputEl = document.getElementById("chat-input");
+  const text = inputEl.value.trim();
+  if (!text) return;
+
+  const chatBox = document.getElementById("chat-box");
+  const sendBtn = document.getElementById("chat-send-btn");
+
+  // Hiển thị tin nhắn người dùng
+  appendMessage(text, "user-msg");
+  inputEl.value = "";
+  sendBtn.disabled = true;
+
+  // Cập nhật lịch sử
+  chatHistory.push({ role: "user", content: text });
+
+  // Hiển thị loading
+  const loadingId = "loading-" + Date.now();
+  chatBox.innerHTML += `<div id="${loadingId}" class="loading-msg">AI đang gõ...</div>`;
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  try {
+    // Gọi Firebase Cloud Function
+    const chatWithAI = window._httpsCallable(window._functions, 'chatWithAI');
+    const response = await chatWithAI({ messages: chatHistory });
+    const aiReply = response.data.reply;
+
+    // Xóa loading
+    const loader = document.getElementById(loadingId);
+    if (loader) loader.remove();
+
+    // Hiển thị tin nhắn AI
+    appendMessage(aiReply, "ai-msg");
+    chatHistory.push({ role: "assistant", content: aiReply });
+
+  } catch (error) {
+    console.error(error);
+    const loader = document.getElementById(loadingId);
+    if (loader) loader.remove();
+    appendMessage("Xin lỗi, hệ thống đang bận hoặc có lỗi kết nối. Vui lòng thử lại sau.", "ai-msg");
+  } finally {
+    sendBtn.disabled = false;
+    inputEl.focus();
+  }
+};
+
+window.appendMessage = function(text, className) {
+  const chatBox = document.getElementById("chat-box");
+  const msgDiv = document.createElement("div");
+  msgDiv.className = `chat-msg ${className}`;
+  msgDiv.textContent = text; 
+  chatBox.appendChild(msgDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
+};
+
+</script>
+</body>
+</html>
