@@ -51,12 +51,40 @@
     return localStorage.getItem("siteLang") || document.documentElement.lang || "vi";
   }
 
+
+  const FIRESTORE_REST_BASE = "https://firestore.googleapis.com/v1/projects/nutrio-app-jarvis-2025/databases/(default)/documents";
+  const FIREBASE_API_KEY = "AIzaSyBSAd2sYf8xBfSaHmyfugoWWONC3qBA2-U";
+
+  function toFirestoreFields(data) {
+    const fields = {};
+    Object.entries(data).forEach(([key, value]) => {
+      if (value === undefined || value === null) return;
+      if (typeof value === "boolean") fields[key] = { booleanValue: value };
+      else if (typeof value === "number") fields[key] = Number.isInteger(value) ? { integerValue: String(value) } : { doubleValue: value };
+      else fields[key] = { stringValue: String(value) };
+    });
+    return fields;
+  }
+
+  async function addRestDoc(collectionName, data) {
+    const response = await fetch(`${FIRESTORE_REST_BASE}/${collectionName}?key=${FIREBASE_API_KEY}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fields: toFirestoreFields({ ...data, createdAt: new Date().toISOString() }) })
+    });
+    const text = await response.text();
+    if (!response.ok) {
+      throw new Error(`Firestore REST error ${response.status}: ${text}`);
+    }
+    return JSON.parse(text);
+  }
+
   window.submitContact = async function(e) {
     e.preventDefault();
     const btn = document.getElementById("contact-btn");
     const name = document.getElementById("c-name").value.trim();
     const email = document.getElementById("c-email").value.trim();
-    const interest = document.getElementById("c-interest")?.value || "";
+    const interest = document.getElementById("c-interest")?.value || document.querySelector('#contact-form select')?.value || "";
     const message = document.getElementById("c-msg").value.trim();
     const originalText = btn.textContent || "Gửi đăng ký";
 
@@ -69,15 +97,14 @@
     btn.textContent = "Đang gửi...";
 
     try {
-      await withTimeout(window._fb.addDoc(window._fb.collection(window._db, "contacts"), {
+      await withTimeout(addRestDoc("contacts", {
         name,
         email,
         interest,
         message,
         source: "website_contact_form",
         language: getCurrentLanguage(),
-        status: "new",
-        ts: window._fb.serverTimestamp()
+        status: "new"
       }), 15000);
 
       btn.textContent = "Đã gửi ✓";
@@ -91,10 +118,7 @@
       console.error("Contact form submit error:", err);
       btn.disabled = false;
       btn.textContent = originalText;
-      const msg = err?.code === "permission-denied"
-        ? "Firebase từ chối ghi dữ liệu. Hãy kiểm tra Firestore Rules cho collection contacts."
-        : "Chưa gửi được dữ liệu. Hãy kiểm tra Console/Firebase Rules rồi thử lại.";
-      showToast(msg);
+      showToast("Chưa gửi được dữ liệu. Hãy kiểm tra Console/Firebase Rules rồi thử lại.");
     }
   };
 
@@ -106,13 +130,12 @@
     btn.disabled = true;
     btn.textContent = "Đang gửi...";
     try {
-      await withTimeout(window._fb.addDoc(window._fb.collection(window._db, "letters"), {
+      await withTimeout(addRestDoc("letters", {
         content,
         source: "website_secret_letter",
         language: getCurrentLanguage(),
         status: "new",
-        isAnonymous: true,
-        ts: window._fb.serverTimestamp()
+        isAnonymous: true
       }), 15000);
       btn.textContent = "Đã gửi ✓";
       document.getElementById("letter-form").reset();
