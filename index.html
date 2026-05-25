@@ -366,7 +366,7 @@ section { padding: 6rem 6rem; }
 .postwriting-survey .section-title { text-align: center; }
 .postwriting-survey p { text-align: center; color: var(--text-muted); max-width: 800px; margin: 0 auto 1.5rem; }
 .postwriting-survey .survey-wrapper { margin: 2rem auto 0; max-width: 1100px; }
-.postwriting-survey .survey-wrapper iframe { height: 11417px; }
+.postwriting-survey .survey-wrapper iframe { width: 100%; height: 920px; border: none; display: block; }
 
 /* ─── ESP WRITING EVALUATOR ─── */
 .esp-ai-lab { margin-top: 5rem; background: var(--white); border: 1px solid rgba(13,51,32,.08); border-radius: 28px; overflow: hidden; box-shadow: 0 20px 55px rgba(13,51,32,.08); }
@@ -1163,7 +1163,7 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 </div>
 </div>
 <!-- POST-WRITING SURVEY -->
-<div class="postwriting-survey reveal" id="post-writing-survey">
+<div class="postwriting-survey" id="post-writing-survey">
 <div class="section-eyebrow eyebrow-brown eyebrow-center" style="margin-bottom: 1rem;">
 <span class="eyebrow-center-line" style="margin-right: 0.6rem;"></span>
           <span data-i18n="post_survey_eyebrow">Nghiên cứu học thuật</span>
@@ -1171,8 +1171,9 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 </div>
 <h2 class="section-title" data-i18n="post_survey_title">Khảo sát Post-writing</h2>
 <p data-i18n="post_survey_desc">Vui lòng hoàn thành khảo sát sau khi sử dụng Công cụ đánh giá bài viết ESP-XAI. Phần này giúp ghi nhận trải nghiệm, mức độ hiểu phản hồi AI và cảm nhận của người học sau khi nhận góp ý.</p>
+<div style="text-align:center;"><a class="survey-open-link" href="https://docs.google.com/forms/d/e/1FAIpQLSdoQ8UpzXQnB2R4qlDnmUILr_pE7G5KvUfoaqO3ziv0crKdnw/viewform" target="_blank" rel="noopener">Mở Post-writing Survey trong tab mới →</a></div>
 <div class="survey-wrapper">
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdoQ8UpzXQnB2R4qlDnmUILr_pE7G5KvUfoaqO3ziv0crKdnw/viewform?embedded=true" width="640" height="11417" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdoQ8UpzXQnB2R4qlDnmUILr_pE7G5KvUfoaqO3ziv0crKdnw/viewform?embedded=true" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
 </div>
 </div>
 <div class="calendar-wrap reveal">
