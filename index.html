@@ -339,6 +339,35 @@ section { padding: 6rem 6rem; }
 }
 
 
+
+
+/* ─── PRE-WRITING SURVEY INSIDE ACADEMICS ─── */
+.prewriting-survey {
+  margin-top: 4rem;
+  padding: 3rem 2rem;
+  background: var(--cream-dark);
+  border: 1px solid rgba(13,51,32,.06);
+  border-radius: 28px;
+  box-shadow: 0 16px 42px rgba(13,51,32,.07);
+}
+.prewriting-survey .section-title { text-align: center; }
+.prewriting-survey p { text-align: center; color: var(--text-muted); max-width: 800px; margin: 0 auto 1.5rem; }
+.prewriting-survey .survey-wrapper { margin: 2rem auto 0; }
+
+/* ─── POST-WRITING SURVEY INSIDE ACADEMICS ─── */
+.postwriting-survey {
+  margin-top: 4rem;
+  padding: 3rem 2rem;
+  background: var(--white);
+  border: 1px solid rgba(13,51,32,.08);
+  border-radius: 28px;
+  box-shadow: 0 16px 42px rgba(13,51,32,.07);
+}
+.postwriting-survey .section-title { text-align: center; }
+.postwriting-survey p { text-align: center; color: var(--text-muted); max-width: 800px; margin: 0 auto 1.5rem; }
+.postwriting-survey .survey-wrapper { margin: 2rem auto 0; max-width: 1100px; }
+.postwriting-survey .survey-wrapper iframe { height: 11417px; }
+
 /* ─── ESP WRITING EVALUATOR ─── */
 .esp-ai-lab { margin-top: 5rem; background: var(--white); border: 1px solid rgba(13,51,32,.08); border-radius: 28px; overflow: hidden; box-shadow: 0 20px 55px rgba(13,51,32,.08); }
 .esp-ai-header { padding: 3rem; background: radial-gradient(circle at top right, rgba(212,168,71,.16), transparent 34%), linear-gradient(135deg, var(--green-deep), var(--green-main)); color: var(--cream); }
@@ -814,15 +843,15 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 <div class="letter-backdrop" id="chat-modal" onclick="closeChatModal(event)">
 <div class="letter-modal" style="display: flex; flex-direction: column; height: 80vh; max-height: 600px; padding: 1.5rem;">
 <button class="modal-close" onclick="document.getElementById('chat-modal').classList.remove('open')">✕</button>
-<div class="modal-title" style="margin-bottom: 0.5rem; font-size: 1.3rem;">Phòng tư vấn AI 🤖</div>
-<p class="modal-sub" style="margin-bottom: 1rem; font-size: 0.85rem;">Trợ lý AI hỗ trợ bước đầu để học sinh chia sẻ cảm xúc, đặt câu hỏi và nhận định hướng phù hợp.</p>
+<div class="modal-title" data-i18n="career_modal_title" style="margin-bottom: 0.5rem; font-size: 1.3rem;">Hỗ trợ định hướng nghề nghiệp 🎯</div>
+<p class="modal-sub" data-i18n="career_modal_sub" style="margin-bottom: 1rem; font-size: 0.85rem;">Trợ lý AI hỗ trợ học sinh khám phá năng lực, sở thích, ngành học và hướng nghề nghiệp phù hợp.</p>
 <!-- Khu vực hiển thị tin nhắn -->
 <div id="chat-box" style="flex: 1; overflow-y: auto; background: var(--cream-dark); border-radius: var(--radius-md); padding: 1rem; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem;">
-<div class="chat-msg ai-msg">Chào bạn, mình là trợ lý AI của cô Thư. Bạn có thể chia sẻ cảm xúc, áp lực học tập, hoặc câu hỏi về việc học tiếng Anh. Nếu vấn đề nghiêm trọng, hãy tìm sự hỗ trợ trực tiếp từ giáo viên, phụ huynh hoặc chuyên gia.</div>
+<div class="chat-msg ai-msg" data-i18n="career_chat_initial">Chào bạn, mình là trợ lý định hướng nghề nghiệp của cô Thư. Bạn có thể chia sẻ môn học yêu thích, điểm mạnh, băn khoăn về ngành học, nghề nghiệp hoặc kế hoạch học tiếng Anh cho tương lai.</div>
 </div>
 <!-- Khu vực nhập tin nhắn -->
 <div style="display: flex; gap: 0.5rem;">
-<input id="chat-input" onkeypress="handleChatEnter(event)" placeholder="Nhập tin nhắn của bạn..." style="flex: 1; padding: 0.75rem 1rem; border: 1px solid rgba(13,51,32,.14); border-radius: var(--radius-pill); outline: none; font-family: var(--ff-sans);" type="text"/>
+<input id="chat-input" onkeypress="handleChatEnter(event)" data-i18n-placeholder="career_chat_placeholder" placeholder="Nhập câu hỏi về ngành học, nghề nghiệp hoặc kế hoạch tương lai..." style="flex: 1; padding: 0.75rem 1rem; border: 1px solid rgba(13,51,32,.14); border-radius: var(--radius-pill); outline: none; font-family: var(--ff-sans);" type="text"/>
 <button class="btn-primary" id="chat-send-btn" onclick="sendChatMessage()" style="padding: 0.75rem 1.5rem;">Gửi</button>
 </div>
 </div>
@@ -1059,6 +1088,19 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 <a href="#academics">Xem chi tiết lịch →</a>
 </div>
 </div>
+<!-- PRE-WRITING SURVEY -->
+<div class="prewriting-survey reveal" id="research-survey">
+<div class="section-eyebrow eyebrow-purple eyebrow-center" style="margin-bottom: 1rem;">
+<span class="eyebrow-center-line" style="margin-right: 0.6rem;"></span>
+          Nghiên cứu học thuật
+          <span class="eyebrow-center-line" style="margin-left: 0.6rem;"></span>
+</div>
+<h2 class="section-title">Khảo sát Pre-writing</h2>
+<p>Vui lòng hoàn thành khảo sát trước khi sử dụng Công cụ đánh giá bài viết ESP-XAI. Phần này giúp ghi nhận cảm xúc, mức độ tự tin và trải nghiệm ban đầu của người học trước khi nhận phản hồi AI.</p>
+<div class="survey-wrapper">
+<iframe frameborder="0" marginheight="0" marginwidth="0" src="https://docs.google.com/forms/d/e/1FAIpQLSegQM04c-FAjJZ7vQTWgV4azBNtQXdkTe4r_aTPHCVQeJHtXg/viewform?embedded=true">Đang tải…</iframe>
+</div>
+</div>
 <!-- ESP AI WRITING EVALUATOR -->
 <div class="esp-ai-lab reveal" id="esp-writing-evaluator">
 <div class="esp-ai-header">
@@ -1118,6 +1160,19 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 <div><strong>Kết quả đánh giá sẽ hiển thị tại đây.</strong><br/>Hệ thống sẽ trả về bậc VSTEP ước lượng, điểm theo rubric và phản hồi theo chế độ bạn chọn.</div>
 </div>
 </div>
+</div>
+</div>
+<!-- POST-WRITING SURVEY -->
+<div class="postwriting-survey reveal" id="post-writing-survey">
+<div class="section-eyebrow eyebrow-brown eyebrow-center" style="margin-bottom: 1rem;">
+<span class="eyebrow-center-line" style="margin-right: 0.6rem;"></span>
+          <span data-i18n="post_survey_eyebrow">Nghiên cứu học thuật</span>
+          <span class="eyebrow-center-line" style="margin-left: 0.6rem;"></span>
+</div>
+<h2 class="section-title" data-i18n="post_survey_title">Khảo sát Post-writing</h2>
+<p data-i18n="post_survey_desc">Vui lòng hoàn thành khảo sát sau khi sử dụng Công cụ đánh giá bài viết ESP-XAI. Phần này giúp ghi nhận trải nghiệm, mức độ hiểu phản hồi AI và cảm nhận của người học sau khi nhận góp ý.</p>
+<div class="survey-wrapper">
+<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdoQ8UpzXQnB2R4qlDnmUILr_pE7G5KvUfoaqO3ziv0crKdnw/viewform?embedded=true" width="640" height="11417" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
 </div>
 </div>
 <div class="calendar-wrap reveal">
@@ -1186,20 +1241,6 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 </div>
 </div>
 </section>
-<section id="research-survey" style="background: var(--cream-dark);">
-<div class="reveal">
-<div class="section-eyebrow eyebrow-purple eyebrow-center" style="margin-bottom: 1rem;">
-<span class="eyebrow-center-line" style="margin-right: 0.6rem;"></span>
-          Nghiên cứu học thuật
-          <span class="eyebrow-center-line" style="margin-left: 0.6rem;"></span>
-</div>
-<h2 class="section-title" style="text-align: center;">Khảo sát cảm xúc người học ESP</h2>
-<p style="text-align: center; color: var(--text-muted); max-width: 800px; margin: 0 auto; margin-bottom: 2rem;">Cảm ơn bạn đã dành thời gian tham gia khảo sát. Vui lòng hoàn thành các mục bên dưới để phục vụ công tác nghiên cứu XAI.</p>
-</div>
-<div class="survey-wrapper">
-<iframe frameborder="0" marginheight="0" marginwidth="0" src="https://docs.google.com/forms/d/e/1FAIpQLSegQM04c-FAjJZ7vQTWgV4azBNtQXdkTe4r_aTPHCVQeJHtXg/viewform?embedded=true">Đang tải…</iframe>
-</div>
-</section>
 </div>
 <div class="page" id="page-counseling">
 <section id="counseling">
@@ -1210,10 +1251,10 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 </div>
 <div class="counseling-grid reveal">
 <div class="c-card">
-<div class="c-card-icon">🤖</div>
-<h3 data-i18n="psy_card1_title">Phòng tư vấn AI</h3>
-<p data-i18n="psy_card1_desc">Công cụ hỗ trợ ban đầu giúp học sinh chia sẻ cảm xúc, đặt câu hỏi và nhận định hướng phù hợp trước khi cần hỗ trợ sâu hơn.</p>
-<a class="c-card-link" data-i18n="psy_card1_cta" href="#" onclick="document.getElementById('chat-modal').classList.add('open'); return false;">Trò chuyện ngay →</a>
+<div class="c-card-icon">🎯</div>
+<h3 data-i18n="psy_card1_title">Hỗ trợ định hướng nghề nghiệp</h3>
+<p data-i18n="psy_card1_desc">Công cụ hỗ trợ học sinh khám phá điểm mạnh, sở thích, ngành học phù hợp và lộ trình phát triển nghề nghiệp trong tương lai.</p>
+<a class="c-card-link" data-i18n="psy_card1_cta" href="#" onclick="document.getElementById('chat-modal').classList.add('open'); return false;">Nhận định hướng →</a>
 </div>
 <div class="c-card">
 <div class="c-card-icon">💌</div>
@@ -1580,16 +1621,16 @@ const I18N = {
     "en": "A space where students can speak honestly, feel safe, and receive support through listening, respect, and empathy."
   },
   "psy_card1_title": {
-    "vi": "Phòng tư vấn AI",
-    "en": "AI Counseling Assistant"
+    "vi": "Hỗ trợ định hướng nghề nghiệp",
+    "en": "Career Orientation Support"
   },
   "psy_card1_desc": {
-    "vi": "Công cụ hỗ trợ ban đầu giúp học sinh chia sẻ cảm xúc, đặt câu hỏi và nhận định hướng phù hợp trước khi cần hỗ trợ sâu hơn.",
-    "en": "An initial support tool where students can express feelings, ask questions, and receive guidance before deeper support is needed."
+    "vi": "Công cụ hỗ trợ học sinh khám phá điểm mạnh, sở thích, ngành học phù hợp và lộ trình phát triển nghề nghiệp trong tương lai.",
+    "en": "A support tool that helps students explore their strengths, interests, suitable fields of study, and future career development paths."
   },
   "psy_card1_cta": {
-    "vi": "Trò chuyện ngay →",
-    "en": "Start Chat →"
+    "vi": "Nhận định hướng →",
+    "en": "Get Guidance →"
   },
   "psy_card2_title": {
     "vi": "Hộp thư bí mật",
