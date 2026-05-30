@@ -1979,10 +1979,14 @@ window.evaluateEspWriting = async function() {
     renderEspResult(response.data, mode);
     status.textContent = 'Đã hoàn tất.';
   } catch (error) {
-    console.warn('Using demo fallback because backend is not ready:', error);
-    const demoResult = buildDemoEspResult(domain, mode, essayText);
-    renderEspResult(demoResult, mode);
-    status.textContent = 'Đang hiển thị bản demo. Cần kết nối Cloud Function để chạy AI thật.';
+    console.error('Lỗi kết nối AI Backend:', error);
+    document.getElementById('esp-result').innerHTML = `
+      <div style="color: #9b482b; padding: 2rem; text-align: center; border: 1px solid #9b482b; border-radius: 16px; background: #fdf5f2;">
+        <strong>⚠️ Quá trình đánh giá bị gián đoạn</strong><br><br>
+        Hệ thống AI đang bận hoặc có lỗi mạng kết nối. Mã lỗi: ${error.message || "Timeout"}.<br>
+        Vui lòng đợi vài giây và bấm "Đánh giá bài viết" lại nhé!
+      </div>`;
+    status.textContent = 'Đánh giá thất bại.';
   } finally {
     btn.disabled = false;
   }
