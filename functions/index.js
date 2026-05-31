@@ -1,12 +1,8 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-<<<<<<< HEAD
-// Khởi tạo Google AI với API Key của bạn
-=======
-// [QUAN TRỌNG]: BẠN PHẢI THAY CHUỖI NÀY BẰNG API KEY THẬT (BẮT ĐẦU BẰNG "AIzaSy...")
->>>>>>> c9bba23 (chore: save local updates before pulling)
-const GOOGLE_AI_API_KEY = "AQ.Ab8RN6L46AZehqQlFXIHWuaumd5u9lPMSefo6sg7u0lWMma4WA"; 
+// [QUAN TRỌNG]: Nguyễn hãy dán API Key mới (bắt đầu bằng AIzaSy...) vào đây nhé!
+const GOOGLE_AI_API_KEY = "AQ.Ab8RN6KKUNpraCxOO_YU_6mYUbXm5U9p2upq31t0YnJjrZJ35w"; 
 const genAI = new GoogleGenerativeAI(GOOGLE_AI_API_KEY);
 
 // ============================================================================
@@ -92,8 +88,11 @@ exports.evaluateEspWriting = onCall(async (request) => {
     const result = await model.generateContent(prompt);
     let responseText = result.response.text();
     
-    // BỘ LỌC AN TOÀN: Dọn dẹp ký tự markdown nếu AI lỡ sinh ra thừa để không bị sập hàm JSON.parse
-    responseText = responseText.replace(/```json/gi, "").replace(/```/g, "").trim();
+    // BỘ LỌC TỐI ƯU: Gọt sạch toàn bộ dấu markdown block và các ký tự điều khiển xuống dòng lỗi
+    responseText = responseText.replace(/```json/gi, "")
+                               .replace(/```/g, "")
+                               .replace(/[\u0000-\u001F\u007F-\u009F]/g, "")
+                               .trim();
     
     const aiResponseData = JSON.parse(responseText);
     return aiResponseData;
@@ -114,7 +113,6 @@ exports.chatWithAI = onCall(async (request) => {
     throw new HttpsError("invalid-argument", "Lịch sử trò chuyện không được để trống.");
   }
 
-  // TÁCH TIN NHẮN CUỐI CÙNG RA ĐỂ KHÔNG BỊ TRÙNG LẶP TRONG HISTORY (Sửa lỗi logic)
   const priorMessages = messages.slice(0, -1);
   const latestUserMessage = messages[messages.length - 1].content;
 
