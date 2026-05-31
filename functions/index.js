@@ -2,7 +2,7 @@ const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Khởi tạo Google AI với API Key của bạn
-const GOOGLE_AI_API_KEY = "AQ.Ab8RN6LhvbEqSXECI5ZS4N_Z6P6upmczKaw0-6KugVUZkTU6aw"; 
+const GOOGLE_AI_API_KEY = "AQ.Ab8RN6L46AZehqQlFXIHWuaumd5u9lPMSefo6sg7u0lWMma4WA"; 
 const genAI = new GoogleGenerativeAI(GOOGLE_AI_API_KEY);
 
 // ============================================================================
