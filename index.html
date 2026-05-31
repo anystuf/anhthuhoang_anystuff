@@ -1122,7 +1122,6 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 <option value="law">Law</option>
 <option value="finance">Finance</option>
 <option value="accounting">Accounting</option>
-<option value="economics">Economics</option>
 </select>
 </div>
 </div>
@@ -1140,10 +1139,6 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 <span>Giải thích lỗi, lý do sửa và thuật ngữ chuyên ngành.</span>
 </label>
 </div>
-</div>
-<div class="esp-field">
-<label>Writing Task / Prompt</label>
-<textarea id="esp-task" placeholder="Dán đề bài viết hoặc yêu cầu viết tại đây..."></textarea>
 </div>
 <div class="esp-field">
 <label>Student Essay</label>
@@ -2010,7 +2005,7 @@ window.renderEspResult = function(result, mode) {
     const data = rubric[item.key] || {};
     const score = data.score ?? '-';
     const comment = data.comment || 'Chưa có nhận xét.';
-    return `<div class="rubric-item"><div class="rubric-top"><span>${item.label}</span><span class="rubric-weight">${score}/${item.weight}</span></div><p>${escapeHtml(comment)}</p></div>`;
+    return `<div class="rubric-item"><div class="rubric-top"><span>${item.label}</span><span class="rubric-weight">${score}đ</span></div><p>${escapeHtml(comment)}</p></div>`;
   }).join('');
 
   const xaiHtml = mode === 'xai' ? `<div class="result-card"><h4>Giải thích lỗi chi tiết</h4>${errors.length ? errors.map(err => `<div class="error-item"><span class="tag">${escapeHtml(err.error_type || 'Writing issue')}</span><p><strong>Câu gốc:</strong> ${escapeHtml(err.original_sentence || '')}</p><p><strong>Câu sửa:</strong> ${escapeHtml(err.corrected_sentence || '')}</p><p><strong>Vì sao sửa:</strong> ${escapeHtml(err.why_correction_is_better || err.explanation || '')}</p>${err.domain_note ? `<p><strong>Ghi chú chuyên ngành:</strong> ${escapeHtml(err.domain_note)}</p>` : ''}${err.vstep_impact ? `<p><strong>Tác động đến VSTEP:</strong> ${escapeHtml(err.vstep_impact)}</p>` : ''}</div>`).join('') : '<p style="color: var(--text-muted);">Chưa có lỗi chi tiết được trả về.</p>'}</div><div class="result-card"><h4>Learning Notes</h4>${learningNotes.length ? `<ul style="padding-left: 1.1rem; color: var(--text-mid); font-size: .9rem; line-height: 1.75;">${learningNotes.map(note => `<li>${escapeHtml(note)}</li>`).join('')}</ul>` : '<p style="color: var(--text-muted);">Chưa có ghi chú học tập.</p>'}</div>` : '';
@@ -2019,7 +2014,7 @@ window.renderEspResult = function(result, mode) {
 };
 
 window.buildDemoEspResult = function(domain, mode, essayText) {
-  const domainName = { law: 'Law', finance: 'Finance', accounting: 'Accounting', economics: 'Economics' }[domain] || 'ESP';
+  const domainName = { law: 'Law', finance: 'Finance', accounting: 'Accounting'}[domain] || 'ESP';
   const baseRevised = essayText.replace(/got a lot of money/gi, 'generated substantial revenue').replace(/company must obey with/gi, 'company must comply with').replace(/very good/gi, 'highly effective');
   return {
     estimated_vstep_level: 'Bậc 4 / B2', confidence: 'medium', total_score: 72,
