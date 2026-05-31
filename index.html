@@ -167,8 +167,8 @@
   --accent-purple: #625aa5;
   --accent-brown:  #9b482b;
 
-  --ff-serif:     'Playfair Display', Georgia, serif;
-  --ff-sans:      'DM Sans', sans-serif;
+  --ff-serif:      'Playfair Display', Georgia, serif;
+  --ff-sans:       'DM Sans', sans-serif;
   --radius-pill:  999px;
   --radius-lg:    16px;
   --radius-md:    10px;
@@ -319,7 +319,7 @@ section { padding: 6rem 6rem; }
 .shield-icon { font-size: 1.8rem; color: #111; line-height: 1; }
 .shield-text { font-family: var(--ff-serif); font-size: 1.05rem; font-weight: 700; color: #111; line-height: 1.3; }
 
-/* ─── CẬP NHẬT: SURVEY FORM WRAPPER (GIÃN KHUNG TỐI ĐA) ─── */
+/* ─── SURVEY FORM WRAPPER (GIÃN KHUNG TỐI ĐA) ─── */
 .survey-wrapper { 
     width: 100%; 
     max-width: 1100px; 
@@ -333,7 +333,7 @@ section { padding: 6rem 6rem; }
 
 .survey-wrapper iframe { 
     width: 100%; 
-    height: 750px; /* Thu gọn chiều cao để cắt bỏ khoảng trắng thừa ở trang đầu */
+    height: 750px; 
     border: none; 
     display: block; 
 }
@@ -534,7 +534,7 @@ footer { background: var(--green-deep); padding: 3rem 6rem; display: flex; align
   .nav-links { display: none; }
   
   /* CẬP NHẬT CHIỀU CAO CHO MOBILE */
-  .survey-wrapper iframe { height: 850px; } /* Đã thu gọn lại cho cân đối trên điện thoại */
+  .survey-wrapper iframe { height: 850px; }
 
   /* Responsive Cây ESP */
   .tree-svg-trunk, .shield-badge { display: none; }
@@ -839,17 +839,14 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 </form>
 </div>
 </div>
-<!-- CHATBOT MODAL -->
 <div class="letter-backdrop" id="chat-modal" onclick="closeChatModal(event)">
 <div class="letter-modal" style="display: flex; flex-direction: column; height: 80vh; max-height: 600px; padding: 1.5rem;">
 <button class="modal-close" onclick="document.getElementById('chat-modal').classList.remove('open')">✕</button>
 <div class="modal-title" data-i18n="career_modal_title" style="margin-bottom: 0.5rem; font-size: 1.3rem;">Hỗ trợ định hướng nghề nghiệp 🎯</div>
 <p class="modal-sub" data-i18n="career_modal_sub" style="margin-bottom: 1rem; font-size: 0.85rem;">Trợ lý AI hỗ trợ học sinh khám phá năng lực, sở thích, ngành học và hướng nghề nghiệp phù hợp.</p>
-<!-- Khu vực hiển thị tin nhắn -->
 <div id="chat-box" style="flex: 1; overflow-y: auto; background: var(--cream-dark); border-radius: var(--radius-md); padding: 1rem; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem;">
 <div class="chat-msg ai-msg" data-i18n="career_chat_initial">Chào bạn, mình là trợ lý định hướng nghề nghiệp của cô Thư. Bạn có thể chia sẻ môn học yêu thích, điểm mạnh, băn khoăn về ngành học, nghề nghiệp hoặc kế hoạch học tiếng Anh cho tương lai.</div>
 </div>
-<!-- Khu vực nhập tin nhắn -->
 <div style="display: flex; gap: 0.5rem;">
 <input id="chat-input" onkeypress="handleChatEnter(event)" data-i18n-placeholder="career_chat_placeholder" placeholder="Nhập câu hỏi về ngành học, nghề nghiệp hoặc kế hoạch tương lai..." style="flex: 1; padding: 0.75rem 1rem; border: 1px solid rgba(13,51,32,.14); border-radius: var(--radius-pill); outline: none; font-family: var(--ff-sans);" type="text"/>
 <button class="btn-primary" id="chat-send-btn" onclick="sendChatMessage()" style="padding: 0.75rem 1.5rem;">Gửi</button>
@@ -1088,7 +1085,6 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 <a href="#academics">Xem chi tiết lịch →</a>
 </div>
 </div>
-<!-- PRE-WRITING SURVEY -->
 <div class="prewriting-survey reveal" id="research-survey">
 <div class="section-eyebrow eyebrow-purple eyebrow-center" style="margin-bottom: 1rem;">
 <span class="eyebrow-center-line" style="margin-right: 0.6rem;"></span>
@@ -1101,7 +1097,6 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 <iframe frameborder="0" marginheight="0" marginwidth="0" src="https://docs.google.com/forms/d/e/1FAIpQLSegQM04c-FAjJZ7vQTWgV4azBNtQXdkTe4r_aTPHCVQeJHtXg/viewform?embedded=true">Đang tải…</iframe>
 </div>
 </div>
-<!-- ESP AI WRITING EVALUATOR -->
 <div class="esp-ai-lab reveal" id="esp-writing-evaluator">
 <div class="esp-ai-header">
 <div class="section-eyebrow eyebrow-purple-light" data-i18n="ai_lab" style="color: var(--gold-light); margin-bottom: .8rem;">Phòng thí nghiệm AI</div>
@@ -1157,7 +1152,6 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 </div>
 </div>
 </div>
-<!-- POST-WRITING SURVEY -->
 <div class="postwriting-survey" id="post-writing-survey">
 <div class="section-eyebrow eyebrow-brown eyebrow-center" style="margin-bottom: 1rem;">
 <span class="eyebrow-center-line" style="margin-right: 0.6rem;"></span>
@@ -1914,19 +1908,14 @@ function router() {
   const targetPage = document.getElementById(targetId);
   
   if (targetPage) {
-    // Ẩn tất cả
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    // Hiện trang đích
     targetPage.classList.add('active');
-    // Cuộn lên đầu trang
     window.scrollTo({ top: 0, behavior: 'instant' });
     
-    // Cập nhật trạng thái menu
     document.querySelectorAll('.nav-links a').forEach(a => {
       a.classList.toggle('active', a.getAttribute('href') === hash);
     });
 
-    // Kích hoạt lại hiệu ứng animation khi chuyển trang
     setTimeout(() => {
       targetPage.querySelectorAll('.reveal').forEach(el => {
         el.classList.remove('in');
@@ -1953,13 +1942,16 @@ window.evaluateEspWriting = async function() {
   const participantId = document.getElementById('esp-participant').value.trim() || 'anonymous';
   const domain = document.getElementById('esp-domain').value;
   const mode = document.querySelector('input[name="esp-mode"]:checked').value;
-  const taskPrompt = document.getElementById('esp-task').value.trim();
+  
+  // ĐỒNG BỘ: Không lấy từ DOM cũ đã xóa, đặt mặc định để chuyển lên Backend
+  const taskPrompt = "Evaluate the professional and academic quality of the text.";
   const essayText = document.getElementById('esp-essay').value.trim();
   const btn = document.getElementById('esp-analyze-btn');
   const status = document.getElementById('esp-status');
 
-  if (!essayText || essayText.length < 80) {
-    showToast('Vui lòng nhập bài viết đủ dài hơn trước khi đánh giá.');
+  // ĐỒNG BỘ: Ngưỡng chặn độ dài ký tự 50 thống nhất với Backend
+  if (!essayText || essayText.length < 50) {
+    showToast('Bài viết quá ngắn. Hệ thống yêu cầu tối thiểu 50 ký tự.');
     return;
   }
 
@@ -1988,7 +1980,6 @@ window.evaluateEspWriting = async function() {
 };
 
 window.resetEspEvaluator = function() {
-  document.getElementById('esp-task').value = '';
   document.getElementById('esp-essay').value = '';
   document.getElementById('esp-status').textContent = '';
   document.getElementById('esp-result').className = 'result-empty';
@@ -2039,7 +2030,6 @@ window.buildDemoEspResult = function(domain, mode, essayText) {
 
 window.escapeHtml = function(str) { return String(str).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;'); };
 
-
 // Toast Notifications
 window.showToast = function(msg) {
   const t = document.getElementById('toast');
@@ -2069,30 +2059,24 @@ window.sendChatMessage = async function() {
   const chatBox = document.getElementById("chat-box");
   const sendBtn = document.getElementById("chat-send-btn");
 
-  // Hiển thị tin nhắn người dùng
   appendMessage(text, "user-msg");
   inputEl.value = "";
   sendBtn.disabled = true;
 
-  // Cập nhật lịch sử
   chatHistory.push({ role: "user", content: text });
 
-  // Hiển thị loading
   const loadingId = "loading-" + Date.now();
   chatBox.innerHTML += `<div id="${loadingId}" class="loading-msg">AI đang gõ...</div>`;
   chatBox.scrollTop = chatBox.scrollHeight;
 
   try {
-    // Gọi Firebase Cloud Function
     const chatWithAI = window._httpsCallable(window._functions, 'chatWithAI');
     const response = await chatWithAI({ messages: chatHistory });
     const aiReply = response.data.reply;
 
-    // Xóa loading
     const loader = document.getElementById(loadingId);
     if (loader) loader.remove();
 
-    // Hiển thị tin nhắn AI
     appendMessage(aiReply, "ai-msg");
     chatHistory.push({ role: "assistant", content: aiReply });
 
@@ -2115,7 +2099,6 @@ window.appendMessage = function(text, className) {
   chatBox.appendChild(msgDiv);
   chatBox.scrollTop = chatBox.scrollHeight;
 };
-
 </script>
 </body>
 </html>
