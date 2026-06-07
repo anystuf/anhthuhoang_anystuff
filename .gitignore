@@ -67,3 +67,8 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+# ==========================================
+# KHÓA BẢO MẬT TUYỆT ĐỐI CHO LỚP THỰC NGHIỆM D04
+# ==========================================
+scripts/
+functions/index.js
