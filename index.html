@@ -1988,9 +1988,9 @@ window.handleSignUp = async function() {
   
   const customRegex = /^[a-zA-Z0-9._%+-]+@(st\.buh\.edu\.vn|st\.ueh\.edu\.vn)$/;
   if (!customRegex.test(email)) {
-  if (window.showToast) window.showToast("⚠️ Thất bại: Email không thuộc danh sách trường được cấp phép.");
-  else alert("⚠️ Thất bại: Email không thuộc danh sách trường được cấp phép.");
-  return;
+    if (window.showToast) window.showToast("⚠️ Thất bại: Email không thuộc danh sách trường được cấp phép.");
+    else alert("⚠️ Thất bại: Email không thuộc danh sách trường được cấp phép.");
+    return;
   }
   if (password.length < 6) {
     if (window.showToast) window.showToast("⚠️ Thất bại: Mật khẩu bảo mật phải có ít nhất 6 ký tự.");
@@ -2086,23 +2086,30 @@ window.handleForgotPassword = async function() {
     return;
   }
   
-  const buhRegex = /^[a-zA-Z0-9._%+-]+@st\.buh\.edu\.vn$/;
-  if (!buhRegex.test(email)) {
-    if (window.showToast) window.showToast("⚠️ Email không hợp lệ hoặc không phải cấu trúc email BUH.");
+  const customRegex = /^[a-zA-Z0-9._%+-]+@(st\.buh\.edu\.vn|st\.ueh\.edu\.vn)$/;
+  if (!customRegex.test(email)) {
+    if (window.showToast) window.showToast("⚠️ Email không hợp lệ hoặc không thuộc danh sách trường được cấp phép.");
+    else alert("⚠️ Email không hợp lệ hoặc không thuộc danh sách trường được cấp phép.");
     return;
   }
 
   try {
     if (window.showToast) window.showToast("🔄 Đang gửi liên kết thiết lập lại mật khẩu...");
-    // ĐỒNG BỘ: Gọi thông qua đối tượng bọc toàn cục window._fbAuth
+    else alert("🔄 Đang gửi liên kết thiết lập lại mật khẩu...");
+    
+    // GỌI THÔNG QUA WINDOW._FBAUTH ĐỂ TRÁNH LỖI REFERENCE
     await window._fbAuth.sendPasswordResetEmail(window._auth, email);
+    
     if (window.showToast) window.showToast("📬 Kiểm tra hòm thư! Google đã gửi liên kết khôi phục vào email trường.");
+    else alert("📬 Kiểm tra hòm thư! Google đã gửi liên kết khôi phục vào email trường.");
   } catch (error) {
     console.error("Lỗi Quên mật khẩu:", error);
     if (error.code === 'auth/user-not-found') {
       if (window.showToast) window.showToast("❌ Email này chưa từng đăng ký tài khoản trên hệ thống.");
+      else alert("❌ Email này chưa từng đăng ký tài khoản trên hệ thống.");
     } else {
       if (window.showToast) window.showToast("❌ Không thể gửi email khôi phục: " + error.message);
+      else alert("❌ Không thể gửi email khôi phục: " + error.message);
     }
   }
 };
@@ -2124,17 +2131,23 @@ window.unlockAILab = function() {
   }
 };
 
+
 // Theo dõi trạng thái đăng nhập để bật/tắt giao diện Lab
-window._fbAuth.onAuthStateChanged(window._auth, (user) => {
-  if (user) {
-    document.getElementById("auth-section").style.display = "none";
-    document.getElementById("logged-in-section").style.display = "block";
-    document.getElementById("user-email-display").textContent = user.email;
-    document.getElementById("esp-analyze-btn").disabled = false; // Mở khóa nút chấm bài
-  } else {
-    document.getElementById("auth-section").style.display = "block";
-    document.getElementById("logged-in-section").style.display = "none";
-    document.getElementById("esp-analyze-btn").disabled = true; // Khóa nút chấm bài
+window.addEventListener('load', () => {
+  // Phải đợi web tải xong toàn bộ thì Firebase mới sẵn sàng
+  if (window._fbAuth && window._auth) {
+    window._fbAuth.onAuthStateChanged(window._auth, (user) => {
+      if (user) {
+        document.getElementById("auth-section").style.display = "none";
+        document.getElementById("logged-in-section").style.display = "block";
+        document.getElementById("user-email-display").textContent = user.email;
+        document.getElementById("esp-analyze-btn").disabled = false; // Mở khóa nút chấm bài
+      } else {
+        document.getElementById("auth-section").style.display = "block";
+        document.getElementById("logged-in-section").style.display = "none";
+        document.getElementById("esp-analyze-btn").disabled = true; // Khóa nút chấm bài
+      }
+    });
   }
 });
 
