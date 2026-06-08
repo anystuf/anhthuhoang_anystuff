@@ -1980,41 +1980,50 @@ const ESP_RUBRIC = [
 
 // ─── AUTHENTICATION LOGIC (Quản lý Đăng nhập) ───
 
+// ─── AUTHENTICATION LOGIC CAO CẤP (Bản bọc biến toàn cục chống lỗi ReferenceError) ───
+
 window.handleSignUp = async function() {
   const email = document.getElementById("auth-email").value.trim().toLowerCase();
   const password = document.getElementById("auth-pwd").value.trim();
   
   const buhRegex = /^[a-zA-Z0-9._%+-]+@st\.buh\.edu\.vn$/;
   if (!buhRegex.test(email)) {
-    showToast("⚠️ Thất bại: Bạn phải dùng đúng Email sinh viên BUH (@st.buh.edu.vn).");
+    if (window.showToast) window.showToast("⚠️ Thất bại: Bạn phải dùng đúng Email sinh viên BUH (@st.buh.edu.vn).");
+    else alert("⚠️ Thất bại: Bạn phải dùng đúng Email sinh viên BUH (@st.buh.edu.vn).");
     return;
   }
   if (password.length < 6) {
-    showToast("⚠️ Thất bại: Mật khẩu bảo mật phải có ít nhất 6 ký tự.");
+    if (window.showToast) window.showToast("⚠️ Thất bại: Mật khẩu bảo mật phải có ít nhất 6 ký tự.");
+    else alert("⚠️ Thất bại: Mật khẩu bảo mật phải có ít nhất 6 ký tự.");
     return;
   }
 
   try {
-    showToast("🔄 Đang xác thực danh sách Whitelist...");
+    if (window.showToast) window.showToast("🔄 Đang xác thực danh sách Whitelist...");
     
-    // TỐI ƯU BẢO MẬT: Kiểm tra trực tiếp Document ID bằng email để tránh lộ dữ liệu lớp
-    const docRef = doc(window._db, "allowed_students", email);
-    const docSnap = await getDoc(docRef);
+    // Gọi thông qua biến toàn cục an toàn
+    const checkDoc = await window._fb.getDocs(window._fb.query(window._fb.collection(window._db, "allowed_students")));
+    
+    let isWhitelisted = false;
+    checkDoc.forEach((doc) => {
+      if (doc.id === email) isWhitelisted = true;
+    });
 
-    if (!docSnap.exists()) {
-      showToast("❌ Không được phép: Email này không nằm trong danh sách lớp thực nghiệm D04.");
+    if (!isWhitelisted) {
+      if (window.showToast) window.showToast("❌ Không được phép: Email này không nằm trong danh sách lớp thực nghiệm D04.");
+      else alert("❌ Không được phép: Email này không nằm trong danh sách lớp thực nghiệm D04.");
       return;
     }
 
-    // Tiến hành tạo tài khoản nếu vượt qua màng lọc Whitelist
-    await createUserWithEmailAndPassword(window._auth, email, password);
-    showToast("🎉 Thành công: Đã tạo tài khoản và kích hoạt quyền truy cập AI Lab!");
+    // ĐỒNG BỘ: Gọi thông qua đối tượng bọc toàn cục window._fbAuth
+    await window._fbAuth.createUserWithEmailAndPassword(window._auth, email, password);
+    if (window.showToast) window.showToast("🎉 Thành công: Đã tạo tài khoản và kích hoạt quyền truy cập AI Lab!");
   } catch (error) {
     console.error("Lỗi Đăng ký:", error);
     if (error.code === 'auth/email-already-in-use') {
-      showToast("ℹ️ Tài khoản này đã được tạo từ trước. Vui lòng chuyển sang Đăng nhập.");
+      if (window.showToast) window.showToast("ℹ️ Tài khoản này đã được tạo từ trước. Vui lòng chuyển sang Đăng nhập.");
     } else {
-      showToast("❌ Lỗi đăng ký hệ thống: " + error.message);
+      if (window.showToast) window.showToast("❌ Lỗi đăng ký hệ thống: " + error.message);
     }
   }
 };
@@ -2024,70 +2033,79 @@ window.handleSignIn = async function() {
   const password = document.getElementById("auth-pwd").value.trim();
   
   if (!email || !password) {
-    showToast("⚠️ Vui lòng nhập đầy đủ cả Email và Mật khẩu.");
+    if (window.showToast) window.showToast("⚠️ Vui lòng nhập đầy đủ cả Email và Mật khẩu.");
+    else alert("⚠️ Vui lòng nhập đầy đủ cả Email và Mật khẩu.");
     return;
   }
   try {
-    await signInWithEmailAndPassword(window._auth, email, password);
-    showToast("🔓 Đăng nhập thành công! Hệ thống chấm bài đã được mở khóa.");
+    // ĐỒNG BỘ: Gọi thông qua đối tượng bọc toàn cục window._fbAuth
+    await window._fbAuth.signInWithEmailAndPassword(window._auth, email, password);
+    if (window.showToast) window.showToast("🔓 Đăng nhập thành công! Hệ thống chấm bài đã được mở khóa.");
   } catch (error) {
     console.error("Lỗi Đăng nhập:", error);
-    // BẮT MÃ LỖI CHI TIẾT TỪ FIREBASE AUTH
+    
+    // Kiểm tra và hiển thị an toàn bằng phương thức dự phòng alert nếu toast chưa tải xong
+    const displayMsg = function(msg) {
+      if (window.showToast) window.showToast(msg);
+      else alert(msg);
+    };
+
     switch (error.code) {
       case 'auth/invalid-credential':
       case 'auth/wrong-password':
-        showToast("❌ Thất bại: Sai mật khẩu bảo mật. Vui lòng thử lại.");
+        displayMsg("❌ Thất bại: Sai mật khẩu bảo mật. Vui lòng thử lại.");
         break;
       case 'auth/user-not-found':
-        showToast("❌ Thất bại: Email này chưa được đăng ký tài khoản. Hãy bấm Tạo tài khoản.");
+        displayMsg("❌ Thất bại: Email này chưa được đăng ký tài khoản. Hãy bấm Tạo tài khoản.");
         break;
       case 'auth/too-many-requests':
-        showToast("🔒 Tài khoản tạm thời bị khóa do nhập sai quá nhiều lần. Hãy thử lại sau ít phút hoặc bấm Quên mật khẩu.");
+        displayMsg("🔒 Tài khoản tạm thời bị khóa do nhập sai quá nhiều lần. Hãy thử lại sau ít phút hoặc bấm Quên mật khẩu.");
         break;
       default:
-        showToast("❌ Đăng nhập thất bại: " + error.message);
+        displayMsg("❌ Đăng nhập thất bại: " + error.message);
     }
   }
 };
 
 window.handleSignOut = async function() {
   try {
-    await signOut(window._auth);
-    showToast("ℹ️ Đã đăng xuất an toàn khỏi hệ thống.");
+    // ĐỒNG BỘ: Gọi thông qua đối tượng bọc toàn cục window._fbAuth
+    await window._fbAuth.signOut(window._auth);
+    if (window.showToast) window.showToast("ℹ️ Đã đăng xuất an toàn khỏi hệ thống.");
   } catch (error) {
-    showToast("❌ Không thể đăng xuất: " + error.message);
+    if (window.showToast) window.showToast("❌ Không thể đăng xuất: " + error.message);
   }
 };
 
-// 🔥 TÍNH NĂNG MỚI: XỬ LÝ QUÊN MẬT KHẨU TỰ ĐỘNG
 window.handleForgotPassword = async function() {
   const email = document.getElementById("auth-email").value.trim().toLowerCase();
   
   if (!email) {
-    showToast("⚠️ Vui lòng nhập địa chỉ Email trường của bạn vào ô trống phía trên trước khi bấm quên mật khẩu.");
+    if (window.showToast) window.showToast("⚠️ Vui lòng nhập địa chỉ Email trường trước khi bấm quên mật khẩu.");
+    else alert("⚠️ Vui lòng nhập địa chỉ Email trường trước khi bấm quên mật khẩu.");
     return;
   }
   
   const buhRegex = /^[a-zA-Z0-9._%+-]+@st\.buh\.edu\.vn$/;
   if (!buhRegex.test(email)) {
-    showToast("⚠️ Email không hợp lệ hoặc không phải cấu trúc email BUH.");
+    if (window.showToast) window.showToast("⚠️ Email không hợp lệ hoặc không phải cấu trúc email BUH.");
     return;
   }
 
   try {
-    showToast("🔄 Đang gửi liên kết thiết lập lại mật khẩu...");
-    await sendPasswordResetEmail(window._auth, email);
-    showToast("📬 Kiểm tra hòm thư! Google đã gửi một liên kết khôi phục mật khẩu vào email trường của bạn.");
+    if (window.showToast) window.showToast("🔄 Đang gửi liên kết thiết lập lại mật khẩu...");
+    // ĐỒNG BỘ: Gọi thông qua đối tượng bọc toàn cục window._fbAuth
+    await window._fbAuth.sendPasswordResetEmail(window._auth, email);
+    if (window.showToast) window.showToast("📬 Kiểm tra hòm thư! Google đã gửi liên kết khôi phục vào email trường.");
   } catch (error) {
     console.error("Lỗi Quên mật khẩu:", error);
     if (error.code === 'auth/user-not-found') {
-      showToast("❌ Email này chưa từng đăng ký tài khoản trên hệ thống.");
+      if (window.showToast) window.showToast("❌ Email này chưa từng đăng ký tài khoản trên hệ thống.");
     } else {
-      showToast("❌ Không thể gửi email khôi phục: " + error.message);
+      if (window.showToast) window.showToast("❌ Không thể gửi email khôi phục: " + error.message);
     }
   }
 };
-
 
 // ─── WATERFALL FLOW (Mở khóa thác đổ) ───
 window.unlockAILab = function() {
