@@ -12,6 +12,8 @@
   import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
   import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
   import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"; // THÊM DÒNG NÀY
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBSAd2sYf8xBfSaHmyfugoWWONC3qBA2-U",
@@ -1116,16 +1118,17 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
     <p data-i18n="ai_desc">Công cụ thử nghiệm hỗ trợ đánh giá bài viết tiếng Anh chuyên ngành theo định hướng VSTEP, đồng thời so sánh hai chế độ phản hồi: AI hộp đen và AI có giải thích.</p>
     
     <div id="auth-section" style="margin-top: 1.5rem; background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);">
-      <h4 style="margin-bottom: 1rem; color: #fff;">Xác thực tài khoản lớp thực nghiệm</h4>
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-        <input type="email" id="auth-email" placeholder="Nhập Email (VD: 030739230002@student.edu.vn)" style="padding: 0.75rem; border-radius: 8px; border: none; outline: none; flex: 1; min-width: 250px;">
-        <input type="password" id="auth-pwd" placeholder="Mật khẩu (Tự tạo từ 6 ký tự)" style="padding: 0.75rem; border-radius: 8px; border: none; outline: none; flex: 1; min-width: 200px;">
-      </div>
-      <div style="margin-top: 1rem; display: flex; gap: 1rem;">
-        <button class="btn-primary" onclick="handleSignUp()" style="background: var(--gold); border:none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold;">Tạo tài khoản (Sign Up)</button>
-        <button class="btn-primary" onclick="handleSignIn()" style="background: var(--white); color: var(--green-deep); border:none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold;">Đăng nhập (Sign In)</button>
-      </div>
-    </div>
+  <h4 style="margin-bottom: 1rem; color: #fff;">Xác thực tài khoản lớp thực nghiệm</h4>
+  <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+    <input type="email" id="auth-email" placeholder="Nhập Email trường (VD: 030739230002@st.buh.edu.vn)" style="padding: 0.75rem; border-radius: 8px; border: none; outline: none; flex: 1; min-width: 250px;">
+    <input type="password" id="auth-pwd" placeholder="Mật khẩu (Tự tạo từ 6 ký tự)" style="padding: 0.75rem; border-radius: 8px; border: none; outline: none; flex: 1; min-width: 200px;">
+  </div>
+  <div style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+    <button class="btn-primary" onclick="handleSignUp()" style="background: var(--gold); border:none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold;">Tạo tài khoản (Sign Up)</button>
+    <button class="btn-primary" onclick="handleSignIn()" style="background: var(--white); color: var(--green-deep); border:none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold;">Đăng nhập (Sign In)</button>
+    <button onclick="handleForgotPassword()" style="background: transparent; color: #f0c96a; border: none; cursor: pointer; font-size: 0.85rem; text-decoration: underline; padding: 0.5rem;">Quên mật khẩu?</button>
+  </div>
+</div>
 
     <div id="logged-in-section" style="display: none; margin-top: 1.5rem; padding: 1rem; background: rgba(74, 173, 116, 0.2); border-radius: 12px; border: 1px solid rgba(74, 173, 116, 0.4);">
       <span style="color: #fff; font-weight: bold;">✅ Đã xác thực: <span id="user-email-display"></span></span>
@@ -1978,47 +1981,115 @@ const ESP_RUBRIC = [
 ];
 
 // ─── AUTHENTICATION LOGIC (Quản lý Đăng nhập) ───
+
 window.handleSignUp = async function() {
-  const email = document.getElementById("auth-email").value.trim();
+  const email = document.getElementById("auth-email").value.trim().toLowerCase();
   const password = document.getElementById("auth-pwd").value.trim();
   
-  // Bộ lọc Regex chặn email cá nhân, bắt buộc dùng đuôi .edu / .edu.vn
-  const eduRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.edu(\.vn)?$/;
-  if (!eduRegex.test(email)) {
-    showToast("Bạn phải sử dụng Email học đường (.edu.vn) để tạo tài khoản.");
+  const buhRegex = /^[a-zA-Z0-9._%+-]+@st\.buh\.edu\.vn$/;
+  if (!buhRegex.test(email)) {
+    showToast("⚠️ Thất bại: Bạn phải dùng đúng Email sinh viên BUH (@st.buh.edu.vn).");
     return;
   }
   if (password.length < 6) {
-    showToast("Mật khẩu phải có ít nhất 6 ký tự.");
+    showToast("⚠️ Thất bại: Mật khẩu bảo mật phải có ít nhất 6 ký tự.");
     return;
   }
+
   try {
-    await window._fbAuth.createUserWithEmailAndPassword(window._auth, email, password);
-    showToast("Tạo tài khoản thành công! Bạn đã có thể sử dụng AI Lab.");
+    showToast("🔄 Đang xác thực danh sách Whitelist...");
+    
+    // TỐI ƯU BẢO MẬT: Kiểm tra trực tiếp Document ID bằng email để tránh lộ dữ liệu lớp
+    const docRef = doc(window._db, "allowed_students", email);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      showToast("❌ Không được phép: Email này không nằm trong danh sách lớp thực nghiệm D04.");
+      return;
+    }
+
+    // Tiến hành tạo tài khoản nếu vượt qua màng lọc Whitelist
+    await createUserWithEmailAndPassword(window._auth, email, password);
+    showToast("🎉 Thành công: Đã tạo tài khoản và kích hoạt quyền truy cập AI Lab!");
   } catch (error) {
-    showToast("Lỗi đăng ký: " + error.message);
+    console.error("Lỗi Đăng ký:", error);
+    if (error.code === 'auth/email-already-in-use') {
+      showToast("ℹ️ Tài khoản này đã được tạo từ trước. Vui lòng chuyển sang Đăng nhập.");
+    } else {
+      showToast("❌ Lỗi đăng ký hệ thống: " + error.message);
+    }
   }
 };
 
-
-
 window.handleSignIn = async function() {
-  const email = document.getElementById("auth-email").value.trim();
+  const email = document.getElementById("auth-email").value.trim().toLowerCase();
   const password = document.getElementById("auth-pwd").value.trim();
+  
+  if (!email || !password) {
+    showToast("⚠️ Vui lòng nhập đầy đủ cả Email và Mật khẩu.");
+    return;
+  }
   try {
-    await window._fbAuth.signInWithEmailAndPassword(window._auth, email, password);
-    showToast("Đăng nhập thành công!");
+    await signInWithEmailAndPassword(window._auth, email, password);
+    showToast("🔓 Đăng nhập thành công! Hệ thống chấm bài đã được mở khóa.");
   } catch (error) {
-    showToast("Sai tài khoản hoặc mật khẩu.");
+    console.error("Lỗi Đăng nhập:", error);
+    // BẮT MÃ LỖI CHI TIẾT TỪ FIREBASE AUTH
+    switch (error.code) {
+      case 'auth/invalid-credential':
+      case 'auth/wrong-password':
+        showToast("❌ Thất bại: Sai mật khẩu bảo mật. Vui lòng thử lại.");
+        break;
+      case 'auth/user-not-found':
+        showToast("❌ Thất bại: Email này chưa được đăng ký tài khoản. Hãy bấm Tạo tài khoản.");
+        break;
+      case 'auth/too-many-requests':
+        showToast("🔒 Tài khoản tạm thời bị khóa do nhập sai quá nhiều lần. Hãy thử lại sau ít phút hoặc bấm Quên mật khẩu.");
+        break;
+      default:
+        showToast("❌ Đăng nhập thất bại: " + error.message);
+    }
   }
 };
 
 window.handleSignOut = async function() {
   try {
-    await window._fbAuth.signOut(window._auth);
-    showToast("Đã đăng xuất.");
-  } catch (error) {}
+    await signOut(window._auth);
+    showToast("ℹ️ Đã đăng xuất an toàn khỏi hệ thống.");
+  } catch (error) {
+    showToast("❌ Không thể đăng xuất: " + error.message);
+  }
 };
+
+// 🔥 TÍNH NĂNG MỚI: XỬ LÝ QUÊN MẬT KHẨU TỰ ĐỘNG
+window.handleForgotPassword = async function() {
+  const email = document.getElementById("auth-email").value.trim().toLowerCase();
+  
+  if (!email) {
+    showToast("⚠️ Vui lòng nhập địa chỉ Email trường của bạn vào ô trống phía trên trước khi bấm quên mật khẩu.");
+    return;
+  }
+  
+  const buhRegex = /^[a-zA-Z0-9._%+-]+@st\.buh\.edu\.vn$/;
+  if (!buhRegex.test(email)) {
+    showToast("⚠️ Email không hợp lệ hoặc không phải cấu trúc email BUH.");
+    return;
+  }
+
+  try {
+    showToast("🔄 Đang gửi liên kết thiết lập lại mật khẩu...");
+    await sendPasswordResetEmail(window._auth, email);
+    showToast("📬 Kiểm tra hòm thư! Google đã gửi một liên kết khôi phục mật khẩu vào email trường của bạn.");
+  } catch (error) {
+    console.error("Lỗi Quên mật khẩu:", error);
+    if (error.code === 'auth/user-not-found') {
+      showToast("❌ Email này chưa từng đăng ký tài khoản trên hệ thống.");
+    } else {
+      showToast("❌ Không thể gửi email khôi phục: " + error.message);
+    }
+  }
+};
+
 
 // ─── WATERFALL FLOW (Mở khóa thác đổ) ───
 window.unlockAILab = function() {
