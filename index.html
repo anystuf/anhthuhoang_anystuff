@@ -1986,7 +1986,7 @@ window.handleSignUp = async function() {
   const email = document.getElementById("auth-email").value.trim().toLowerCase();
   const password = document.getElementById("auth-pwd").value.trim();
   
-  const buhRegex = /^[a-zA-Z0-9._%+-]+@st\.buh\.edu\.vn$/;
+  const customRegex = /^[a-zA-Z0-9._%+-]+@(st\.buh\.edu\.vn|st\.ueh\.edu\.vn)$/;
   if (!buhRegex.test(email)) {
     if (window.showToast) window.showToast("⚠️ Thất bại: Bạn phải dùng đúng Email sinh viên BUH (@st.buh.edu.vn).");
     else alert("⚠️ Thất bại: Bạn phải dùng đúng Email sinh viên BUH (@st.buh.edu.vn).");
@@ -2107,15 +2107,21 @@ window.handleForgotPassword = async function() {
   }
 };
 
-// ─── WATERFALL FLOW (Mở khóa thác đổ) ───
+// ─── WATERFALL FLOW (Mở khóa thác đổ an toàn) ───
 window.unlockAILab = function() {
   const labContent = document.getElementById('esp-writing-evaluator');
-  labContent.style.display = 'block'; // Hiện AI Lab lên
+  if (labContent) {
+    labContent.style.display = 'block'; // Hiện AI Lab lên
+    // Tạo hiệu ứng cuộn mượt mà đưa người dùng xuống ngay đầu phòng Lab
+    labContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
   
-  // Tạo hiệu ứng cuộn mượt mà đưa người dùng xuống ngay đầu phòng Lab
-  labContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  
-  showToast("Phòng thí nghiệm AI đã được mở khóa! Bạn hãy xác thực tài khoản để bắt đầu.");
+  // Kiểm tra an toàn trước khi gọi hàm hiển thị thông báo
+  if (window.showToast) {
+    window.showToast("Phòng thí nghiệm AI đã được mở khóa! Bạn hãy xác thực tài khoản để bắt đầu.");
+  } else {
+    alert("Phòng thí nghiệm AI đã được mở khóa! Bạn hãy xác thực tài khoản để bắt đầu.");
+  }
 };
 
 // Theo dõi trạng thái đăng nhập để bật/tắt giao diện Lab
