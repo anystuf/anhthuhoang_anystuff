@@ -1987,10 +1987,10 @@ window.handleSignUp = async function() {
   const password = document.getElementById("auth-pwd").value.trim();
   
   const customRegex = /^[a-zA-Z0-9._%+-]+@(st\.buh\.edu\.vn|st\.ueh\.edu\.vn)$/;
-  if (!buhRegex.test(email)) {
-    if (window.showToast) window.showToast("⚠️ Thất bại: Bạn phải dùng đúng Email sinh viên BUH (@st.buh.edu.vn).");
-    else alert("⚠️ Thất bại: Bạn phải dùng đúng Email sinh viên BUH (@st.buh.edu.vn).");
-    return;
+  if (!customRegex.test(email)) {
+  if (window.showToast) window.showToast("⚠️ Thất bại: Email không thuộc danh sách trường được cấp phép.");
+  else alert("⚠️ Thất bại: Email không thuộc danh sách trường được cấp phép.");
+  return;
   }
   if (password.length < 6) {
     if (window.showToast) window.showToast("⚠️ Thất bại: Mật khẩu bảo mật phải có ít nhất 6 ký tự.");
