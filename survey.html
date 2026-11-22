@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="vi"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Khảo sát PRE / POST · ATH Research</title>
+<meta name="description" content="Bộ khảo sát PRE / POST dành cho sinh viên tham gia nghiên cứu ESP-XAI của cô Hoàng Anh Thư.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--green:#174b35;--gold:#c3a15e;--text:#21382e;--muted:#65766d;--paper:#fffefa;--border:#e1e8df;--bg:#f4f7f1;--red:#a53f3f}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 14% 6%,#e6efe3,transparent 33%),var(--bg);color:var(--text);font:14px/1.7 'Be Vietnam Pro',system-ui,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+.sitebar{max-width:920px;margin:0 auto;padding:24px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px}.logo{font:700 13px 'DM Sans',sans-serif;letter-spacing:.15em;color:var(--green)}.home{color:var(--green);font-size:12px;text-decoration:none;border-bottom:1px solid #bbc9bd}
+main{width:min(920px,calc(100% - 30px));margin:10px auto 60px}.hero{text-align:center;padding:28px 18px 27px}.eyebrow{color:#8c784d;text-transform:uppercase;letter-spacing:.2em;font-size:11px;font-weight:700}.hero h1{font-size:clamp(29px,5vw,43px);line-height:1.28;letter-spacing:-.045em;margin:12px 0;color:var(--green)}.hero p{max-width:680px;color:var(--muted);margin:10px auto 0;font-size:13px}
+.box{background:var(--paper);border:1px solid var(--border);border-radius:18px;box-shadow:0 12px 42px #254c2b0d;padding:clamp(22px,4vw,38px);margin-top:18px}
+.box h2{font-size:20px;line-height:1.45;margin:0 0 9px}.small{font-size:12px;color:var(--muted)}.notice{border:1px solid #d5e1d0;background:#f0f6eb;border-radius:12px;padding:12px 15px;font-size:12px;color:#3c5c48;margin:14px 0}.alert{display:none;border-radius:10px;padding:12px 14px;margin:14px 0;background:#fff0ed;color:#943e36;font-size:13px}.alert.ok{background:#eaf5ec;color:#21613d}.alert.visible{display:block}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field{display:flex;flex-direction:column;gap:6px;margin:10px 0}.field label{font-weight:600;font-size:12px}.field input,.field select,.field textarea{border:1px solid #cbd8cd;border-radius:10px;padding:12px 13px;outline:none;background:white;color:var(--text);width:100%;font-size:13px}.field input:focus,.field select:focus,.field textarea:focus{border-color:#6c9b74;box-shadow:0 0 0 3px #7ba38027}.field textarea{resize:vertical;min-height:90px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}.btn{background:var(--green);border:1px solid var(--green);color:white;border-radius:10px;padding:12px 18px;font-weight:600;font-size:12px}.btn:hover{background:#0f3826}.btn.outline{background:transparent;color:var(--green)}.btn.light{background:#eef4ed;border-color:#d8e5d5;color:var(--green)}.linkbutton{border:0;background:transparent;color:#1d6946;text-decoration:underline;padding:4px;font-size:12px}
+.divider{border:0;border-top:1px solid var(--border);margin:20px 0}.headrow{display:flex;gap:12px;align-items:center;justify-content:space-between}.chip{border-radius:100px;background:#e6f2e6;color:#216843;padding:6px 11px;font-size:11px;font-weight:700}
+.tabs{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.tab{border:1px solid #cedbd0;background:white;color:var(--green);padding:11px 17px;border-radius:10px;font-weight:700}.tab[aria-selected=true]{background:var(--green);color:white;border-color:var(--green)}.tab:disabled{opacity:.5}
+.scale{font-size:12px;background:#fff8e9;border:1px solid #efdfb6;padding:13px 15px;border-radius:10px;margin:16px 0}.question{border:1px solid #e0e8dd;border-radius:13px;padding:18px;margin:13px 0;background:#fff}.question legend{font-weight:700;font-size:13px;line-height:1.7;display:block;width:100%;padding:0}.question .en{font:12px/1.8 'DM Sans',sans-serif;color:var(--muted);margin:7px 0 14px}.ratings{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.rating{display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 0;background:#f4f7f2;border:1px solid #d9e4d9;border-radius:9px;font:600 12px 'DM Sans',sans-serif;cursor:pointer}.rating:has(input:checked){background:#e2eee0;border-color:#3e7a53;color:#1f6740}.rating input{accent-color:#22683f;width:16px;height:16px;margin:0}
+.checkrow{display:flex;align-items:start;gap:11px;font-size:12px;color:#405d46;margin:16px 0}.checkrow input{flex:none;margin-top:5px;width:16px;height:16px;accent-color:var(--green)}.notes{background:#f8f9f5;border-left:3px solid var(--gold);padding:12px 14px;margin:15px 0;font-size:12px}
+.footer{text-align:center;color:#9aab9c;font-size:11px;padding:20px}.hidden,[hidden]{display:none!important}
+@media(max-width:610px){.form-grid{grid-template-columns:1fr}.box{padding:19px}.question{padding:14px}.ratings{gap:5px}.rating{padding:9px 0}.sitebar{padding:18px 16px}.sitebar .logo{font-size:11px}.hero{padding:10px 0 14px}}
+</style></head>
+<body>
+<header class="sitebar"><div class="logo">ATH · RESEARCH PLATFORM</div><a class="home" href="./index.html#academics">← Về website cô Thư</a></header>
+<main>
+<div class="hero"><div class="eyebrow">ESP-XAI · Pilot study</div><h1>Khảo sát trước & sau phản hồi AI</h1><p>Chỉ dành cho sinh viên đã đồng ý tham gia nghiên cứu. Các câu trả lời được lưu riêng theo tài khoản và không ảnh hưởng đến điểm học phần.</p></div>
+<div id="alert" class="alert" role="status" aria-live="polite"></div>
+<section id="auth-panel" class="box"><h2>Đăng nhập / Kích hoạt tài khoản</h2><p class="small">Dùng email trường của bạn (ví dụ: mã sinh viên@st.buh.edu.vn). Nếu chưa có tài khoản Supabase ATH, chọn “Tạo tài khoản” và xác minh email trước khi đăng nhập.</p>
+<div class="form-grid"><div class="field"><label for="email">Email trường</label><input id="email" autocomplete="email" type="email" placeholder="mssv@st.buh.edu.vn"></div><div class="field"><label for="password">Mật khẩu</label><input id="password" autocomplete="current-password" type="password" minlength="8" placeholder="Tối thiểu 8 ký tự"></div></div>
+<div class="actions"><button class="btn" id="login" type="button">Đăng nhập</button><button class="btn outline" id="signup" type="button">Tạo tài khoản</button><button class="linkbutton" id="forgot" type="button">Quên mật khẩu?</button></div>
+<div class="notice">Tài khoản Firebase trước đây chưa được chuyển sang Supabase. Nếu chưa từng đăng ký ATH trên Supabase, hãy tạo tài khoản mới bằng email trường. Hệ thống chỉ cho phép các email có tên trong danh sách đồng ý tham gia truy cập khảo sát.</div>
+</section>
+<section id="recovery-panel" class="box hidden"><h2>Đặt mật khẩu mới</h2><p class="small">Bạn đã mở liên kết khôi phục/kích hoạt tài khoản. Hãy tự tạo mật khẩu mới; tuyệt đối không chia sẻ mật khẩu với giảng viên hoặc quản trị viên.</p>
+<div class="form-grid"><div class="field"><label for="new-password">Mật khẩu mới (ít nhất 8 ký tự)</label><input id="new-password" type="password" autocomplete="new-password" minlength="8"></div><div class="field"><label for="confirm-password">Nhập lại mật khẩu</label><input id="confirm-password" type="password" autocomplete="new-password" minlength="8"></div></div><button class="btn" type="button" id="set-password">Lưu mật khẩu mới</button></section>
+<section id="student-panel" class="box hidden">
+<div class="headrow"><div><h2>Khảo sát dành cho bạn</h2><p id="signed-in-as" class="small"></p></div><button id="logout" type="button" class="btn outline">Đăng xuất</button></div>
+<div class="notes">Quy trình: <strong>PRE (trước khi viết)</strong> → thực hiện bài viết ESP và đọc phản hồi AI → <strong>POST (sau khi xem phản hồi)</strong>. Mỗi lượt khảo sát chỉ gửi một lần. Không chia sẻ tài khoản.</div>
+<div class="tabs"><button class="tab" id="tab-pre" type="button" aria-selected="true">A · PRE <span id="done-pre"></span></button><button class="tab" id="tab-post" type="button" aria-selected="false">B · POST <span id="done-post"></span></button></div>
+<div id="survey-panel" class="hidden"><hr class="divider"><h2 id="form-title"></h2><p id="form-intro" class="small"></p><form id="survey-form"><div id="pre-extra" class="hidden">
+<label class="checkrow"><input id="consent" type="checkbox"><span><strong>Tôi đồng ý tham gia khảo sát.</strong> Tôi đã được giải thích mục đích nghiên cứu; tham gia hoàn toàn tự nguyện, không ảnh hưởng điểm học phần và dữ liệu chỉ dùng cho nghiên cứu dưới dạng mã hóa. / I have been informed of the study, participation is voluntary, and my answers are used only for research in coded form.</span></label>
+<div class="form-grid"><div class="field"><label for="gender">Giới tính / Gender</label><select id="gender"><option value="">Chọn câu trả lời</option><option value="male">Nam</option><option value="female">Nữ</option><option value="other_or_no_answer">Khác / Không muốn trả lời</option></select></div><div class="field"><label for="ai-frequency">Mức độ sử dụng AI khi viết tiếng Anh</label><select id="ai-frequency"><option value="">Chọn câu trả lời</option><option value="never">Chưa bao giờ</option><option value="rarely">Hiếm khi</option><option value="sometimes">Thỉnh thoảng</option><option value="often">Thường xuyên</option><option value="almost_every_time">Hầu như mỗi lần viết</option></select></div></div></div>
+<div id="post-extra" class="hidden"><label class="checkrow"><input id="feedback-read" type="checkbox"><span>Tôi xác nhận đã đọc phản hồi AI cho bài viết ESP trước khi thực hiện POST. / I confirm that I have read the AI feedback before taking this POST survey.</span></label></div>
+<div class="scale"><strong>Thang đo / Scale:</strong> 1 = Hoàn toàn không đồng ý · 2 = Không đồng ý · 3 = Phân vân · 4 = Đồng ý · 5 = Hoàn toàn đồng ý.</div><div id="question-list"></div>
+<div class="field"><label for="open-response" id="open-label">Câu hỏi mở (không bắt buộc)</label><textarea id="open-response" maxlength="4000"></textarea></div>
+<div class="field"><label for="pilot-feedback">[Chỉ dùng cho khảo sát thử] Có câu nào khó hiểu hoặc khó trả lời không? Ghi số câu và lý do. / [Pilot only] Were any items unclear or hard to answer?</label><textarea id="pilot-feedback" maxlength="4000"></textarea></div>
+<div class="actions"><button class="btn" id="submit-survey" type="submit">Gửi câu trả lời</button></div>
+</form></div><div id="done-panel" class="notice hidden">Bạn đã hoàn thành khảo sát này. Cảm ơn bạn đã tham gia! / Your response has been recorded.</div>
+</section>
+<div class="footer">Hoàng Anh Thư · ESP-XAI Pilot Research · Dữ liệu nghiên cứu chỉ sử dụng cho mục đích đã thông báo</div>
+</main>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/+esm';
+const SUPABASE_URL='https://aignaxmirbbnfuutvvdg.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_StzzvgRqME3Dt241NZ8nnQ_yfvUYWzA';
+const db=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
+const $=id=>document.getElementById(id), alertEl=$('alert'); let user=null,phase='PRE',questions=[],submitted=new Set();
+const gotoUrl=location.origin+location.pathname;
+function notify(msg,good=false){alertEl.textContent=msg;alertEl.className='alert visible'+(good?' ok':'');alertEl.scrollIntoView({behavior:'smooth',block:'nearest'});}
+function hideNotice(){alertEl.className='alert';alertEl.textContent='';}
+function schoolEmail(email){return /^[^\s@]+@(st\.buh\.edu\.vn|st\.ueh\.edu\.vn)$/i.test(email);}
+async function signup(){hideNotice();const email=$('email').value.trim().toLowerCase(),password=$('password').value;
+ if(!schoolEmail(email))return notify('Vui lòng sử dụng email sinh viên trường BUH hoặc UEH.');
+ if(password.length<8)return notify('Mật khẩu cần ít nhất 8 ký tự.');
+ const b=$('signup');b.disabled=true;try{const {error}=await db.auth.signUp({email,password,options:{emailRedirectTo:gotoUrl}});if(error)throw error;notify('Đã xử lý đăng ký. Nếu tài khoản cần xác minh, hãy mở email trường và nhấn liên kết xác nhận rồi quay lại đăng nhập. Chỉ các sinh viên có trong danh sách đồng ý mới được mở khảo sát.',true);}catch(e){notify('Không thể tạo tài khoản: '+e.message);}finally{b.disabled=false;}
+}
+async function login(){hideNotice();const email=$('email').value.trim().toLowerCase(),password=$('password').value;
+ if(!email||!password)return notify('Nhập email và mật khẩu để đăng nhập.');
+ const b=$('login');b.disabled=true;try{const {error}=await db.auth.signInWithPassword({email,password});if(error)throw error;await refresh();}catch(e){notify('Đăng nhập thất bại: '+e.message);}finally{b.disabled=false;}
+}
+async function forgot(){hideNotice();const email=$('email').value.trim().toLowerCase();if(!schoolEmail(email))return notify('Nhập email trường trước khi yêu cầu khôi phục mật khẩu.');
+ const b=$('forgot');b.disabled=true;try{const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:gotoUrl+'?recovery=1'});if(error)throw error;notify('Nếu email đã có tài khoản, hướng dẫn đặt lại mật khẩu sẽ được gửi vào hộp thư. Hãy kiểm tra cả Spam.',true);}catch(e){notify('Không gửi được yêu cầu: '+e.message);}finally{b.disabled=false;}
+}
+async function updatePassword(){const pass=$('new-password').value,confirm=$('confirm-password').value;if(pass.length<8||pass!==confirm)return notify('Mật khẩu mới phải có ít nhất 8 ký tự và hai ô phải giống nhau.');
+ const b=$('set-password');b.disabled=true;try{const {error}=await db.auth.updateUser({password:pass});if(error)throw error;$('recovery-panel').classList.add('hidden');history.replaceState(null,'',gotoUrl);notify('Đặt mật khẩu mới thành công. Bạn có thể tiếp tục vào khảo sát.',true);await refresh();}catch(e){notify('Không đặt được mật khẩu: '+e.message);}finally{b.disabled=false;}
+}
+async function refresh(){const {data:{user:current},error}=await db.auth.getUser();if(error||!current){user=null;showAuth();return;}user=current;
+ const {data:eligibility,error:checkErr}=await db.from('allowed_students').select('email,status,class_code').eq('email',String(user.email||'').toLowerCase()).maybeSingle();
+ if(checkErr){showAuth();return notify('Không thể xác minh quyền tham gia: '+checkErr.message);}
+ if(!eligibility||eligibility.status!=='active'){showAuth();return notify('Tài khoản đã đăng nhập, nhưng email chưa được xác minh trong danh sách đồng ý tham gia. Vui lòng liên hệ giảng viên để kiểm tra địa chỉ email.');}
+ $('auth-panel').classList.add('hidden');$('student-panel').classList.remove('hidden');
+ $('signed-in-as').textContent='Đăng nhập: '+user.email+' · '+(eligibility.class_code||'');
+ const {data:rows,error:responseErr}=await db.from('survey_submissions').select('phase').eq('user_id',user.id);
+ if(responseErr)return notify('Không thể đọc trạng thái khảo sát: '+responseErr.message);
+ submitted=new Set((rows||[]).map(x=>x.phase));$('done-pre').textContent=submitted.has('PRE')?'✓':'';$('done-post').textContent=submitted.has('POST')?'✓':'';
+ $('tab-post').disabled=!submitted.has('PRE');await setPhase(phase);
+}
+function showAuth(){$('student-panel').classList.add('hidden');$('auth-panel').classList.remove('hidden');}
+async function setPhase(next){if(next==='POST'&&!submitted.has('PRE'))return notify('Vui lòng hoàn thành PRE trước khi thực hiện POST.');
+ hideNotice();phase=next;$('tab-pre').setAttribute('aria-selected',String(phase==='PRE'));$('tab-post').setAttribute('aria-selected',String(phase==='POST'));
+ if(submitted.has(phase)){$('done-panel').classList.remove('hidden');$('survey-panel').classList.add('hidden');return;}
+ $('done-panel').classList.add('hidden');
+ const [formResult,questionResult]=await Promise.all([db.from('survey_forms').select('phase,title_vi,title_en,introduction_vi,introduction_en,instrument_version,expected_minutes').eq('phase',phase).maybeSingle(),db.from('survey_questions').select('question_id,ordinal,display_number,statement_vi,statement_en,question_type').eq('phase',phase).order('ordinal',{ascending:true})]);
+ if(formResult.error||questionResult.error)return notify('Không thể tải khảo sát. Vui lòng đăng nhập lại hoặc liên hệ giảng viên.');
+ const form=formResult.data;questions=questionResult.data||[];if(!form||questions.length!==(phase==='PRE'?14:19))return notify('Bộ khảo sát đang được kiểm tra, chưa thể gửi câu trả lời.');
+ $('form-title').textContent=form.title_vi+' / '+form.title_en;$('form-intro').textContent=form.introduction_vi+' '+form.introduction_en;
+ $('pre-extra').classList.toggle('hidden',phase!=='PRE');$('post-extra').classList.toggle('hidden',phase!=='POST');$('survey-form').reset();
+ $('open-label').textContent=phase==='PRE'?'Điều bạn lo lắng hoặc mong đợi nhất khi viết bài này là gì? (Không bắt buộc) / What are you most worried about or looking forward to?':'Điều gì trong phản hồi của AI khiến bạn có cảm xúc như trên? (Không bắt buộc) / What in the AI feedback made you feel this way?';
+ const list=$('question-list');list.replaceChildren();for(const q of questions){const fs=document.createElement('fieldset');fs.className='question';const legend=document.createElement('legend');legend.textContent=(q.display_number==='–'?'★':q.display_number)+'. '+q.statement_vi;fs.append(legend);
+ const en=document.createElement('p');en.className='en';en.textContent=q.statement_en;fs.append(en);
+ const radios=document.createElement('div');radios.className='ratings';radios.setAttribute('role','radiogroup');radios.setAttribute('aria-label',q.statement_vi);for(let i=1;i<=5;i++){const lb=document.createElement('label');lb.className='rating';const input=document.createElement('input');input.type='radio';input.name=q.question_id;input.value=String(i);input.required=true;lb.append(input,document.createTextNode(String(i)));radios.append(lb);}fs.append(radios);list.append(fs)}
+ $('survey-panel').classList.remove('hidden');
+}
+async function submitSurvey(ev){ev.preventDefault();if(!user||!questions.length)return;if(submitted.has(phase))return notify('Bạn đã gửi khảo sát này rồi.');
+ const answers={};for(const q of questions){const selected=document.querySelector('input[name="'+q.question_id+'"]:checked');if(!selected)return notify('Bạn cần trả lời đủ các nhận định trước khi gửi.');answers[q.question_id]=Number(selected.value);}
+ if(phase==='PRE'&&!$('consent').checked)return notify('Bạn cần xác nhận tự nguyện đồng ý tham gia khảo sát.');
+ if(phase==='PRE'&&(!$('gender').value||!$('ai-frequency').value))return notify('Vui lòng chọn giới tính và mức sử dụng AI.');
+ if(phase==='POST'&&!$('feedback-read').checked)return notify('Chỉ gửi POST sau khi bạn đã đọc phản hồi AI.');
+ const b=$('submit-survey');b.disabled=true;try{const record={user_id:user.id,phase,instrument_version:'pilot_2026_11',answers,consent_confirmed:true,gender:phase==='PRE'?$('gender').value:null,ai_usage_frequency:phase==='PRE'?$('ai-frequency').value:null,open_response:$('open-response').value.trim()||null,pilot_clarity_note:$('pilot-feedback').value.trim()||null};const {error}=await db.from('survey_submissions').insert(record);if(error)throw error;submitted.add(phase);notify('Đã lưu câu trả lời '+phase+' thành công. Cảm ơn bạn!',true);await refresh();}catch(e){notify('Không lưu được khảo sát: '+(e.code==='23505'?'Bạn đã nộp khảo sát này.':e.message));}finally{b.disabled=false;}
+}
+$('signup').addEventListener('click',signup);$('login').addEventListener('click',login);$('forgot').addEventListener('click',forgot);$('set-password').addEventListener('click',updatePassword);
+$('logout').addEventListener('click',async()=>{await db.auth.signOut();user=null;submitted.clear();showAuth();notify('Đã đăng xuất.',true);});
+$('tab-pre').addEventListener('click',()=>setPhase('PRE'));$('tab-post').addEventListener('click',()=>setPhase('POST'));
+$('survey-form').addEventListener('submit',submitSurvey);
+db.auth.onAuthStateChange((event)=>{if(event==='PASSWORD_RECOVERY'){$('recovery-panel').classList.remove('hidden');$('auth-panel').classList.add('hidden');}});
+if(location.search.includes('recovery=1')||location.hash.includes('type=invite')||location.hash.includes('type=recovery'))$('recovery-panel').classList.remove('hidden');
+refresh();
+</script></body></html>
