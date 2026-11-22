@@ -1,0 +1,15 @@
+# Real exports, transformed data, backups and credentials must NEVER enter this public repository.
+*.json
+*.jsonl
+*.csv
+*.tsv
+*.sql.gz
+*.db
+*.sqlite*
+*.bak
+*.backup
+*.dump
+.env
+.env.*
+__pycache__/
+*.py[cod]
