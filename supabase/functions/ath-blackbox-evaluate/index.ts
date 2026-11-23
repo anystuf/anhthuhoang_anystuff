@@ -63,7 +63,19 @@ Deno.serve(async (req: Request) => {
   const {data:pre,error:preError}=await userDb.from("survey_submissions")
     .select("id").eq("user_id",user.id).eq("phase","PRE").limit(1).maybeSingle();
   if(preError)return toJson({error:"Không xác minh được khảo sát PRE."},503,origin);
-  if(!pre && !preExempt)return toJson({error:"Vui lòng hoàn thành khảo sát PRE trước khi sử dụng Black-box AI."},403,origin);
+  // The Google Form iframe is cross-origin. Its submission cannot be observed
+  // directly. Student self-attestation is kept SEPARATE from verified responses.
+  let googlePreSelfAttested = false;
+  if(!pre && !preExempt) {
+    const {data:ack,error:ackError}=await userDb.from("google_form_attestations")
+      .select("id").eq("user_id",user.id).eq("phase","PRE")
+      .eq("instrument_version","google_forms_pilot_2026_11").maybeSingle();
+    if(ackError)return toJson({error:"Chưa xác minh được xác nhận PRE trên ATH."},503,origin);
+    googlePreSelfAttested=Boolean(ack);
+    if(!googlePreSelfAttested)return toJson({
+      error:"Vui lòng điền Google Form PRE và xác nhận đã gửi trên ATH trước khi sử dụng AI."
+    },403,origin);
+  }
 
   const lenHeader=Number(req.headers.get("content-length")||"0");
   if(lenHeader>24000)return toJson({error:"Bài viết vượt quá giới hạn cho phép."},413,origin);
@@ -191,7 +203,7 @@ Deno.serve(async (req: Request) => {
   const {error:saveError}=await admin.from("essay_evaluations").insert({
     auth_user_id:user.id,participant_id:null,esp_domain:domain,evaluation_mode:"blackbox",
     task_prompt:"ATH Black-box ESP Writing Evaluation v1",
-    essay_text:essay,result_json:{score,revised_text:revisedText,mode:"blackbox",model_used:successfulModel,is_test:eligibility.is_test===true}
+    essay_text:essay,result_json:{score,revised_text:revisedText,mode:"blackbox",model_used:successfulModel,is_test:eligibility.is_test===true,pre_evidence:pre?"supabase_survey":(preExempt?"test_exemption":(googlePreSelfAttested?"google_form_self_attested_unverified":"none"))}
   });
   if(saveError){
     console.error("Unable to persist essay evaluation",saveError.code);
