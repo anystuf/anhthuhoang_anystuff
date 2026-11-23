@@ -152,6 +152,7 @@ async function signOut() {
   eligibility = null;
   finished.clear();
   byId("esp-result").replaceChildren();
+  byId("esp-result").classList.add("result-empty");
   byId("esp-result").textContent = "Kết quả đánh giá sẽ hiển thị ở đây.";
   byId("ath-post-go").hidden = true;
   await refresh();
@@ -282,6 +283,7 @@ async function evaluateEssay() {
   }
   const button = byId("esp-analyze-btn"); button.disabled = true;
   const status = byId("esp-status");status.textContent = "AI đang đánh giá...";
+  byId("esp-result").classList.add("result-empty");
   byId("esp-result").textContent = "Đang đánh giá bài viết...";
   byId("ath-post-go").hidden = true;
   try {
@@ -300,7 +302,9 @@ async function evaluateEssay() {
         typeof data?.revised_text !== "string" || data.revised_text.trim().length < 30) {
       throw new Error("Kết quả AI không hợp lệ, vui lòng thử lại.");
     }
-    const result = byId("esp-result");result.replaceChildren();
+    const result = byId("esp-result");
+    result.classList.remove("result-empty");
+    result.replaceChildren();
     const score = document.createElement("div");score.className = "result-card";
     const scoreTitle = document.createElement("h4");scoreTitle.textContent = "Điểm đánh giá";
     const scoreNumber = document.createElement("div");scoreNumber.className = "ath-score";
@@ -316,6 +320,7 @@ async function evaluateEssay() {
     status.textContent = "Hoàn tất.";
     result.scrollIntoView({behavior:"smooth",block:"start"});
   } catch (error) {
+    byId("esp-result").classList.add("result-empty");
     byId("esp-result").textContent = "Chưa nhận được kết quả.";
     status.textContent = "Đánh giá chưa thành công.";
     aiStatus(error?.message || "Lỗi kết nối. Vui lòng thử lại.");
@@ -326,6 +331,7 @@ async function evaluateEssay() {
 function resetEssay() {
   byId("esp-essay").value = "";
   byId("esp-status").textContent = "";
+  byId("esp-result").classList.add("result-empty");
   byId("esp-result").textContent = "Kết quả đánh giá sẽ hiển thị tại đây.";
   byId("ath-post-go").hidden = true;
 }
