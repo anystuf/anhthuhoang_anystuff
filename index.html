@@ -871,6 +871,40 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 #esp-writing-evaluator .esp-ai-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 #esp-writing-evaluator .ath-ai-message{margin-top:1.25rem;padding:13px 15px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.09);border-radius:11px;color:#f8ead4;font-size:.87rem}
 #esp-writing-evaluator .ath-ai-account{color:#f5e8d2;font-size:.77rem;margin-top:.5rem}
+
+/* Result has a centered placeholder before analysis, then a vertical card stack. */
+#esp-writing-evaluator .esp-ai-panel.result-panel{min-width:0}
+#esp-writing-evaluator #esp-result:not(.result-empty){
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+  gap:16px;
+  width:100%;
+  min-width:0;
+  text-align:left;
+  padding:0;
+  background:none;
+  border:0;
+}
+#esp-writing-evaluator #esp-result:not(.result-empty) .result-card{
+  display:block;
+  flex:none;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  margin:0;
+  box-sizing:border-box;
+}
+#esp-writing-evaluator #esp-result .ath-score{
+  display:block;
+  white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+  text-align:center;
+  letter-spacing:-.03em;
+}
+#esp-writing-evaluator #esp-result .result-card:first-child h4{text-align:center}
+#esp-writing-evaluator #esp-result .ath-revised{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere}
 #esp-writing-evaluator .ath-score{font-size:clamp(2rem,4vw,3rem);font-weight:700;color:var(--green-deep);margin-top:.8rem}
 #esp-writing-evaluator .ath-revised{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.94rem;line-height:1.9;text-align:left;color:#284432}
 #esp-writing-evaluator .ath-post-go{margin:12px 0;cursor:pointer}
