@@ -89,7 +89,7 @@ async function evaluateText(event){
    const {data,error}=await db.functions.invoke("ath-blackbox-evaluate",{body:{domain,essayText:text}});
    if(error){let message="Không kết nối được dịch vụ Black-box AI.";try{const info=await error.context?.json();if(typeof info?.error==="string")message=info.error;}catch{}throw new Error(message)}
    if(!Number.isInteger(data?.score)||typeof data?.revised_text!=="string")throw new Error("Kết quả AI chưa hợp lệ.");
-   $("score").textContent=String(data.score)+" / 100";$("revised").textContent=data.revised_text;
+   $("score").textContent=String(data.score)+" / 100";$("revised").textContent=data.revised_text.replace(/\*\*/g,"").replace(/(^|\n)#{1,6}[ \t]+/g,"$1");
    $("output").classList.remove("hidden");$("output").scrollIntoView({behavior:"smooth",block:"start"});
  }catch(e){showNotice(e instanceof Error?e.message:"Lỗi đánh giá bài viết. Vui lòng thử lại.")}
  finally{button.disabled=false;button.textContent="Đánh giá bài viết"}
