@@ -1096,6 +1096,7 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
     <span class="eyebrow-center-line" style="margin-left: 0.6rem;"></span>
   </div>
   <h2 class="section-title">Khảo sát Pre-writing</h2>
+<div style="padding:1rem;margin:1rem auto;max-width:720px;text-align:center;border:1px solid #d9e5da;background:#f0f7ef;border-radius:15px;"><strong style="display:block;color:#184b36;margin-bottom:.4rem;">Black-box AI — giai đoạn thử nghiệm</strong><span style="display:block;font-size:.9rem;color:#456451;margin-bottom:1rem;">Sinh viên hoàn thành PRE trước, sau đó nhận điểm đánh giá và bài sửa từ AI (không có lời giải thích).</span><a href="./blackbox.html" style="color:#fff;background:#174b35;border-radius:999px;padding:.8rem 1.2rem;text-decoration:none;font-weight:bold;display:inline-block;">Mở Black-box AI →</a></div>
   <div style="margin:1rem auto 1.5rem;padding:1.1rem 1.25rem;max-width:720px;text-align:center;background:#ecf4eb;border:1px solid #bed7c3;border-radius:14px;">
     <strong style="display:block;color:#174b35;margin-bottom:.35rem;">Khảo sát PRE / POST trên ATH Research (bản mới)</strong>
     <p style="font-size:.9rem;color:#3c5c45;margin:.4rem 0 1rem;">Dành cho sinh viên đã đồng ý tham gia; đăng ký bằng email trường, xác minh tài khoản và tự đặt mật khẩu. Các biểu mẫu Google cũ được giữ trong giai đoạn chuyển tiếp.</p>
@@ -2177,6 +2178,8 @@ window.addEventListener("DOMContentLoaded", window.initAuthStateListener);
 
 // ─── WATERFALL FLOW (Mở khóa thác đổ an toàn) ───
 window.unlockAILab = function() {
+  window.location.assign("./blackbox.html");
+  return;
   const labContent = document.getElementById('esp-writing-evaluator');
   if (labContent) {
     labContent.style.display = 'block'; // Hiện AI Lab lên
