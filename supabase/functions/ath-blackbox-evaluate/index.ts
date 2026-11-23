@@ -100,30 +100,86 @@ Deno.serve(async (req: Request) => {
     essay,
     "</student_essay>"
   ].join("\n");
-  const model=(Deno.env.get("GEMINI_MODEL")||"gemini-3.8-flash").trim();
-  const apiUrl="https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent";
-  const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(),45000);
-  let parsed:{score?:unknown;revised_text?:unknown};
-  try {
-    const upstream=await fetch(apiUrl,{method:"POST",signal:controller.signal,headers:{
-      "Content-Type":"application/json","x-goog-api-key":geminiKey
-    },body:JSON.stringify({
-      contents:[{role:"user",parts:[{text:prompt}]}],
-      generationConfig:{temperature:0.15,maxOutputTokens:8192,responseMimeType:"application/json",
-        responseSchema:{type:"OBJECT",properties:{score:{type:"INTEGER"},revised_text:{type:"STRING"}},required:["score","revised_text"]}}
-    })});
-    if(!upstream.ok) {
-      console.error("Gemini upstream status",upstream.status);
-      return toJson({error:"Dịch vụ đánh giá AI hiện chưa phản hồi. Vui lòng thử lại sau."},502,origin);
+  // A 503 from Gemini is a transient provider capacity error, not an auth failure.
+  // Keep the primary model fixed for all genuine research participants to avoid
+  // confounding their scores. Only an expressly marked TEST account may use
+  // a secondary model after retrying the primary model.
+  const primaryModel=(Deno.env.get("GEMINI_MODEL")||"gemini-3.8-flash").trim();
+  const models=[primaryModel];
+  if(eligibility.is_test===true && email==="nguyentran.31231024329@st.ueh.edu.vn" &&
+     primaryModel!=="gemini-3.5-flash-lite")models.push("gemini-3.5-flash-lite");
+  const requestBody=JSON.stringify({
+    contents:[{role:"user",parts:[{text:prompt}]}],
+    generationConfig:{
+      temperature:0.15,maxOutputTokens:8192,responseMimeType:"application/json",
+      responseSchema:{
+        type:"OBJECT",properties:{
+          score:{type:"INTEGER"},
+          revised_text:{type:"STRING"}
+        },required:["score","revised_text"]
+      }
     }
-    const response=await upstream.json();
-    const raw=response?.candidates?.[0]?.content?.parts?.map((p:{text?:string})=>p.text||"").join("")||"";
-    parsed=JSON.parse(raw);
-  }catch(error){
-    console.error("Evaluation transport/parse failure",error instanceof Error?error.name:"unknown");
-    return toJson({error:"Không nhận được kết quả hợp lệ từ AI. Vui lòng thử lại."},502,origin);
-  }finally{clearTimeout(timeout)}
+  });
+  let parsed: {score?:unknown;revised_text?:unknown}|null=null;
+  let successfulModel="";
+  let lastUpstreamStatus=0;
+  for(const model of models){
+    for(let attempt=0;attempt<2;attempt++){
+      // Global upper bound: 4 attempts with 28s each, including test fallback.
+      const controller=new AbortController();
+      const timeout=setTimeout(()=>controller.abort(),28000);
+      let upstream: Response;
+      try{
+        upstream=await fetch(
+          "https://generativelanguage.googleapis.com/v1beta/models/"+
+          encodeURIComponent(model)+":generateContent",
+          {method:"POST",signal:controller.signal,headers:{
+             "Content-Type":"application/json","x-goog-api-key":geminiKey
+          },body:requestBody}
+        );
+      }catch(error){
+        console.error("Gemini network error",model,attempt+1,error instanceof Error?error.name:"unknown");
+        lastUpstreamStatus=503;
+        if(attempt===0)await new Promise(r=>setTimeout(r,1200));
+        continue;
+      }finally{clearTimeout(timeout)}
+      if(!upstream.ok){
+        lastUpstreamStatus=upstream.status;
+        console.warn("Gemini upstream status",model,upstream.status,"attempt",attempt+1);
+        // Do not repeat invalid-key, invalid-schema, or other permanent errors.
+        if(![429,500,502,503,504].includes(upstream.status)){
+          return toJson({error:"Dịch vụ AI không chấp nhận yêu cầu. Quản trị viên cần kiểm tra cấu hình mô hình/khóa API."},502,origin);
+        }
+        if(attempt===0)await new Promise(r=>setTimeout(r,1200));
+        continue;
+      }
+      try{
+        const data=await upstream.json();
+        const raw=data?.candidates?.[0]?.content?.parts
+          ?.map((part:{text?:string})=>part.text||"").join("")||"";
+        const candidate=JSON.parse(raw);
+        if(!Number.isInteger(candidate?.score) ||
+           candidate.score<0 || candidate.score>100 ||
+           typeof candidate?.revised_text!=="string" ||
+           candidate.revised_text.trim().length<30 ||
+           candidate.revised_text.trim().length>24000){
+          console.warn("Gemini returned unusable structured output",model);
+          return toJson({error:"AI trả kết quả chưa hợp lệ. Vui lòng thử lại."},502,origin);
+        }
+        parsed=candidate;
+        successfulModel=model;
+        break;
+      }catch(error){
+        console.error("Gemini response parse failure",model,error instanceof Error?error.name:"unknown");
+        return toJson({error:"AI trả dữ liệu không đúng định dạng. Vui lòng thử lại."},502,origin);
+      }
+    }
+    if(parsed)break;
+  }
+  if(!parsed){
+    console.warn("Gemini retries exhausted, last status",lastUpstreamStatus);
+    return toJson({error:"Gemini đang quá tải (HTTP "+lastUpstreamStatus+"). Hệ thống đã thử lại tự động. Vui lòng thử lại sau."},503,origin);
+  }
 
   if(!Number.isInteger(parsed?.score)||Number(parsed.score)<0||Number(parsed.score)>100 ||
     typeof parsed?.revised_text!=="string" || parsed.revised_text.trim().length<30 ||
@@ -134,7 +190,7 @@ Deno.serve(async (req: Request) => {
   const {error:saveError}=await admin.from("essay_evaluations").insert({
     auth_user_id:user.id,participant_id:null,esp_domain:domain,evaluation_mode:"blackbox",
     task_prompt:"ATH Black-box ESP Writing Evaluation v1",
-    essay_text:essay,result_json:{score,revised_text:revisedText,mode:"blackbox"}
+    essay_text:essay,result_json:{score,revised_text:revisedText,mode:"blackbox",model_used:successfulModel,is_test:eligibility.is_test===true}
   });
   if(saveError){
     console.error("Unable to persist essay evaluation",saveError.code);
