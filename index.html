@@ -2216,6 +2216,9 @@ window.addEventListener('load', () => {
 });
 
 window.evaluateEspWriting = async function() {
+  // Black-box-only pilot: legacy Firebase evaluator stays disabled.
+  window.location.assign("./blackbox.html");
+  return;
   const participantId = document.getElementById('esp-participant').value.trim() || 'anonymous';
   const domain = document.getElementById('esp-domain').value;
   const mode = document.querySelector('input[name="esp-mode"]:checked').value;
