@@ -336,7 +336,7 @@ async function evaluateEssay() {
     revisedTitle.textContent = "Bài viết đã chỉnh sửa";
     const revisedBody = document.createElement("div");
     revisedBody.className = "ath-blackbox-revised-text";
-    revisedBody.textContent = data.revised_text;
+    revisedBody.textContent = data.revised_text.replace(/\*\*/g, "").replace(/(^|\n)#{1,6}[ \t]+/g, "$1");
     revision.append(revisedTitle, revisedBody);
     report.append(scoreRow, revision);
     result.append(report);
