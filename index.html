@@ -910,6 +910,103 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 #esp-writing-evaluator .ath-post-go{margin:12px 0;cursor:pointer}
 @media(max-width:850px){#esp-writing-evaluator .esp-ai-body{display:block}#esp-writing-evaluator .esp-ai-panel.input-panel{border-right:0;border-bottom:1px solid #e2e8df}}
 @media(max-width:600px){#research-survey .ath-form-grid{grid-template-columns:1fr}#research-survey .ath-panel{padding:18px}#research-survey .ath-question{padding:13px}#research-survey .ath-ratings{gap:4px}#research-survey .ath-rating{gap:3px}#research-survey .ath-question legend{font-size:.85rem}.esp-ai-header{padding:1.5rem}#research-survey{padding:2rem 1rem}}
+
+/* Black-box result card — unbreakable full-width score + revised essay */
+#esp-writing-evaluator #esp-result.ath-has-result{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:100%!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  background:transparent!important;
+  text-align:left!important;
+}
+#esp-writing-evaluator #esp-result .ath-blackbox-report{
+  display:block;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  overflow:hidden;
+  box-sizing:border-box;
+  border:1px solid rgba(13,51,32,.1);
+  border-radius:18px;
+  background:#fffefa;
+  box-shadow:0 12px 34px rgba(13,51,32,.055);
+}
+#esp-writing-evaluator #esp-result .ath-blackbox-score-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  column-gap:16px;
+  row-gap:8px;
+  padding:19px 22px;
+  background:linear-gradient(110deg,#edf5ed 0%,#fafbf7 100%);
+  border-bottom:1px solid #d9e7d9;
+}
+#esp-writing-evaluator #esp-result .ath-blackbox-score-label{
+  font-family:var(--ff-serif);
+  font-size:clamp(1.05rem,1.5vw,1.2rem);
+  line-height:1.45;
+  color:var(--green-deep);
+  margin:0;
+  flex:1 1 130px;
+}
+#esp-writing-evaluator #esp-result .ath-blackbox-score-value{
+  display:inline-flex!important;
+  flex-direction:row!important;
+  flex-wrap:nowrap!important;
+  white-space:nowrap!important;
+  align-items:baseline!important;
+  justify-content:flex-end;
+  gap:4px;
+  flex:0 0 auto;
+  min-width:max-content;
+  color:var(--green-deep);
+  font-variant-numeric:tabular-nums;
+  line-height:1;
+}
+#esp-writing-evaluator #esp-result .ath-blackbox-score-number{
+  display:inline!important;
+  white-space:nowrap!important;
+  font-size:clamp(2.2rem,3.8vw,3.25rem);
+  font-weight:800;
+  letter-spacing:-.05em;
+}
+#esp-writing-evaluator #esp-result .ath-blackbox-score-max{
+  display:inline!important;
+  white-space:nowrap!important;
+  font-size:1rem;
+  font-weight:600;
+  color:#597565;
+}
+#esp-writing-evaluator #esp-result .ath-blackbox-revision{
+  min-width:0;
+  padding:22px;
+}
+#esp-writing-evaluator #esp-result .ath-blackbox-revision h4{
+  color:var(--green-deep);
+  font-family:var(--ff-serif);
+  font-size:1.2rem;
+  margin:0 0 16px;
+}
+#esp-writing-evaluator #esp-result .ath-blackbox-revised-text{
+  color:#284432;
+  font-size:.95rem;
+  line-height:1.9;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  max-width:100%;
+}
+@media(max-width:520px){
+  #esp-writing-evaluator #esp-result .ath-blackbox-score-row{padding:16px;gap:8px}
+  #esp-writing-evaluator #esp-result .ath-blackbox-revision{padding:17px}
+  #esp-writing-evaluator #esp-result .ath-blackbox-score-number{font-size:2.5rem}
+}
 </style>
 </head>
 <body>
@@ -2106,6 +2203,6 @@ window.appendMessage = function(text, className) {
 
 // Anti-tamper debugging block removed so login, password reset, and browser testing work normally.
 </script>
-<script type="module" src="./ath-experiment.js"></script>
+<script type="module" src="./ath-experiment.js?v=20261123-score-v2"></script>
 </body>
 </html>
