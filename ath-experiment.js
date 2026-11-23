@@ -152,6 +152,7 @@ async function signOut() {
   eligibility = null;
   finished.clear();
   byId("esp-result").replaceChildren();
+  byId("esp-result").classList.remove("ath-has-result");
   byId("esp-result").classList.add("result-empty");
   byId("esp-result").textContent = "Kết quả đánh giá sẽ hiển thị ở đây.";
   byId("ath-post-go").hidden = true;
@@ -283,6 +284,7 @@ async function evaluateEssay() {
   }
   const button = byId("esp-analyze-btn"); button.disabled = true;
   const status = byId("esp-status");status.textContent = "AI đang đánh giá...";
+  byId("esp-result").classList.remove("ath-has-result");
   byId("esp-result").classList.add("result-empty");
   byId("esp-result").textContent = "Đang đánh giá bài viết...";
   byId("ath-post-go").hidden = true;
@@ -302,25 +304,48 @@ async function evaluateEssay() {
         typeof data?.revised_text !== "string" || data.revised_text.trim().length < 30) {
       throw new Error("Kết quả AI không hợp lệ, vui lòng thử lại.");
     }
+    // One self-contained results card: legacy result-card and flex styles cannot squeeze the score.
     const result = byId("esp-result");
     result.classList.remove("result-empty");
+    result.classList.add("ath-has-result");
     result.replaceChildren();
-    const score = document.createElement("div");score.className = "result-card";
-    const scoreTitle = document.createElement("h4");scoreTitle.textContent = "Điểm đánh giá";
-    const scoreNumber = document.createElement("div");scoreNumber.className = "ath-score";
-    scoreNumber.textContent = String(data.score) + " / 100";
-    score.append(scoreTitle, scoreNumber);
-    const revised = document.createElement("div");revised.className = "result-card";
-    const revisedTitle = document.createElement("h4");revisedTitle.textContent = "Bài viết đã chỉnh sửa";
-    const revisedBody = document.createElement("div");revisedBody.className = "ath-revised";
+
+    const report = document.createElement("section");
+    report.className = "ath-blackbox-report";
+    report.setAttribute("aria-label", "Kết quả Black-box AI");
+
+    const scoreRow = document.createElement("div");
+    scoreRow.className = "ath-blackbox-score-row";
+    const scoreLabel = document.createElement("h4");
+    scoreLabel.className = "ath-blackbox-score-label";
+    scoreLabel.textContent = "Điểm đánh giá";
+    const scoreValue = document.createElement("div");
+    scoreValue.className = "ath-blackbox-score-value";
+    const scoreNumber = document.createElement("span");
+    scoreNumber.className = "ath-blackbox-score-number";
+    scoreNumber.textContent = String(data.score);
+    const scoreMax = document.createElement("span");
+    scoreMax.className = "ath-blackbox-score-max";
+    scoreMax.textContent = " / 100";
+    scoreValue.append(scoreNumber, scoreMax);
+    scoreRow.append(scoreLabel, scoreValue);
+
+    const revision = document.createElement("div");
+    revision.className = "ath-blackbox-revision";
+    const revisedTitle = document.createElement("h4");
+    revisedTitle.textContent = "Bài viết đã chỉnh sửa";
+    const revisedBody = document.createElement("div");
+    revisedBody.className = "ath-blackbox-revised-text";
     revisedBody.textContent = data.revised_text;
-    revised.append(revisedTitle, revisedBody);
-    result.append(score, revised);
+    revision.append(revisedTitle, revisedBody);
+    report.append(scoreRow, revision);
+    result.append(report);
     byId("ath-post-go").hidden = !completedPre();
     status.textContent = "Hoàn tất.";
     result.scrollIntoView({behavior:"smooth",block:"start"});
   } catch (error) {
-    byId("esp-result").classList.add("result-empty");
+    byId("esp-result").classList.remove("ath-has-result");
+  byId("esp-result").classList.add("result-empty");
     byId("esp-result").textContent = "Chưa nhận được kết quả.";
     status.textContent = "Đánh giá chưa thành công.";
     aiStatus(error?.message || "Lỗi kết nối. Vui lòng thử lại.");
@@ -331,6 +356,7 @@ async function evaluateEssay() {
 function resetEssay() {
   byId("esp-essay").value = "";
   byId("esp-status").textContent = "";
+  byId("esp-result").classList.remove("ath-has-result");
   byId("esp-result").classList.add("result-empty");
   byId("esp-result").textContent = "Kết quả đánh giá sẽ hiển thị tại đây.";
   byId("ath-post-go").hidden = true;
