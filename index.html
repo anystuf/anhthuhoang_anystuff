@@ -826,6 +826,57 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 }
 
 </style>
+
+<style id="ath-experiment-styles">
+#research-survey [hidden], #esp-writing-evaluator [hidden]{display:none!important}
+#research-survey .ath-intro {text-align:center;max-width:730px;margin:0 auto 1.4rem;color:var(--text-muted)}
+#research-survey .ath-panel{max-width:940px;margin:1.4rem auto;background:#fffefa;border:1px solid rgba(13,51,32,.1);border-radius:20px;padding:clamp(18px,3vw,32px);box-shadow:0 14px 38px rgba(13,51,32,.045)}
+#research-survey .ath-kicker{font-size:.72rem;text-transform:uppercase;letter-spacing:.11em;color:#9c804e;font-weight:700;margin-bottom:.45rem}
+#research-survey .ath-panel h3{color:var(--green-deep);font-family:var(--ff-serif);font-size:1.5rem;margin:0 0 .55rem}
+#research-survey .ath-panel p.ath-copy{text-align:left;max-width:none;font-size:.9rem;line-height:1.8;margin:0 0 1rem;color:var(--text-muted)}
+#research-survey .ath-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#research-survey .ath-field{margin:12px 0 16px}
+#research-survey .ath-field label{display:block;font-weight:700;color:var(--green-deep);font-size:.83rem;margin-bottom:8px}
+#research-survey .ath-field input,#research-survey .ath-field select,#research-survey .ath-field textarea{width:100%;min-width:0;border:1px solid #cbdccf;border-radius:11px;padding:12px 13px;font:inherit;background:white;color:#214331;outline:none}
+#research-survey .ath-field input:focus,#research-survey .ath-field select:focus,#research-survey .ath-field textarea:focus{border-color:#679777;box-shadow:0 0 0 3px rgba(51,120,82,.12)}
+#research-survey .ath-field textarea{resize:vertical}
+#research-survey .ath-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0}
+#research-survey .ath-button,.ath-post-go{border:1px solid var(--green-main);background:var(--green-deep);color:#fff;padding:.8rem 1.3rem;border-radius:12px;font:700 .83rem var(--ff-sans);cursor:pointer}
+#research-survey .ath-button[disabled],#esp-writing-evaluator button[disabled]{cursor:not-allowed;opacity:.5}
+#research-survey .ath-button.ath-outline{background:#fff;color:var(--green-deep)}
+#research-survey .ath-text-button{border:0;background:transparent;color:var(--green-deep);text-decoration:underline;cursor:pointer;padding:.6rem}
+#research-survey .ath-note{margin-top:1.2rem;padding:14px 16px;background:#eef6ed;border:1px solid #d0e3d0;border-radius:12px;font-size:.79rem;line-height:1.75;color:#41624b;text-align:left}
+#research-survey .ath-alert{max-width:940px;margin:14px auto;padding:13px 17px;border:1px solid #ebc7b5;background:#fff0ec;color:#963e2f;border-radius:12px;font-size:.84rem}
+#research-survey .ath-alert.ath-success{background:#eaf4e8;border-color:#c8dec7;color:#255b3a}
+#research-survey .ath-member-head{display:flex;justify-content:space-between;align-items:start;gap:14px;flex-wrap:wrap}
+#research-survey .ath-account{font-size:.8rem;color:var(--text-muted)}
+#research-survey p.ath-steps{text-align:left;max-width:none;color:#335843;background:#f1f6ee;border-radius:10px;padding:13px 16px;margin:17px 0}
+#research-survey .ath-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:1.2rem 0}
+#research-survey .ath-tab{background:#f4f7f1;border:1px solid #c9dcca;color:var(--green-deep);font-weight:700;border-radius:10px;padding:12px 20px;cursor:pointer}
+#research-survey .ath-tab[aria-selected=true]{background:var(--green-deep);color:white}
+#research-survey .ath-tab[disabled]{opacity:.45;cursor:not-allowed}
+#research-survey .ath-done{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#eff6ed;border-radius:12px;padding:14px 18px;color:#285b3d;font-size:.9rem}
+#research-survey .ath-section-title{margin:1.5rem 0 0;font-size:1.2rem}
+#research-survey .ath-check{display:flex;gap:10px;align-items:start;margin:16px 0;text-align:left;font-size:.81rem;line-height:1.7}
+#research-survey .ath-check input{width:17px;height:17px;min-width:17px;accent-color:#246446;margin-top:5px}
+#research-survey .ath-scale{background:#f9f3e7;border:1px solid #eddcb8;padding:14px 16px;border-radius:12px;font-size:.8rem;margin:16px 0}
+#research-survey .ath-question{min-width:0;border:1px solid #d8e4d8;background:#fff;border-radius:13px;padding:18px;margin:15px 0}
+#research-survey .ath-question legend{float:none;display:block;width:100%;font-weight:700;text-align:left;color:#274d37;font-size:.92rem;padding:0}
+#research-survey .ath-question p.ath-english{text-align:left;max-width:none;color:#69786e;font-size:.79rem;margin:8px 0 14px}
+#research-survey .ath-ratings{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+#research-survey .ath-rating{background:#f3f7f2;border:1px solid #d5e2d5;padding:9px 4px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;font-size:.86rem}
+#research-survey .ath-rating:has(input:checked){background:#dfefdf;border-color:#49865d;color:#155e33;font-weight:700}
+#research-survey .ath-rating input{width:17px;height:17px;accent-color:#25663f;min-width:0;margin:0}
+#esp-writing-evaluator{display:block;margin-top:2.5rem}
+#esp-writing-evaluator .esp-ai-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+#esp-writing-evaluator .ath-ai-message{margin-top:1.25rem;padding:13px 15px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.09);border-radius:11px;color:#f8ead4;font-size:.87rem}
+#esp-writing-evaluator .ath-ai-account{color:#f5e8d2;font-size:.77rem;margin-top:.5rem}
+#esp-writing-evaluator .ath-score{font-size:clamp(2rem,4vw,3rem);font-weight:700;color:var(--green-deep);margin-top:.8rem}
+#esp-writing-evaluator .ath-revised{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.94rem;line-height:1.9;text-align:left;color:#284432}
+#esp-writing-evaluator .ath-post-go{margin:12px 0;cursor:pointer}
+@media(max-width:850px){#esp-writing-evaluator .esp-ai-body{display:block}#esp-writing-evaluator .esp-ai-panel.input-panel{border-right:0;border-bottom:1px solid #e2e8df}}
+@media(max-width:600px){#research-survey .ath-form-grid{grid-template-columns:1fr}#research-survey .ath-panel{padding:18px}#research-survey .ath-question{padding:13px}#research-survey .ath-ratings{gap:4px}#research-survey .ath-rating{gap:3px}#research-survey .ath-question legend{font-size:.85rem}.esp-ai-header{padding:1.5rem}#research-survey{padding:2rem 1rem}}
+</style>
 </head>
 <body>
 <div class="toast" id="toast"></div>
@@ -1090,119 +1141,97 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 </div>
 </div>
 <div class="prewriting-survey reveal" id="research-survey">
-  <div class="section-eyebrow eyebrow-purple eyebrow-center" style="margin-bottom: 1rem;">
-    <span class="eyebrow-center-line" style="margin-right: 0.6rem;"></span>
-    Nghiên cứu học thuật
-    <span class="eyebrow-center-line" style="margin-left: 0.6rem;"></span>
-  </div>
-  <h2 class="section-title">Khảo sát Pre-writing</h2>
-<div style="padding:1rem;margin:1rem auto;max-width:720px;text-align:center;border:1px solid #d9e5da;background:#f0f7ef;border-radius:15px;"><strong style="display:block;color:#184b36;margin-bottom:.4rem;">Black-box AI — giai đoạn thử nghiệm</strong><span style="display:block;font-size:.9rem;color:#456451;margin-bottom:1rem;">Sinh viên hoàn thành PRE trước, sau đó nhận điểm đánh giá và bài sửa từ AI (không có lời giải thích).</span><a href="./blackbox.html" style="color:#fff;background:#174b35;border-radius:999px;padding:.8rem 1.2rem;text-decoration:none;font-weight:bold;display:inline-block;">Mở Black-box AI →</a></div>
-  <div style="margin:1rem auto 1.5rem;padding:1.1rem 1.25rem;max-width:720px;text-align:center;background:#ecf4eb;border:1px solid #bed7c3;border-radius:14px;">
-    <strong style="display:block;color:#174b35;margin-bottom:.35rem;">Khảo sát PRE / POST trên ATH Research (bản mới)</strong>
-    <p style="font-size:.9rem;color:#3c5c45;margin:.4rem 0 1rem;">Dành cho sinh viên đã đồng ý tham gia; đăng ký bằng email trường, xác minh tài khoản và tự đặt mật khẩu. Các biểu mẫu Google cũ được giữ trong giai đoạn chuyển tiếp.</p>
-    <a href="./survey.html" style="display:inline-block;padding:.85rem 1.4rem;border-radius:999px;background:#174b35;color:#fff;text-decoration:none;font-weight:bold;">Mở khảo sát ATH →</a>
-  </div>
-  <p>Vui lòng hoàn thành khảo sát trước khi sử dụng Công cụ đánh giá bài viết ESP-XAI. Phần này giúp ghi nhận cảm xúc, mức độ tự tin và trải nghiệm ban đầu của người học trước khi nhận phản hồi AI.</p>
-  
-  <div class="survey-wrapper">
-    <iframe frameborder="0" marginheight="0" marginwidth="0" src="https://docs.google.com/forms/d/e/1FAIpQLSegQM04c-FAjJZ7vQTWgV4azBNtQXdkTe4r_aTPHCVQeJHtXg/viewform?embedded=true">Đang tải…</iframe>
-  </div>
+  <div class="section-eyebrow eyebrow-purple eyebrow-center" style="margin-bottom:1rem;">Nghiên cứu học thuật · ESP-XAI</div>
+  <h2 class="section-title">Khảo sát Pre-writing &amp; Post-writing</h2>
+  <p class="ath-intro">Sinh viên đăng nhập bằng email trường để hoàn thành khảo sát PRE, nhận đánh giá Black-box AI và thực hiện POST ngay trên trang này.</p>
+  <div id="ath-alert" class="ath-alert" role="status" aria-live="polite" hidden></div>
 
-  <div style="text-align: center; margin-top: 2rem;">
-    <button onclick="unlockAILab()" class="btn-primary" style="background: var(--accent-purple); color: white; padding: 1rem 2rem; border-radius: 999px; border: none; cursor: pointer; font-weight: bold; font-size: 1.1rem; box-shadow: 0 8px 20px rgba(98,85,165,0.3);">
-      Xác nhận đã hoàn thành Pre-Test & Mở khóa AI Lab 🔓
-    </button>
-  </div>
-</div>
-
-<div class="esp-ai-lab reveal" id="esp-writing-evaluator" style="display: none;">
-  <div class="esp-ai-header">
-    <div class="section-eyebrow eyebrow-purple-light" data-i18n="ai_lab" style="color: var(--gold-light); margin-bottom: .8rem;">Phòng thí nghiệm AI</div>
-    <h3 data-i18n="ai_title">Công cụ đánh giá bài viết ESP-XAI</h3>
-    <p data-i18n="ai_desc">Công cụ thử nghiệm hỗ trợ đánh giá bài viết tiếng Anh chuyên ngành theo định hướng VSTEP, đồng thời so sánh hai chế độ phản hồi: AI hộp đen và AI có giải thích.</p>
-    
-    <div id="auth-section" style="margin-top: 1.5rem; background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);">
-  <h4 style="margin-bottom: 1rem; color: #fff;">Xác thực tài khoản lớp thực nghiệm</h4>
-  <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-    <input type="email" id="auth-email" placeholder="Nhập Email trường (VD: 030739230002@st.buh.edu.vn)" style="padding: 0.75rem; border-radius: 8px; border: none; outline: none; flex: 1; min-width: 250px;">
-    <input type="password" id="auth-pwd" placeholder="Mật khẩu (Tự tạo từ 6 ký tự)" style="padding: 0.75rem; border-radius: 8px; border: none; outline: none; flex: 1; min-width: 200px;">
-  </div>
-  <div style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-    <button class="btn-primary" onclick="handleSignUp()" style="background: var(--gold); border:none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold;">Tạo tài khoản (Sign Up)</button>
-    <button class="btn-primary" onclick="handleSignIn()" style="background: var(--white); color: var(--green-deep); border:none; padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: bold;">Đăng nhập (Sign In)</button>
-    <button onclick="handleForgotPassword()" style="background: transparent; color: #f0c96a; border: none; cursor: pointer; font-size: 0.85rem; text-decoration: underline; padding: 0.5rem;">Quên mật khẩu?</button>
-  </div>
-</div>
-
-    <div id="logged-in-section" style="display: none; margin-top: 1.5rem; padding: 1rem; background: rgba(74, 173, 116, 0.2); border-radius: 12px; border: 1px solid rgba(74, 173, 116, 0.4);">
-      <span style="color: #fff; font-weight: bold;">✅ Đã xác thực: <span id="user-email-display"></span></span>
-      <button onclick="handleSignOut()" style="margin-left: 1rem; background: transparent; color: #f0c96a; border: 1px solid #f0c96a; padding: 0.3rem 0.8rem; border-radius: 6px; cursor: pointer;">Đăng xuất</button>
+  <div id="ath-login-panel" class="ath-panel">
+    <div class="ath-kicker">Bước đầu tiên · Đăng nhập</div>
+    <h3>Truy cập khảo sát ATH</h3>
+    <p class="ath-copy">Dùng email trường đã đăng ký và mật khẩu ATH. Nếu chưa có tài khoản, bạn có thể tự tạo và xác minh bằng email.</p>
+    <div class="ath-form-grid">
+      <div class="ath-field"><label for="ath-email">Email sinh viên</label><input id="ath-email" type="email" autocomplete="email" placeholder="mssv@st.buh.edu.vn hoặc @st.ueh.edu.vn"/></div>
+      <div class="ath-field"><label for="ath-password">Mật khẩu</label><input id="ath-password" type="password" autocomplete="current-password" placeholder="Mật khẩu ATH"/></div>
     </div>
-
-    <div class="esp-ai-disclaimer" data-i18n="ai_note" style="margin-top: 1.5rem;">Lưu ý: Kết quả chỉ phục vụ học tập và nghiên cứu, không thay thế điểm VSTEP chính thức hoặc đánh giá của giảng viên. Các góp ý chuyên ngành nên được kiểm tra lại bởi người có chuyên môn.</div>
+    <div class="ath-actions">
+      <button type="button" id="ath-login-button" class="ath-button">Đăng nhập</button>
+      <button type="button" id="ath-signup-button" class="ath-button ath-outline">Tạo tài khoản</button>
+      <button type="button" id="ath-forgot-button" class="ath-text-button">Quên mật khẩu?</button>
+    </div>
+    <div class="ath-note">Chỉ các email nằm trong danh sách sinh viên đã đồng ý tham gia mới được mở khảo sát. Người học tự quản lý mật khẩu; không cần nhận mật khẩu chung từ giảng viên.</div>
   </div>
 
+  <div id="ath-member-panel" class="ath-panel" hidden>
+    <div class="ath-member-head">
+      <div><div class="ath-kicker">Khảo sát học thuật</div><h3>Phiếu PRE / POST</h3><span class="ath-account" id="ath-member-email"></span></div>
+      <button type="button" id="ath-logout" class="ath-button ath-outline">Đăng xuất</button>
+    </div>
+    <p id="ath-test-message" class="ath-note" hidden>Tài khoản kiểm thử đã được cấp quyền sử dụng Black-box AI mà không cần hoàn thành PRE. Câu trả lời thử được đánh dấu riêng với dữ liệu nghiên cứu.</p>
+    <p class="ath-steps"><strong>Quy trình:</strong> PRE → viết bài ESP và nhận điểm + bài sửa từ AI → POST.</p>
+    <div class="ath-tabs" role="tablist" aria-label="Chọn khảo sát">
+      <button type="button" id="ath-pre-tab" class="ath-tab" aria-selected="true">01 · PRE<span id="ath-pre-done"></span></button>
+      <button type="button" id="ath-post-tab" class="ath-tab" aria-selected="false" disabled>02 · POST<span id="ath-post-done"></span></button>
+    </div>
+    <div class="ath-done" id="ath-done" hidden>
+      <span id="ath-done-text"></span>
+      <button type="button" id="ath-next-ai" class="ath-button">Tiếp tục Black-box AI ↓</button>
+    </div>
+    <form id="ath-survey-form" hidden>
+      <h3 id="ath-phase-title" class="ath-section-title"></h3>
+      <p id="ath-phase-intro" class="ath-copy"></p>
+      <div id="ath-pre-fields">
+        <label class="ath-check"><input type="checkbox" id="ath-consent"/> <span>Tôi tự nguyện đồng ý tham gia khảo sát; dữ liệu chỉ phục vụ nghiên cứu và không ảnh hưởng đến điểm học phần. / I voluntarily agree to participate.</span></label>
+        <div class="ath-form-grid">
+          <div class="ath-field"><label for="ath-gender">Giới tính / Gender</label><select id="ath-gender"><option value="">Chọn câu trả lời</option><option value="male">Nam</option><option value="female">Nữ</option><option value="other_or_no_answer">Khác / Không muốn trả lời</option></select></div>
+          <div class="ath-field"><label for="ath-ai-use">Tần suất sử dụng AI khi viết tiếng Anh</label><select id="ath-ai-use"><option value="">Chọn câu trả lời</option><option value="never">Chưa bao giờ</option><option value="rarely">Hiếm khi</option><option value="sometimes">Thỉnh thoảng</option><option value="often">Thường xuyên</option><option value="almost_every_time">Hầu như mỗi lần viết</option></select></div>
+        </div>
+      </div>
+      <div id="ath-post-fields" hidden>
+        <label class="ath-check"><input type="checkbox" id="ath-feedback-read"/> <span>Tôi xác nhận đã xem điểm và bản sửa từ AI trước khi trả lời POST. / I confirm I have read the AI feedback.</span></label>
+      </div>
+      <div class="ath-scale"><strong>Thang đo:</strong> 1 = Hoàn toàn không đồng ý · 2 = Không đồng ý · 3 = Phân vân · 4 = Đồng ý · 5 = Hoàn toàn đồng ý</div>
+      <div id="ath-questions"></div>
+      <div class="ath-field"><label for="ath-open-response" id="ath-open-label">Câu trả lời mở (không bắt buộc)</label><textarea id="ath-open-response" maxlength="4000" rows="3"></textarea></div>
+      <div class="ath-field"><label for="ath-pilot-note">Góp ý về câu hỏi khó hiểu (không bắt buộc) / Pilot feedback</label><textarea id="ath-pilot-note" maxlength="4000" rows="2"></textarea></div>
+      <button type="submit" id="ath-submit" class="ath-button">Nộp bài khảo sát</button>
+    </form>
+  </div>
+</div>
+
+<div class="esp-ai-lab reveal" id="esp-writing-evaluator">
+  <div class="esp-ai-header">
+    <div class="section-eyebrow eyebrow-purple-light" style="color:var(--gold-light);margin-bottom:.8rem;">Phòng thí nghiệm AI · Giai đoạn Black-box</div>
+    <h3>Công cụ đánh giá bài viết ESP</h3>
+    <p>Nhập bài viết tiếng Anh chuyên ngành để nhận <strong>điểm đánh giá (/100)</strong> và <strong>bài viết đã chỉnh sửa</strong>. Không hiển thị giải thích, nhận xét hay phân tích lỗi.</p>
+    <div class="ath-ai-message" id="ath-ai-message" role="status">Vui lòng đăng nhập ở phần khảo sát bên trên trước khi sử dụng.</div>
+    <div class="ath-ai-account" id="ath-ai-signed-in"></div>
+    <div class="esp-ai-disclaimer" style="margin-top:1rem">Đánh giá AI chỉ có giá trị tham khảo cho học tập và nghiên cứu, không thay thế kết quả chấm thi chính thức.</div>
+  </div>
   <div class="esp-ai-body">
     <div class="esp-ai-panel input-panel">
-      <div class="esp-ai-grid">
-        <div class="esp-field">
-          <label>Participant ID</label>
-          <input id="esp-participant" placeholder="VD: P001" type="text"/>
-        </div>
-        <div class="esp-field">
-          <label>Lĩnh vực ESP</label>
-          <select id="esp-domain">
-            <option value="law">Law</option>
-            <option value="finance">Finance</option>
-            <option value="accounting">Accounting</option>
-          </select>
-        </div>
+      <div class="esp-field">
+        <label for="esp-domain">Lĩnh vực ESP</label>
+        <select id="esp-domain" disabled>
+          <option value="law">Law (Luật)</option>
+          <option value="finance">Finance (Tài chính)</option>
+          <option value="accounting">Accounting (Kế toán)</option>
+        </select>
       </div>
       <div class="esp-field">
-        <label>Chế độ phản hồi</label>
-        <div class="mode-switch">
-          <label class="mode-card">
-            <input checked="" name="esp-mode" type="radio" value="blackbox"/>
-            <strong>Black-box AI</strong>
-            <span>Chỉ nhận bậc ước lượng và bản viết cải thiện.</span>
-          </label>
-          <label class="mode-card">
-            <input name="esp-mode" type="radio" value="xai"/>
-            <strong>XAI Feedback</strong>
-            <span>Giải thích lỗi, lý do sửa và thuật ngữ chuyên ngành.</span>
-          </label>
-        </div>
-      </div>
-      <div class="esp-field">
-        <label>Student Essay</label>
-        <textarea class="essay-box" id="esp-essay" placeholder="Dán bài viết tiếng Anh chuyên ngành tại đây..."></textarea>
+        <label for="esp-essay">Student Essay</label>
+        <textarea class="essay-box" id="esp-essay" maxlength="12000" disabled placeholder="Dán bài viết tiếng Anh chuyên ngành (50–12.000 ký tự)..."></textarea>
       </div>
       <div class="esp-actions">
-        <button class="btn-primary" id="esp-analyze-btn" onclick="evaluateEspWriting()">Đánh giá bài viết</button>
-        <button class="esp-secondary-btn" onclick="resetEspEvaluator()">Xóa nội dung</button>
-        <span class="esp-status" id="esp-status"></span>
+        <button type="button" class="btn-primary" id="esp-analyze-btn" disabled>Đánh giá bài viết</button>
+        <button type="button" class="esp-secondary-btn" id="esp-reset-btn">Xóa nội dung</button>
+        <span class="esp-status" id="esp-status" role="status"></span>
       </div>
     </div>
-    
     <div class="esp-ai-panel result-panel">
-      <div class="result-empty" id="esp-result">
-        <div><strong>Kết quả đánh giá sẽ hiển thị tại đây.</strong><br/>Hệ thống sẽ trả về bậc VSTEP ước lượng, điểm theo rubric và phản hồi theo chế độ bạn chọn.</div>
-      </div>
+      <div id="esp-result" class="result-empty"><div>Kết quả đánh giá sẽ hiển thị tại đây sau khi bạn nộp bài viết.</div></div>
+      <button type="button" id="ath-post-go" class="ath-button ath-post-go" hidden>Tiếp tục khảo sát POST ↑</button>
     </div>
-  </div>
-</div> 
-
-<div class="postwriting-survey" id="post-writing-survey" style="display: none;">
-  <div class="section-eyebrow eyebrow-brown eyebrow-center" style="margin-bottom: 1rem;">
-    <span class="eyebrow-center-line" style="margin-right: 0.6rem;"></span>
-    <span data-i18n="post_survey_eyebrow">Nghiên cứu học thuật</span>
-    <span class="eyebrow-center-line" style="margin-left: 0.6rem;"></span>
-  </div>
-  <h2 class="section-title" data-i18n="post_survey_title">Khảo sát Post-writing</h2>
-  <p data-i18n="post_survey_desc">Vui lòng hoàn thành khảo sát sau khi sử dụng Công cụ đánh giá bài viết ESP-XAI. Phần này giúp ghi nhận trải nghiệm, mức độ hiểu phản hồi AI và cảm nhận của người học sau khi nhận góp ý.</p>
-  <div style="text-align:center;"><a class="survey-open-link" href="https://docs.google.com/forms/d/e/1FAIpQLSdoQ8UpzXQnB2R4qlDnmUILr_pE7G5KvUfoaqO3ziv0crKdnw/viewform" target="_blank" rel="noopener">Mở Post-writing Survey trong tab mới →</a></div>
-  <div class="survey-wrapper">
-    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdoQ8UpzXQnB2R4qlDnmUILr_pE7G5KvUfoaqO3ziv0crKdnw/viewform?embedded=true" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
   </div>
 </div>
 
@@ -1969,349 +1998,7 @@ function router() {
 window.addEventListener('hashchange', () => { closeMobileMenu(); router(); });
 window.addEventListener('DOMContentLoaded', router);
 
-// ─── ESP WRITING EVALUATOR LOGIC ───
-const ESP_RUBRIC = [
-  { key: 'task_achievement', label: 'Task Achievement', weight: 20 },
-  { key: 'organization_coherence', label: 'Organization & Coherence', weight: 15 },
-  { key: 'grammar_accuracy', label: 'Grammar Range & Accuracy', weight: 15 },
-  { key: 'lexical_resource', label: 'Lexical Resource', weight: 20 },
-  { key: 'esp_domain_accuracy', label: 'ESP Domain Accuracy', weight: 20 },
-  { key: 'professional_tone', label: 'Professional Tone', weight: 10 }
-];
-
-// ─── AUTHENTICATION LOGIC FIXED (Đăng ký / Đăng nhập / Quên mật khẩu) ───
-
-const ALLOWED_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@(st\.buh\.edu\.vn|st\.ueh\.edu\.vn)$/;
-
-function authToast(message) {
-  if (window.showToast) window.showToast(message);
-  else alert(message);
-}
-
-function getAuthInputs() {
-  const emailEl = document.getElementById("auth-email");
-  const pwdEl = document.getElementById("auth-pwd");
-
-  return {
-    email: (emailEl?.value || "").trim().toLowerCase(),
-    password: (pwdEl?.value || "").trim()
-  };
-}
-
-function mapAuthError(error) {
-  const code = error?.code || "";
-  const message = error?.message || "Unknown error";
-
-  switch (code) {
-    case "auth/operation-not-allowed":
-      return "Email/Password chưa được bật trong Firebase Authentication → Sign-in method.";
-    case "auth/unauthorized-domain":
-      return "Domain website chưa được thêm vào Firebase Authentication → Settings → Authorized domains.";
-    case "auth/invalid-email":
-      return "Email không đúng định dạng.";
-    case "auth/weak-password":
-      return "Mật khẩu quá yếu. Vui lòng dùng ít nhất 6 ký tự.";
-    case "auth/email-already-in-use":
-      return "Tài khoản này đã tồn tại. Vui lòng chuyển sang Đăng nhập.";
-    case "auth/invalid-credential":
-    case "auth/wrong-password":
-      return "Email hoặc mật khẩu chưa đúng. Vui lòng kiểm tra lại.";
-    case "auth/user-not-found":
-      return "Email này chưa đăng ký tài khoản. Hãy bấm Tạo tài khoản trước.";
-    case "auth/too-many-requests":
-      return "Tài khoản tạm thời bị khóa do thử sai quá nhiều lần. Hãy thử lại sau hoặc dùng Quên mật khẩu.";
-    case "auth/network-request-failed":
-      return "Lỗi mạng. Hãy kiểm tra kết nối Internet rồi thử lại.";
-    default:
-      return message;
-  }
-}
-
-async function isWhitelistedStudent(email) {
-  // IMPORTANT:
-  // Collection: allowed_students
-  // Document ID: chính là email viết thường, ví dụ: 030739230002@st.buh.edu.vn
-  // Field gợi ý: active: true, class: "D04"
-  const ref = window._fb.doc(window._db, "allowed_students", email);
-  const snap = await window._fb.getDoc(ref);
-
-  if (!snap.exists()) return false;
-
-  const data = snap.data ? snap.data() : {};
-  return data.active !== false;
-}
-
-window.handleSignUp = async function() {
-  const { email, password } = getAuthInputs();
-
-  if (!ALLOWED_EMAIL_REGEX.test(email)) {
-    authToast("⚠️ Email phải thuộc domain trường được cấp phép: @st.buh.edu.vn hoặc @st.ueh.edu.vn.");
-    return;
-  }
-
-  if (password.length < 6) {
-    authToast("⚠️ Mật khẩu phải có ít nhất 6 ký tự.");
-    return;
-  }
-
-  try {
-    authToast("🔄 Đang kiểm tra danh sách lớp thực nghiệm...");
-
-    const studentRef = window._fb.doc(window._db, "allowed_students", email);
-const studentSnap = await window._fb.getDoc(studentRef);
-
-if (!studentSnap.exists()) {
-  authToast("Email này không nằm trong danh sách lớp thực nghiệm.");
-  return;
-}
-
-const studentData = studentSnap.data();
-
-if (studentData.status !== "active") {
-  authToast("Tài khoản này chưa được kích hoạt cho lớp thực nghiệm.");
-  return;
-}
-
-await window._fbAuth.createUserWithEmailAndPassword(window._auth, email, password);
-    authToast("🎉 Tạo tài khoản thành công. Bạn đã có thể sử dụng AI Lab.");
-  } catch (error) {
-    console.error("Sign up error:", error);
-    authToast("❌ Đăng ký thất bại: " + mapAuthError(error));
-  }
-};
-
-window.handleSignIn = async function() {
-  const { email, password } = getAuthInputs();
-
-  if (!email || !password) {
-    authToast("⚠️ Vui lòng nhập đầy đủ Email và Mật khẩu.");
-    return;
-  }
-
-  if (!ALLOWED_EMAIL_REGEX.test(email)) {
-    authToast("⚠️ Email phải thuộc domain trường được cấp phép.");
-    return;
-  }
-
-  try {
-    await window._fbAuth.signInWithEmailAndPassword(window._auth, email, password);
-
-    const allowed = await isWhitelistedStudent(email);
-    if (!allowed) {
-      await window._fbAuth.signOut(window._auth);
-      authToast("❌ Tài khoản đăng nhập được, nhưng email chưa nằm trong whitelist allowed_students.");
-      return;
-    }
-
-    authToast("🔓 Đăng nhập thành công. AI Lab đã được mở khóa.");
-  } catch (error) {
-    console.error("Sign in error:", error);
-    authToast("❌ Đăng nhập thất bại: " + mapAuthError(error));
-  }
-};
-
-window.handleSignOut = async function() {
-  try {
-    await window._fbAuth.signOut(window._auth);
-    authToast("ℹ️ Đã đăng xuất khỏi hệ thống.");
-  } catch (error) {
-    console.error("Sign out error:", error);
-    authToast("❌ Không thể đăng xuất: " + mapAuthError(error));
-  }
-};
-
-window.handleForgotPassword = async function() {
-  const { email } = getAuthInputs();
-
-  if (!email) {
-    authToast("⚠️ Vui lòng nhập email trường trước khi bấm Quên mật khẩu.");
-    return;
-  }
-
-  if (!ALLOWED_EMAIL_REGEX.test(email)) {
-    authToast("⚠️ Email phải thuộc domain trường được cấp phép.");
-    return;
-  }
-
-  try {
-    authToast("🔄 Đang gửi email khôi phục mật khẩu...");
-
-    await window._fbAuth.sendPasswordResetEmail(window._auth, email, {
-      url: "https://anystuf.github.io/anhthuhoang_anystuff/",
-      handleCodeInApp: false
-    });
-
-    authToast("📬 Đã gửi email khôi phục. Hãy kiểm tra Inbox/Spam của email trường.");
-  } catch (error) {
-    console.error("Forgot password error:", error);
-    authToast("❌ Không thể gửi email khôi phục: " + mapAuthError(error));
-  }
-};
-
-window.initAuthStateListener = function() {
-  if (!window._fbAuth || !window._auth) return;
-
-  window._fbAuth.onAuthStateChanged(window._auth, async (user) => {
-    const authSection = document.getElementById("auth-section");
-    const loggedInSection = document.getElementById("logged-in-section");
-    const emailDisplay = document.getElementById("user-email-display");
-    const analyzeBtn = document.getElementById("esp-analyze-btn");
-
-    if (!authSection || !loggedInSection || !emailDisplay || !analyzeBtn) return;
-
-    if (user) {
-      authSection.style.display = "none";
-      loggedInSection.style.display = "block";
-      emailDisplay.textContent = user.email || "";
-      analyzeBtn.disabled = false;
-    } else {
-      authSection.style.display = "block";
-      loggedInSection.style.display = "none";
-      emailDisplay.textContent = "";
-      analyzeBtn.disabled = true;
-    }
-  });
-};
-
-window.addEventListener("DOMContentLoaded", window.initAuthStateListener);
-
-
-// ─── WATERFALL FLOW (Mở khóa thác đổ an toàn) ───
-window.unlockAILab = function() {
-  window.location.assign("./blackbox.html");
-  return;
-  const labContent = document.getElementById('esp-writing-evaluator');
-  if (labContent) {
-    labContent.style.display = 'block'; // Hiện AI Lab lên
-    // Tạo hiệu ứng cuộn mượt mà đưa người dùng xuống ngay đầu phòng Lab
-    labContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-  
-  // Kiểm tra an toàn trước khi gọi hàm hiển thị thông báo
-  if (window.showToast) {
-    window.showToast("Phòng thí nghiệm AI đã được mở khóa! Bạn hãy xác thực tài khoản để bắt đầu.");
-  } else {
-    alert("Phòng thí nghiệm AI đã được mở khóa! Bạn hãy xác thực tài khoản để bắt đầu.");
-  }
-};
-
-
-// Theo dõi trạng thái đăng nhập để bật/tắt giao diện Lab
-window.addEventListener('load', () => {
-  // Phải đợi web tải xong toàn bộ thì Firebase mới sẵn sàng
-  if (window._fbAuth && window._auth) {
-    window._fbAuth.onAuthStateChanged(window._auth, (user) => {
-      if (user) {
-        document.getElementById("auth-section").style.display = "none";
-        document.getElementById("logged-in-section").style.display = "block";
-        document.getElementById("user-email-display").textContent = user.email;
-        document.getElementById("esp-analyze-btn").disabled = false; // Mở khóa nút chấm bài
-      } else {
-        document.getElementById("auth-section").style.display = "block";
-        document.getElementById("logged-in-section").style.display = "none";
-        document.getElementById("esp-analyze-btn").disabled = true; // Khóa nút chấm bài
-      }
-    });
-  }
-});
-
-window.evaluateEspWriting = async function() {
-  // Black-box-only pilot: legacy Firebase evaluator stays disabled.
-  window.location.assign("./blackbox.html");
-  return;
-  const participantId = document.getElementById('esp-participant').value.trim() || 'anonymous';
-  const domain = document.getElementById('esp-domain').value;
-  const mode = document.querySelector('input[name="esp-mode"]:checked').value;
-  
-  // ĐỒNG BỘ: Không lấy từ DOM cũ đã xóa, đặt mặc định để chuyển lên Backend
-  const taskPrompt = "Evaluate the professional and academic quality of the text.";
-  const essayText = document.getElementById('esp-essay').value.trim();
-  const btn = document.getElementById('esp-analyze-btn');
-  const status = document.getElementById('esp-status');
-
-  // ĐỒNG BỘ: Ngưỡng chặn độ dài ký tự 50 thống nhất với Backend
-  if (!essayText || essayText.length < 50) {
-    showToast('Bài viết quá ngắn. Hệ thống yêu cầu tối thiểu 50 ký tự.');
-    return;
-  }
-
-  btn.disabled = true;
-  status.textContent = 'Đang phân tích...';
-  document.getElementById('esp-result').className = 'result-empty';
-  document.getElementById('esp-result').innerHTML = '<div><strong>AI đang đánh giá bài viết...</strong><br>Quá trình này có thể mất vài giây.</div>';
-
-  try {
-    const evaluateEssay = window._httpsCallable(window._functions, 'evaluateEspWriting');
-    const response = await evaluateEssay({ participantId, domain, mode, taskPrompt, essayText });
-    renderEspResult(response.data, mode);
-    status.textContent = 'Đã hoàn tất.';
-  } catch (error) {
-    console.error('Lỗi kết nối AI Backend:', error);
-    document.getElementById('esp-result').innerHTML = `
-      <div style="color: #9b482b; padding: 2rem; text-align: center; border: 1px solid #9b482b; border-radius: 16px; background: #fdf5f2;">
-        <strong>⚠️ Quá trình đánh giá bị gián đoạn</strong><br><br>
-        Hệ thống AI đang bận hoặc có lỗi mạng kết nối. Mã lỗi: ${error.message || "Timeout"}.<br>
-        Vui lòng đợi vài giây và bấm "Đánh giá bài viết" lại nhé!
-      </div>`;
-    status.textContent = 'Đánh giá thất bại.';
-  } finally {
-    btn.disabled = false;
-  }
-};
-
-window.resetEspEvaluator = function() {
-  document.getElementById('esp-essay').value = '';
-  document.getElementById('esp-status').textContent = '';
-  document.getElementById('esp-result').className = 'result-empty';
-  document.getElementById('esp-result').innerHTML = '<div><strong>Kết quả đánh giá sẽ hiển thị tại đây.</strong><br>Hệ thống sẽ trả về bậc VSTEP ước lượng, điểm theo rubric và phản hồi theo chế độ bạn chọn.</div>';
-};
-
-window.renderEspResult = function(result, mode) {
-  const container = document.getElementById('esp-result');
-  container.className = '';
-  const rubric = result.rubric_scores || {};
-  const errors = result.error_explanations || [];
-  const learningNotes = result.learning_notes || [];
-  const rubricHtml = ESP_RUBRIC.map(item => {
-    const data = rubric[item.key] || {};
-    const score = data.score ?? '-';
-    const comment = data.comment || 'Chưa có nhận xét.';
-    return `<div class="rubric-item"><div class="rubric-top"><span>${item.label}</span><span class="rubric-weight">${score}đ</span></div><p>${escapeHtml(comment)}</p></div>`;
-  }).join('');
-
-  const xaiHtml = mode === 'xai' ? `<div class="result-card"><h4>Giải thích lỗi chi tiết</h4>${errors.length ? errors.map(err => `<div class="error-item"><span class="tag">${escapeHtml(err.error_type || 'Writing issue')}</span><p><strong>Câu gốc:</strong> ${escapeHtml(err.original_sentence || '')}</p><p><strong>Câu sửa:</strong> ${escapeHtml(err.corrected_sentence || '')}</p><p><strong>Vì sao sửa:</strong> ${escapeHtml(err.why_correction_is_better || err.explanation || '')}</p>${err.domain_note ? `<p><strong>Ghi chú chuyên ngành:</strong> ${escapeHtml(err.domain_note)}</p>` : ''}${err.vstep_impact ? `<p><strong>Tác động đến VSTEP:</strong> ${escapeHtml(err.vstep_impact)}</p>` : ''}</div>`).join('') : '<p style="color: var(--text-muted);">Chưa có lỗi chi tiết được trả về.</p>'}</div><div class="result-card"><h4>Learning Notes</h4>${learningNotes.length ? `<ul style="padding-left: 1.1rem; color: var(--text-mid); font-size: .9rem; line-height: 1.75;">${learningNotes.map(note => `<li>${escapeHtml(note)}</li>`).join('')}</ul>` : '<p style="color: var(--text-muted);">Chưa có ghi chú học tập.</p>'}</div>` : '';
-
-  container.innerHTML = `<div class="result-card"><h4>VSTEP Level Estimate</h4><div class="level-badge-row"><span class="level-badge">${escapeHtml(result.estimated_vstep_level || 'Pending')}</span><span class="confidence-badge">Confidence: ${escapeHtml(result.confidence || 'medium')}</span><span class="confidence-badge">Total: ${escapeHtml(String(result.total_score ?? '-'))}/100</span></div><p style="color: var(--text-muted); font-size: .88rem; line-height: 1.65;">${escapeHtml(result.overall_comment || 'Đây là đánh giá ước lượng phục vụ học tập và nghiên cứu.')}</p></div><div class="result-card"><h4>Rubric Breakdown</h4><div class="rubric-grid">${rubricHtml}</div></div>${xaiHtml}<div class="result-card"><h4>Suggested Revised Version</h4><div class="revised-version">${escapeHtml(result.revised_version || 'Chưa có bản chỉnh sửa.')}</div></div><div class="result-card" style="background: rgba(212,168,71,.08);"><h4>Research Note</h4><p style="color: var(--text-mid); font-size: .86rem; line-height: 1.65;">Teacher review recommended: <strong>${result.teacher_review_recommended === false ? 'No' : 'Yes'}</strong>. Kết quả này nên được dùng như phản hồi hỗ trợ, không phải kết luận chấm điểm chính thức.</p></div>`;
-  document.getElementById('post-writing-survey').style.display = 'block';
-  document.getElementById('post-writing-survey').scrollIntoView({ behavior: 'smooth' });
-  showToast("Vui lòng hoàn thành bài khảo sát Post-Test phía dưới để kết thúc phiên thực nghiệm.");
-};
-
-window.buildDemoEspResult = function(domain, mode, essayText) {
-  const domainName = { law: 'Law', finance: 'Finance', accounting: 'Accounting'}[domain] || 'ESP';
-  const baseRevised = essayText.replace(/got a lot of money/gi, 'generated substantial revenue').replace(/company must obey with/gi, 'company must comply with').replace(/very good/gi, 'highly effective');
-  return {
-    estimated_vstep_level: 'Bậc 4 / B2', confidence: 'medium', total_score: 72,
-    overall_comment: `Bài viết có nền tảng lập luận tương đối rõ, nhưng cần cải thiện độ chính xác thuật ngữ ${domainName} và văn phong học thuật/chuyên nghiệp.`,
-    rubric_scores: {
-      task_achievement: { score: 15, comment: 'Bài nhìn chung đáp ứng yêu cầu, nhưng cần làm rõ luận điểm chính và phạm vi phân tích.' },
-      organization_coherence: { score: 11, comment: 'Bố cục có thể theo dõi được, nhưng liên kết giữa các đoạn cần mạch lạc hơn.' },
-      grammar_accuracy: { score: 10, comment: 'Có một số lỗi cấu trúc câu và collocation ảnh hưởng đến độ tự nhiên.' },
-      lexical_resource: { score: 14, comment: 'Từ vựng học thuật ở mức khá, nhưng vẫn còn một số cách diễn đạt chung chung.' },
-      esp_domain_accuracy: { score: 14, comment: `Thuật ngữ ${domainName} cần chính xác và nhất quán hơn trong bối cảnh chuyên ngành.` },
-      professional_tone: { score: 8, comment: 'Văn phong tương đối phù hợp, nhưng nên giảm các cụm từ thân mật hoặc quá đơn giản.' }
-    },
-    error_explanations: mode === 'xai' ? [
-      { error_type: 'ESP collocation', original_sentence: 'The company got a lot of money.', corrected_sentence: 'The company generated substantial revenue.', why_correction_is_better: '“Generated substantial revenue” là cách diễn đạt chuyên nghiệp hơn trong văn cảnh kinh doanh/tài chính.', domain_note: 'Trong ESP, collocation đúng giúp bài viết đáng tin cậy hơn về mặt chuyên ngành.', vstep_impact: 'Ảnh hưởng đến Lexical Resource và Professional Tone.' },
-      { error_type: 'Professional register', original_sentence: 'This solution is very good.', corrected_sentence: 'This solution is highly effective.', why_correction_is_better: '“Highly effective” trang trọng và phù hợp với academic/professional writing hơn “very good”.', domain_note: 'Tránh dùng từ quá khẩu ngữ trong báo cáo chuyên ngành.', vstep_impact: 'Ảnh hưởng đến Professional Tone.' }
-    ] : [],
-    revised_version: baseRevised,
-    learning_notes: mode === 'xai' ? ['Ưu tiên dùng collocation chuyên ngành thay vì từ vựng đời thường.', 'Mỗi đoạn nên có topic sentence rõ ràng.', 'Khi chưa chắc thuật ngữ chuyên ngành, cần kiểm tra lại với giảng viên hoặc tài liệu đáng tin cậy.'] : [],
-    teacher_review_recommended: true
-  };
-};
-
-window.escapeHtml = function(str) { return String(str).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;'); };
+// ATH survey and Black-box AI run in ath-experiment.js; legacy Firebase evaluator removed.
 
 // Toast Notifications
 window.showToast = function(msg) {
@@ -2385,5 +2072,6 @@ window.appendMessage = function(text, className) {
 
 // Anti-tamper debugging block removed so login, password reset, and browser testing work normally.
 </script>
+<script type="module" src="./ath-experiment.js"></script>
 </body>
 </html>
