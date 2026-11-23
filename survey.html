@@ -46,7 +46,7 @@ main{width:min(920px,calc(100% - 30px));margin:10px auto 60px}.hero{text-align:c
 <div class="field"><label for="open-response" id="open-label">Câu hỏi mở (không bắt buộc)</label><textarea id="open-response" maxlength="4000"></textarea></div>
 <div class="field"><label for="pilot-feedback">[Chỉ dùng cho khảo sát thử] Có câu nào khó hiểu hoặc khó trả lời không? Ghi số câu và lý do. / [Pilot only] Were any items unclear or hard to answer?</label><textarea id="pilot-feedback" maxlength="4000"></textarea></div>
 <div class="actions"><button class="btn" id="submit-survey" type="submit">Gửi câu trả lời</button></div>
-</form></div><div id="done-panel" class="notice hidden">Bạn đã hoàn thành khảo sát này. Cảm ơn bạn đã tham gia! / Your response has been recorded.</div>
+</form></div><div id="done-panel" class="notice hidden">Bạn đã hoàn thành khảo sát này. Cảm ơn bạn đã tham gia! / Your response has been recorded. <a id="blackbox-step" href="./blackbox.html" style="display:block;margin-top:12px;font-weight:bold;color:#174b35">Tiếp tục bước 2: Black-box AI →</a></div>
 </section>
 <div class="footer">Hoàng Anh Thư · ESP-XAI Pilot Research · Dữ liệu nghiên cứu chỉ sử dụng cho mục đích đã thông báo</div>
 </main>
@@ -89,7 +89,7 @@ async function refresh(){const {data:{user:current},error}=await db.auth.getUser
 function showAuth(){$('student-panel').classList.add('hidden');$('auth-panel').classList.remove('hidden');}
 async function setPhase(next){if(next==='POST'&&!submitted.has('PRE'))return notify('Vui lòng hoàn thành PRE trước khi thực hiện POST.');
  hideNotice();phase=next;$('tab-pre').setAttribute('aria-selected',String(phase==='PRE'));$('tab-post').setAttribute('aria-selected',String(phase==='POST'));
- if(submitted.has(phase)){$('done-panel').classList.remove('hidden');$('survey-panel').classList.add('hidden');return;}
+ if(submitted.has(phase)){$('done-panel').classList.remove('hidden');$('blackbox-step').classList.toggle('hidden',phase!=='PRE');$('survey-panel').classList.add('hidden');return;}
  $('done-panel').classList.add('hidden');
  const [formResult,questionResult]=await Promise.all([db.from('survey_forms').select('phase,title_vi,title_en,introduction_vi,introduction_en,instrument_version,expected_minutes').eq('phase',phase).maybeSingle(),db.from('survey_questions').select('question_id,ordinal,display_number,statement_vi,statement_en,question_type').eq('phase',phase).order('ordinal',{ascending:true})]);
  if(formResult.error||questionResult.error)return notify('Không thể tải khảo sát. Vui lòng đăng nhập lại hoặc liên hệ giảng viên.');
