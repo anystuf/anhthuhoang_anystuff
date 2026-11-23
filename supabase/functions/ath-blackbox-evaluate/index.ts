@@ -99,17 +99,17 @@ Deno.serve(async (req: Request) => {
     essay,
     "</student_essay>"
   ].join("\n");
-  const model=(Deno.env.get("GEMINI_MODEL")||"gemini-2.5-flash").trim();
+  const model=(Deno.env.get("GEMINI_MODEL")||"gemini-3.8-flash").trim();
   const apiUrl="https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent";
   const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(),25000);
+  const timeout=setTimeout(()=>controller.abort(),45000);
   let parsed:{score?:unknown;revised_text?:unknown};
   try {
     const upstream=await fetch(apiUrl,{method:"POST",signal:controller.signal,headers:{
       "Content-Type":"application/json","x-goog-api-key":geminiKey
     },body:JSON.stringify({
       contents:[{role:"user",parts:[{text:prompt}]}],
-      generationConfig:{temperature:0.15,maxOutputTokens:4096,responseMimeType:"application/json",
+      generationConfig:{temperature:0.15,maxOutputTokens:8192,responseMimeType:"application/json",
         responseSchema:{type:"OBJECT",properties:{score:{type:"INTEGER"},revised_text:{type:"STRING"}},required:["score","revised_text"]}}
     })});
     if(!upstream.ok) {
