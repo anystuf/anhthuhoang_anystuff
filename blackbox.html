@@ -62,12 +62,13 @@ async function ensureReady(){
  current=user;
  const email=(user.email||"").toLowerCase();
  const [allowed,pre]=await Promise.all([
- db.from("allowed_students").select("email,status").eq("email",email).eq("status","active").maybeSingle(),
+ db.from("allowed_students").select("email,status,is_test").eq("email",email).eq("status","active").maybeSingle(),
  db.from("survey_submissions").select("id").eq("user_id",user.id).eq("phase","PRE").limit(1).maybeSingle()
  ]);
  if(allowed.error||pre.error){panel("login-panel");showNotice("Không thể kiểm tra quyền tham gia. Vui lòng đăng nhập lại.");return}
  if(!allowed.data){panel("login-panel");showNotice("Email này chưa được xác nhận trong danh sách tham gia. Vui lòng liên hệ giảng viên.");return}
- if(!pre.data){panel("pre-required");return}
+ const testExempt=email==="nguyentran.31231024329@st.ueh.edu.vn" && allowed.data.is_test===true;
+ if(!pre.data&&!testExempt){panel("pre-required");return}
  $("user-email").textContent=email;panel("editor");hideNotice();
 }
 async function login(){
