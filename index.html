@@ -1007,6 +1007,21 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
   #esp-writing-evaluator #esp-result .ath-blackbox-revision{padding:17px}
   #esp-writing-evaluator #esp-result .ath-blackbox-score-number{font-size:2.5rem}
 }
+
+/* Embedded Google Forms — use the existing ATH card system. */
+#research-survey .ath-google-form-wrap{
+  width:100%; min-width:0; overflow:hidden; margin:18px 0;
+  border:1px solid #d9e4d8; border-radius:16px; background:#fff;
+  box-shadow:0 10px 30px rgba(13,51,32,.05)
+}
+#research-survey #ath-google-form-frame{
+  display:block; width:100%; height:1050px; min-height:750px; border:0;
+  background:#fff;
+}
+#research-survey .ath-form-footer{margin-top:18px;text-align:left}
+#research-survey #ath-form-open{display:inline-flex;color:var(--green-deep);font-size:.87rem;font-weight:700;margin:0 0 10px;text-decoration:underline;text-underline-offset:3px}
+#research-survey #ath-google-completed{background:#eaf4e8;border-color:#c7dec6}
+@media(max-width:600px){#research-survey #ath-google-form-frame{height:1200px}}
 </style>
 </head>
 <body>
@@ -1273,60 +1288,57 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 </div>
 <div class="prewriting-survey reveal" id="research-survey">
   <div class="section-eyebrow eyebrow-purple eyebrow-center" style="margin-bottom:1rem;">Nghiên cứu học thuật · ESP-XAI</div>
-  <h2 class="section-title">Khảo sát Pre-writing &amp; Post-writing</h2>
-  <p class="ath-intro">Sinh viên đăng nhập bằng email trường để hoàn thành khảo sát PRE, nhận đánh giá Black-box AI và thực hiện POST ngay trên trang này.</p>
+  <h2 class="section-title">Khảo sát PRE / POST</h2>
+  <p class="ath-intro">Điền Google Forms ngay trên website. Cô Thư xem câu trả lời và biểu đồ trong Google Forms / Google Sheets, không cần thao tác với database.</p>
   <div id="ath-alert" class="ath-alert" role="status" aria-live="polite" hidden></div>
-
   <div id="ath-login-panel" class="ath-panel">
-    <div class="ath-kicker">Bước đầu tiên · Đăng nhập</div>
-    <h3>Truy cập khảo sát ATH</h3>
-    <p class="ath-copy">Dùng email trường đã đăng ký và mật khẩu ATH. Nếu chưa có tài khoản, bạn có thể tự tạo và xác minh bằng email.</p>
+    <div class="ath-kicker">Tài khoản nghiên cứu</div>
+    <h3>Đăng nhập ATH</h3>
+    <p class="ath-copy">Dùng email trường để kết nối bài viết với mã tham gia nghiên cứu. Google Forms thu thập câu trả lời khảo sát riêng biệt.</p>
     <div class="ath-form-grid">
-      <div class="ath-field"><label for="ath-email">Email sinh viên</label><input id="ath-email" type="email" autocomplete="email" placeholder="mssv@st.buh.edu.vn hoặc @st.ueh.edu.vn"/></div>
-      <div class="ath-field"><label for="ath-password">Mật khẩu</label><input id="ath-password" type="password" autocomplete="current-password" placeholder="Mật khẩu ATH"/></div>
+      <div class="ath-field"><label for="ath-email">Email trường</label><input id="ath-email" type="email" autocomplete="email" placeholder="mssv@st.buh.edu.vn hoặc @st.ueh.edu.vn"/></div>
+      <div class="ath-field"><label for="ath-password">Mật khẩu ATH</label><input id="ath-password" type="password" autocomplete="current-password" placeholder="Mật khẩu ATH"/></div>
     </div>
     <div class="ath-actions">
       <button type="button" id="ath-login-button" class="ath-button">Đăng nhập</button>
       <button type="button" id="ath-signup-button" class="ath-button ath-outline">Tạo tài khoản</button>
       <button type="button" id="ath-forgot-button" class="ath-text-button">Quên mật khẩu?</button>
     </div>
-    <div class="ath-note">Chỉ các email nằm trong danh sách sinh viên đã đồng ý tham gia mới được mở khảo sát. Người học tự quản lý mật khẩu; không cần nhận mật khẩu chung từ giảng viên.</div>
+    <div class="ath-note">Chỉ người học được phép tham gia mới sử dụng AI Lab. Không sử dụng chung tài khoản.</div>
   </div>
 
   <div id="ath-member-panel" class="ath-panel" hidden>
     <div class="ath-member-head">
-      <div><div class="ath-kicker">Khảo sát học thuật</div><h3>Phiếu PRE / POST</h3><span class="ath-account" id="ath-member-email"></span></div>
+      <div><div class="ath-kicker">Google Forms · Pilot</div><h3>Khảo sát học thuật</h3><span class="ath-account" id="ath-member-email"></span></div>
       <button type="button" id="ath-logout" class="ath-button ath-outline">Đăng xuất</button>
     </div>
-    <p id="ath-test-message" class="ath-note" hidden>Tài khoản kiểm thử đã được cấp quyền sử dụng Black-box AI mà không cần hoàn thành PRE. Câu trả lời thử được đánh dấu riêng với dữ liệu nghiên cứu.</p>
-    <p class="ath-steps"><strong>Quy trình:</strong> PRE → viết bài ESP và nhận điểm + bài sửa từ AI → POST.</p>
-    <div class="ath-tabs" role="tablist" aria-label="Chọn khảo sát">
+    <div id="ath-test-message" class="ath-note" hidden>Tài khoản kiểm thử đã được cấp quyền dùng AI không cần làm PRE. Kết quả thử không thuộc nhóm nghiên cứu chính thức.</div>
+    <p class="ath-steps"><strong>Quy trình:</strong> Google Form PRE → Black-box AI → Google Form POST.</p>
+    <div class="ath-tabs" role="tablist" aria-label="Chọn Google Forms">
       <button type="button" id="ath-pre-tab" class="ath-tab" aria-selected="true">01 · PRE<span id="ath-pre-done"></span></button>
       <button type="button" id="ath-post-tab" class="ath-tab" aria-selected="false" disabled>02 · POST<span id="ath-post-done"></span></button>
     </div>
-    <div class="ath-done" id="ath-done" hidden>
-      <span id="ath-done-text"></span>
-      <button type="button" id="ath-next-ai" class="ath-button">Tiếp tục Black-box AI ↓</button>
+    <h3 class="ath-section-title" id="ath-phase-title">PRE — Trước khi viết bài</h3>
+    <p class="ath-copy" id="ath-phase-intro">Hoàn thành Google Form PRE trước khi sử dụng AI.</p>
+    <div class="ath-google-form-wrap">
+      <iframe
+        id="ath-google-form-frame"
+        title="Google Forms khảo sát ATH"
+        src="https://docs.google.com/forms/d/e/1FAIpQLSegQM04c-FAjJZ7vQTWgV4azBNtQXdkTe4r_aTPHCVQeJHtXg/viewform?embedded=true"
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin">
+      </iframe>
     </div>
-    <form id="ath-survey-form" hidden>
-      <h3 id="ath-phase-title" class="ath-section-title"></h3>
-      <p id="ath-phase-intro" class="ath-copy"></p>
-      <div id="ath-pre-fields">
-        <label class="ath-check"><input type="checkbox" id="ath-consent"/> <span>Tôi tự nguyện đồng ý tham gia khảo sát; dữ liệu chỉ phục vụ nghiên cứu và không ảnh hưởng đến điểm học phần. / I voluntarily agree to participate.</span></label>
-        <div class="ath-form-grid">
-          <div class="ath-field"><label for="ath-gender">Giới tính / Gender</label><select id="ath-gender"><option value="">Chọn câu trả lời</option><option value="male">Nam</option><option value="female">Nữ</option><option value="other_or_no_answer">Khác / Không muốn trả lời</option></select></div>
-          <div class="ath-field"><label for="ath-ai-use">Tần suất sử dụng AI khi viết tiếng Anh</label><select id="ath-ai-use"><option value="">Chọn câu trả lời</option><option value="never">Chưa bao giờ</option><option value="rarely">Hiếm khi</option><option value="sometimes">Thỉnh thoảng</option><option value="often">Thường xuyên</option><option value="almost_every_time">Hầu như mỗi lần viết</option></select></div>
-        </div>
+    <div class="ath-form-footer">
+      <a id="ath-form-open" href="https://docs.google.com/forms/d/e/1FAIpQLSegQM04c-FAjJZ7vQTWgV4azBNtQXdkTe4r_aTPHCVQeJHtXg/viewform" target="_blank" rel="noopener noreferrer">Mở Google Form trong tab mới ↗</a>
+      <p class="ath-note">Khi Google Form báo <strong>đã gửi thành công</strong>, quay lại đây và xác nhận. ATH chỉ lưu xác nhận của bạn; câu trả lời thật được lưu trong Google Forms/Sheets. Xác nhận này chưa được hệ thống đối chiếu tự động.</p>
+      <label class="ath-check"><input id="ath-google-confirm-check" type="checkbox"/><span>Tôi xác nhận đã nhấn <strong>Gửi / Submit</strong> trên Google Form <span id="ath-phase-check-label">PRE</span>. Tôi hiểu xác nhận này chỉ là tự khai báo, không thay thế bản ghi Google Forms.</span></label>
+      <div class="ath-actions">
+        <button type="button" id="ath-google-confirm-button" class="ath-button">Xác nhận đã gửi Google Form</button>
+        <button type="button" id="ath-next-ai" class="ath-button ath-outline" hidden>Chuyển đến Black-box AI ↓</button>
       </div>
-      <div id="ath-post-fields" hidden>
-        <label class="ath-check"><input type="checkbox" id="ath-feedback-read"/> <span>Tôi xác nhận đã xem điểm và bản sửa từ AI trước khi trả lời POST. / I confirm I have read the AI feedback.</span></label>
-      </div>
-      <div class="ath-scale"><strong>Thang đo:</strong> 1 = Hoàn toàn không đồng ý · 2 = Không đồng ý · 3 = Phân vân · 4 = Đồng ý · 5 = Hoàn toàn đồng ý</div>
-      <div id="ath-questions"></div>
-      <div class="ath-field"><label for="ath-open-response" id="ath-open-label">Câu trả lời mở (không bắt buộc)</label><textarea id="ath-open-response" maxlength="4000" rows="3"></textarea></div>
-      <div class="ath-field"><label for="ath-pilot-note">Góp ý về câu hỏi khó hiểu (không bắt buộc) / Pilot feedback</label><textarea id="ath-pilot-note" maxlength="4000" rows="2"></textarea></div>
-      <button type="submit" id="ath-submit" class="ath-button">Nộp bài khảo sát</button>
-    </form>
+      <div id="ath-google-completed" class="ath-note" hidden></div>
+    </div>
   </div>
 </div>
 
@@ -2203,6 +2215,6 @@ window.appendMessage = function(text, className) {
 
 // Anti-tamper debugging block removed so login, password reset, and browser testing work normally.
 </script>
-<script type="module" src="./ath-experiment.js?v=20261123-plain-v1"></script>
+<script type="module" src="./ath-experiment.js?v=20261123-google-forms-v1"></script>
 </body>
 </html>
