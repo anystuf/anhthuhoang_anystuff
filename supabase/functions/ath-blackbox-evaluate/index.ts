@@ -1,5 +1,5 @@
 // ATH Research — Black-box ESP writing evaluation.
-// Privacy: authenticated, allowlisted, PRE-completed users only.
+// Privacy: authenticated, allowlisted users only; PRE required except for one designated test account.
 // The model key lives in Supabase Edge Function Secrets; never in this file or browser.
 import { createClient } from "npm:@supabase/supabase-js@2.119.2";
 
@@ -55,14 +55,15 @@ Deno.serve(async (req: Request) => {
 
   const email=user.email.trim().toLowerCase();
   const {data:eligibility,error:allowError}=await userDb.from("allowed_students")
-    .select("email,status").eq("email",email).eq("status","active").maybeSingle();
+    .select("email,status,is_test").eq("email",email).eq("status","active").maybeSingle();
   if(allowError)return toJson({error:"Không xác minh được quyền tham gia."},503,origin);
   if(!eligibility)return toJson({error:"Email chưa có trong danh sách sinh viên tham gia."},403,origin);
+  const preExempt = email === "nguyentran.31231024329@st.ueh.edu.vn" && eligibility.is_test === true;
 
   const {data:pre,error:preError}=await userDb.from("survey_submissions")
     .select("id").eq("user_id",user.id).eq("phase","PRE").limit(1).maybeSingle();
   if(preError)return toJson({error:"Không xác minh được khảo sát PRE."},503,origin);
-  if(!pre)return toJson({error:"Vui lòng hoàn thành khảo sát PRE trước khi sử dụng Black-box AI."},403,origin);
+  if(!pre && !preExempt)return toJson({error:"Vui lòng hoàn thành khảo sát PRE trước khi sử dụng Black-box AI."},403,origin);
 
   const lenHeader=Number(req.headers.get("content-length")||"0");
   if(lenHeader>24000)return toJson({error:"Bài viết vượt quá giới hạn cho phép."},413,origin);
