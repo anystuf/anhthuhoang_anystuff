@@ -1,4 +1,4 @@
-/* ATH Help — local guidance bot; does not send or store messages. */
+/* ATH Gemini Help: server-side AI via Supabase, local FAQ fallback. Chat history is kept in memory only. */
 (()=>{
 "use strict";
 if(document.getElementById("ath-help-launcher"))return;
@@ -26,29 +26,83 @@ const toggle=element("button","ath-help-launcher","💬 Hướng dẫn ATH");
 toggle.type="button";toggle.setAttribute("aria-expanded","false");toggle.setAttribute("aria-controls","ath-help-panel");
 const panel=element("section","ath-help-panel");panel.hidden=true;panel.setAttribute("role","region");panel.setAttribute("aria-label","Trợ lý hướng dẫn ATH");
 const head=element("div","ath-help-head");
-const title=element("div");title.append(element("strong",null,"Trợ lý hướng dẫn ATH"),element("small",null,"Hỏi về đăng ký, khảo sát và AI Lab"));
+const title=element("div");title.append(element("strong",null,"ATH AI Assistant"),element("small",null,"Gemini · Hướng dẫn sử dụng nền tảng"));
 const close=element("button","ath-help-close","×");close.type="button";close.setAttribute("aria-label","Đóng chatbot");head.append(title,close);
 const messages=element("div","ath-help-messages");messages.setAttribute("role","log");messages.setAttribute("aria-live","polite");
 const quick=element("div","ath-help-quick");
 const form=element("form","ath-help-form");
-const input=element("input","ath-help-input");input.type="text";input.maxLength=300;input.autocomplete="off";input.placeholder="Hỏi về ATH...";input.setAttribute("aria-label","Câu hỏi hướng dẫn");
+const input=element("input","ath-help-input");input.type="text";input.maxLength=500;input.autocomplete="off";input.placeholder="Hỏi về ATH...";input.setAttribute("aria-label","Câu hỏi hướng dẫn");
 const send=element("button","ath-help-send","Gửi");send.type="submit";form.append(input,send);
-const note=element("div","ath-help-note","Hướng dẫn tự động trên trình duyệt · Không nhập mật khẩu hoặc API key.");
+const note=element("div","ath-help-note","Câu hỏi được Gemini xử lý qua Supabase. Không nhập mật khẩu, mã xác thực hoặc API key.");
 panel.append(head,messages,quick,form,note);document.body.append(toggle,panel);
-function say(t,who){const b=element("div");b.className="ath-guide-message "+who;b.textContent=t;messages.append(b);messages.scrollTop=messages.scrollHeight}
-function ask(q){
- q=String(q||"").trim();if(!q)return;say(q,"user");input.value="";
- const item=reply(q);say(item.text,"bot");
- if(item.go&&document.getElementById(item.go)){
-  const jump=element("button",null,"Mở mục liên quan ↑");jump.type="button";jump.className="ath-help-jump";
-  jump.addEventListener("click",()=>{open(false);document.getElementById(item.go).scrollIntoView({behavior:"smooth",block:"start"})});
-  messages.append(jump);messages.scrollTop=messages.scrollHeight;
+const endpoint="https://aignaxmirbbnfuutvvdg.supabase.co/functions/v1/ath-help-chat";
+const conversation=[];
+let asking=false;
+function plaintext(value){
+ return String(value||"").replace(/[*#_\x60]/g,"").replace(/\n{3,}/g,"\n\n").trim();
+}
+function say(t,who){
+ const b=element("div");b.className="ath-guide-message "+who;
+ b.textContent=plaintext(t);messages.append(b);
+ messages.scrollTop=messages.scrollHeight;
+ return b;
+}
+function jumpTo(target){
+ if(!target||!document.getElementById(target))return;
+ const jump=element("button",null,"Mở mục liên quan ↑");
+ jump.type="button";jump.className="ath-help-jump";
+ jump.addEventListener("click",()=>{
+  open(false);document.getElementById(target).scrollIntoView({behavior:"smooth",block:"start"});
+ });
+ messages.append(jump);
+}
+async function ask(text){
+ const question=String(text||"").trim();
+ if(!question||asking)return;
+ if(/AIza[0-9A-Za-z_-]{25,}|sb_secret_[\w-]{16,}|Bearer\s+eyJ[\w.-]+/i.test(question)){
+  say("Đừng gửi khóa API hoặc thông tin đăng nhập vào chatbot.","bot");
+  input.value="";return;
+ }
+ say(question,"user");input.value="";
+ const fallback=reply(question);
+ const context=conversation.slice(-6);
+ conversation.push({role:"user",content:question});
+ const pending=say("ATH AI đang trả lời...","bot");
+ asking=true;send.disabled=true;input.disabled=true;
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),70000);
+ try{
+  const res=await fetch(endpoint,{
+   method:"POST",signal:controller.signal,
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({message:question,history:context})
+  });
+  let body={};
+  try{body=await res.json()}catch{}
+  if(!res.ok){
+   const err=typeof body.error==="string"?body.error:"Không kết nối được Gemini.";
+   throw new Error(err);
+  }
+  if(typeof body.answer!=="string"||!body.answer.trim())throw new Error("AI chưa trả lời hợp lệ.");
+  const answer=plaintext(body.answer);
+  pending.textContent=answer;
+  conversation.push({role:"assistant",content:answer});
+  if(conversation.length>12)conversation.splice(0,conversation.length-12);
+  if(fallback.go)jumpTo(fallback.go);
+ }catch(e){
+  const reason=e instanceof Error?e.message:"Gemini không phản hồi.";
+  pending.textContent=plaintext("Gemini đang gián đoạn: "+reason+
+    "\nGợi ý từ hướng dẫn có sẵn: "+fallback.text);
+  if(fallback.go)jumpTo(fallback.go);
+ }finally{
+  clearTimeout(timer);asking=false;send.disabled=false;input.disabled=false;input.focus();
+  messages.scrollTop=messages.scrollHeight;
  }
 }
 function open(yes){panel.hidden=!yes;toggle.setAttribute("aria-expanded",String(yes));if(yes){if(messages.children.length===0)say("Xin chào! Bạn muốn được hướng dẫn tạo tài khoản, làm PRE, dùng AI hay làm POST?","bot");input.focus()}else toggle.focus()}
-for(const q of ["Tạo tài khoản","Email HUB","Quên mật khẩu","PRE → AI → POST"]){const b=element("button",null,q);b.type="button";b.addEventListener("click",()=>ask(q));quick.append(b)}
+for(const q of ["Tạo tài khoản","Email HUB","Quên mật khẩu","PRE → AI → POST"]){const b=element("button",null,q);b.type="button";b.addEventListener("click",()=>{void ask(q)});quick.append(b)}
 toggle.addEventListener("click",()=>open(panel.hidden));
 close.addEventListener("click",()=>open(false));
-form.addEventListener("submit",e=>{e.preventDefault();ask(input.value)});
+form.addEventListener("submit",e=>{e.preventDefault();void ask(input.value)});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!panel.hidden)open(false)});
 })();
