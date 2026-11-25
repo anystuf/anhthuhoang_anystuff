@@ -59,7 +59,7 @@ const $=id=>document.getElementById(id), alertEl=$('alert'); let user=null,phase
 const gotoUrl=location.origin+location.pathname;
 function notify(msg,good=false){alertEl.textContent=msg;alertEl.className='alert visible'+(good?' ok':'');alertEl.scrollIntoView({behavior:'smooth',block:'nearest'});}
 function hideNotice(){alertEl.className='alert';alertEl.textContent='';}
-function schoolEmail(email){return /^[^\s@]+@(st\.buh\.edu\.vn|st\.ueh\.edu\.vn)$/i.test(email);}
+function schoolEmail(email){return /^(?:[^\s@]+@(st\.buh\.edu\.vn|st\.ueh\.edu\.vn)|thuha@hub\.edu\.vn)$/i.test(email);}
 async function signup(){hideNotice();const email=$('email').value.trim().toLowerCase(),password=$('password').value;
  if(!schoolEmail(email))return notify('Vui lòng sử dụng email sinh viên trường BUH hoặc UEH.');
  if(password.length<8)return notify('Mật khẩu cần ít nhất 8 ký tự.');
