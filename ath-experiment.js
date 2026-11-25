@@ -11,7 +11,7 @@ const formUrls={
  POST:"https://docs.google.com/forms/d/e/1FAIpQLSdoQ8UpzXQnB2R4qlDnmUILr_pE7G5KvUfoaqO3ziv0crKdnw/viewform"
 };
 const instrumentVersion="google_forms_pilot_2026_11";
-let user=null,eligibility=null,finished=new Set(),phase="PRE",refreshing=false;
+let user=null,eligibility=null,finished=new Set(),hasAiEvaluation=false,phase="PRE",refreshing=false;
 const survey=byId("research-survey"),ai=byId("esp-writing-evaluator"),alerts=byId("ath-alert");
 function notify(message,success=false){alerts.textContent=message;alerts.hidden=false;alerts.classList.toggle("ath-success",success)}
 function clearNotice(){alerts.hidden=true;alerts.textContent=""}
@@ -35,7 +35,7 @@ async function refresh(){
  if(refreshing)return;refreshing=true;
  try{
   const {data:{user:current},error}=await db.auth.getUser();
-  user=error?null:current;eligibility=null;finished=new Set();
+  user=error?null:current;eligibility=null;finished=new Set();hasAiEvaluation=false;
   if(!user){
    byId("ath-login-panel").hidden=false;byId("ath-member-panel").hidden=true;updateAiAccess();return;
   }
@@ -47,18 +47,22 @@ async function refresh(){
    updateAiAccess();notify("Email chưa có trong danh sách sinh viên được phép tham gia.");return;
   }
   eligibility=allowed.data;
-  const [legacy,google]=await Promise.all([
+  const [legacy,google,graded]=await Promise.all([
    db.from("survey_submissions").select("phase").eq("user_id",user.id),
-   db.from("google_form_attestations").select("phase").eq("user_id",user.id).eq("instrument_version",instrumentVersion)
+   db.from("google_form_attestations").select("phase").eq("user_id",user.id).eq("instrument_version",instrumentVersion),
+   db.from("essay_evaluations").select("id").eq("auth_user_id",user.id).eq("evaluation_mode","blackbox").limit(1)
   ]);
-  if(legacy.error||google.error)throw legacy.error||google.error;
+  if(legacy.error||google.error||graded.error)throw legacy.error||google.error||graded.error;
   finished=new Set([...(legacy.data||[]),...(google.data||[])].map(x=>x.phase));
+  hasAiEvaluation=Boolean(graded.data?.length);
   byId("ath-login-panel").hidden=true;byId("ath-member-panel").hidden=false;
   byId("ath-member-email").textContent="Đã đăng nhập: "+email;
   byId("ath-test-message").hidden=!(allowed.data.is_test&&email===testEmail);
   byId("ath-pre-done").textContent=finished.has("PRE")?" ✓":"";
   byId("ath-post-done").textContent=finished.has("POST")?" ✓":"";
-  byId("ath-post-tab").disabled=!completedPre()&&!((allowed.data.is_test===true)&&email===testEmail);
+  byId("ath-post-tab").hidden=!hasAiEvaluation;
+  byId("ath-post-tab").disabled=!hasAiEvaluation;
+  byId("ath-post-go").hidden=!hasAiEvaluation;
   updateAiAccess();
   selectPhase(phase==="POST"&&byId("ath-post-tab").disabled?"PRE":phase);
  }catch(error){notify("Không tải được tài khoản: "+(error?.message||"Lỗi kết nối"));updateAiAccess()}
@@ -93,11 +97,11 @@ async function forgotPassword(){
 }
 async function signOut(){
  await db.auth.signOut();user=null;eligibility=null;finished=new Set();
- const result=byId("esp-result");result.replaceChildren();result.classList.remove("ath-has-result");result.classList.add("result-empty");result.textContent="Kết quả sẽ hiển thị ở đây.";
+ const result=byId("esp-result");result.replaceChildren();result.classList.remove("ath-has-result");result.classList.add("result-empty");result.textContent="Kết quả sẽ hiển thị ở đây.";hasAiEvaluation=false;byId("ath-post-tab").hidden=true;byId("ath-post-tab").disabled=true;
  byId("ath-post-go").hidden=true;await refresh();notify("Đã đăng xuất.",true)
 }
 function selectPhase(next){
- if(next==="POST"&&byId("ath-post-tab").disabled)return notify("Hoàn thành PRE trước khi xem POST.");
+ if(next==="POST"&&!hasAiEvaluation)return notify("POST chỉ xuất hiện sau khi bạn đã nhận kết quả đánh giá AI.");
  phase=next;clearNotice();
  byId("ath-pre-tab").setAttribute("aria-selected",String(phase==="PRE"));
  byId("ath-post-tab").setAttribute("aria-selected",String(phase==="POST"));
@@ -128,7 +132,8 @@ async function confirmGoogleForm(){
   notify("ATH đã lưu xác nhận tự khai báo. Kết quả khảo sát thật nằm trên Google Forms/Sheets.",true);
   byId("ath-pre-done").textContent=finished.has("PRE")?" ✓":"";
   byId("ath-post-done").textContent=finished.has("POST")?" ✓":"";
-  byId("ath-post-tab").disabled=!completedPre()&&!eligibility.is_test;
+  byId("ath-post-tab").hidden=!hasAiEvaluation;
+  byId("ath-post-tab").disabled=!hasAiEvaluation;
   selectPhase(phase);
   updateAiAccess();
   if(phase==="PRE")scrollToAi();
@@ -202,7 +207,11 @@ async function evaluateEssay() {
     revision.append(revisedTitle, revisedBody);
     report.append(scoreRow, revision);
     result.append(report);
-    byId("ath-post-go").hidden = !completedPre() && !(user&&eligibility?.is_test===true);
+    // The API returns success only after the AI result has been saved to Supabase.
+    hasAiEvaluation=true;
+    byId("ath-post-tab").hidden=false;
+    byId("ath-post-tab").disabled=false;
+    byId("ath-post-go").hidden=false;
     status.textContent = "Hoàn tất.";
     result.scrollIntoView({behavior:"smooth",block:"start"});
   } catch (error) {
