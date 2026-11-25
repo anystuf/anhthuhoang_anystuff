@@ -67,7 +67,7 @@ async function ensureReady(){
  ]);
  if(allowed.error||pre.error){panel("login-panel");showNotice("Không thể kiểm tra quyền tham gia. Vui lòng đăng nhập lại.");return}
  if(!allowed.data){panel("login-panel");showNotice("Email này chưa được xác nhận trong danh sách tham gia. Vui lòng liên hệ giảng viên.");return}
- const testExempt=email==="nguyentran.31231024329@st.ueh.edu.vn" && allowed.data.is_test===true;
+ const testExempt=["nguyentran.31231024329@st.ueh.edu.vn","thuha@hub.edu.vn"].includes(email) && allowed.data.is_test===true;
  if(!pre.data&&!testExempt){panel("pre-required");return}
  $("user-email").textContent=email;panel("editor");hideNotice();
 }
