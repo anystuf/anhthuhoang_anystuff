@@ -58,7 +58,7 @@ Deno.serve(async (req: Request) => {
     .select("email,status,is_test").eq("email",email).eq("status","active").maybeSingle();
   if(allowError)return toJson({error:"Không xác minh được quyền tham gia."},503,origin);
   if(!eligibility)return toJson({error:"Email chưa có trong danh sách sinh viên tham gia."},403,origin);
-  const preExempt = email === "nguyentran.31231024329@st.ueh.edu.vn" && eligibility.is_test === true;
+  const preExempt = ["nguyentran.31231024329@st.ueh.edu.vn","thuha@hub.edu.vn"].includes(email) && eligibility.is_test === true;
 
   const {data:pre,error:preError}=await userDb.from("survey_submissions")
     .select("id").eq("user_id",user.id).eq("phase","PRE").limit(1).maybeSingle();
@@ -119,7 +119,7 @@ Deno.serve(async (req: Request) => {
   // a secondary model after retrying the primary model.
   const primaryModel=(Deno.env.get("GEMINI_MODEL")||"gemini-3.8-flash").trim();
   const models=[primaryModel];
-  if(eligibility.is_test===true && email==="nguyentran.31231024329@st.ueh.edu.vn" &&
+  if(eligibility.is_test===true && ["nguyentran.31231024329@st.ueh.edu.vn","thuha@hub.edu.vn"].includes(email) &&
      primaryModel!=="gemini-3.5-flash-lite")models.push("gemini-3.5-flash-lite");
   const requestBody=JSON.stringify({
     contents:[{role:"user",parts:[{text:prompt}]}],
