@@ -3,8 +3,8 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/+esm";
 const db=createClient("https://aignaxmirbbnfuutvvdg.supabase.co","sb_publishable_StzzvgRqME3Dt241NZ8nnQ_yfvUYWzA",{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const byId=id=>document.getElementById(id);
-const validEmail=/^[^\s@]+@(st\.buh\.edu\.vn|st\.ueh\.edu\.vn)$/i;
-const testEmail="nguyentran.31231024329@st.ueh.edu.vn";
+const validEmail=/^(?:[^\s@]+@(st\.buh\.edu\.vn|st\.ueh\.edu\.vn)|thuha@hub\.edu\.vn)$/i;
+const testEmails=new Set(["nguyentran.31231024329@st.ueh.edu.vn","thuha@hub.edu.vn"]);
 const activateRedirect="https://anystuf.github.io/anhthuhoang_anystuff/survey.html";
 const formUrls={
  PRE:"https://docs.google.com/forms/d/e/1FAIpQLSegQM04c-FAjJZ7vQTWgV4azBNtQXdkTe4r_aTPHCVQeJHtXg/viewform",
@@ -18,7 +18,7 @@ function clearNotice(){alerts.hidden=true;alerts.textContent=""}
 function aiStatus(message){byId("ath-ai-message").textContent=message}
 function completedPre(){return finished.has("PRE")}
 function mayUseAi(){
- return Boolean(user&&eligibility&&(completedPre()||((user.email||"").toLowerCase()===testEmail&&eligibility.is_test===true)));
+ return Boolean(user&&eligibility&&(completedPre()||(testEmails.has((user.email||"").toLowerCase())&&eligibility.is_test===true)));
 }
 function updateAiAccess(){
  const ok=mayUseAi();
@@ -57,7 +57,7 @@ async function refresh(){
   hasAiEvaluation=Boolean(graded.data?.length);
   byId("ath-login-panel").hidden=true;byId("ath-member-panel").hidden=false;
   byId("ath-member-email").textContent="Đã đăng nhập: "+email;
-  byId("ath-test-message").hidden=!(allowed.data.is_test&&email===testEmail);
+  byId("ath-test-message").hidden=!(allowed.data.is_test&&testEmails.has(email));
   byId("ath-pre-done").textContent=finished.has("PRE")?" ✓":"";
   byId("ath-post-done").textContent=finished.has("POST")?" ✓":"";
   byId("ath-post-tab").hidden=!hasAiEvaluation;
@@ -78,7 +78,7 @@ async function signIn(){
 }
 async function signUp(){
  clearNotice();const email=byId("ath-email").value.trim().toLowerCase(),password=byId("ath-password").value;
- if(!validEmail.test(email))return notify("Chỉ dùng email sinh viên BUH hoặc UEH.");
+ if(!validEmail.test(email))return notify("Vui lòng dùng email sinh viên BUH/UEH hoặc email staff được cấp quyền.");
  if(password.length<8)return notify("Mật khẩu phải có ít nhất 8 ký tự.");
  const b=byId("ath-signup-button");b.disabled=true;
  try{
