@@ -74,7 +74,7 @@ async function ask(text){
  try{
   const res=await fetch(endpoint,{
    method:"POST",signal:controller.signal,
-   headers:{"Content-Type":"application/json"},
+   headers:{"Content-Type":"application/json","apikey":"sb_publishable_StzzvgRqME3Dt241NZ8nnQ_yfvUYWzA"},
    body:JSON.stringify({message:question,history:context})
   });
   let body={};
