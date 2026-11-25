@@ -199,7 +199,7 @@ Deno.serve(async (req: Request) => {
     parsed.revised_text.trim().length>24000)
     return toJson({error:"Kết quả AI chưa đạt yêu cầu định dạng. Vui lòng thử lại."},502,origin);
 
-  const score=Number(parsed.score),revisedText=parsed.revised_text.replace(/\*\*/g,"").replace(/(^|\n)#{1,6}[ \t]+/g,"$1").trim();
+  const score=Number(parsed.score),revisedText=parsed.revised_text.replace(/[*#_\x60]/g,"").trim();
   const {error:saveError}=await admin.from("essay_evaluations").insert({
     auth_user_id:user.id,participant_id:null,esp_domain:domain,evaluation_mode:"blackbox",
     task_prompt:"ATH Black-box ESP Writing Evaluation v1",
