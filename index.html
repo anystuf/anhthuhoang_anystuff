@@ -1022,6 +1022,27 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
 #research-survey #ath-form-open{display:inline-flex;color:var(--green-deep);font-size:.87rem;font-weight:700;margin:0 0 10px;text-decoration:underline;text-underline-offset:3px}
 #research-survey #ath-google-completed{background:#eaf4e8;border-color:#c7dec6}
 @media(max-width:600px){#research-survey #ath-google-form-frame{height:1200px}}
+
+/* ATH authentication — separate, accessible registration and login screens. */
+#research-survey .ath-auth-modes{display:flex;flex-wrap:wrap;gap:9px;margin:1rem 0 1.3rem}
+#research-survey .ath-auth-mode{
+ border:1px solid #c9dccd;background:#f5f9f5;color:#174b35;border-radius:10px;
+ padding:10px 16px;font:700 .84rem var(--ff-sans, sans-serif);cursor:pointer
+}
+#research-survey .ath-auth-mode[aria-pressed="true"]{background:#174b35;color:#fff;border-color:#174b35}
+#research-survey .ath-password-wrap{position:relative;display:flex;min-width:0;align-items:center}
+#research-survey .ath-password-wrap input{padding-right:76px!important}
+#research-survey .ath-password-toggle{
+ position:absolute;right:5px;top:50%;transform:translateY(-50%);
+ border:0;background:#eaf2e9;color:#174b35;border-radius:7px;padding:8px 11px;
+ font:700 .76rem var(--ff-sans, sans-serif);cursor:pointer;min-width:55px
+}
+#research-survey .ath-password-toggle:focus-visible,
+#research-survey .ath-auth-mode:focus-visible{outline:2px solid #b4934b;outline-offset:2px}
+#research-survey .ath-register-feedback{margin:2px 0 12px;min-height:1.5rem;color:#4e6653;font-size:.78rem}
+#research-survey .ath-register-feedback.ath-invalid{color:#a63d35}
+#research-survey .ath-register-feedback.ath-valid{color:#246c40}
+#research-survey .ath-panel form[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -1292,22 +1313,68 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
   <p class="ath-intro">Điền Google Forms ngay trên website. Cô Thư xem câu trả lời và biểu đồ trong Google Forms / Google Sheets, không cần thao tác với database.</p>
   <div id="ath-alert" class="ath-alert" role="status" aria-live="polite" hidden></div>
   <div id="ath-login-panel" class="ath-panel">
-    <div class="ath-kicker">Tài khoản nghiên cứu</div>
-    <h3>Đăng nhập ATH</h3>
-    <p class="ath-copy">Dùng email trường để đăng nhập. Mật khẩu là mật khẩu ATH do bạn tự đặt khi chọn <strong>Tạo tài khoản</strong>; nếu quên, hãy chọn <strong>Quên mật khẩu?</strong>. Google Forms lưu câu trả lời khảo sát riêng biệt.</p>
-    <div class="ath-form-grid">
-      <div class="ath-field"><label for="ath-email">Email trường</label><input id="ath-email" type="email" autocomplete="email" placeholder="mssv@st.buh.edu.vn hoặc @st.ueh.edu.vn"/></div>
-      <div class="ath-field"><label for="ath-password">Mật khẩu ATH</label><input id="ath-password" type="password" autocomplete="current-password" placeholder="Mật khẩu ATH"/></div>
+    <div class="ath-kicker">Tài khoản nghiên cứu · ATH</div>
+    <h3 id="ath-auth-heading">Đăng nhập ATH</h3>
+    <p class="ath-copy">Tài khoản dùng email đã được cấp quyền tham gia. <strong>thuha@hub.edu.vn</strong> là email giảng viên hợp lệ; sinh viên dùng email trường đã đăng ký.</p>
+    <div class="ath-auth-modes" role="group" aria-label="Chọn đăng nhập hoặc tạo tài khoản">
+      <button type="button" id="ath-mode-login" class="ath-auth-mode" aria-pressed="true">Đăng nhập</button>
+      <button type="button" id="ath-mode-register" class="ath-auth-mode" aria-pressed="false">Tạo tài khoản</button>
     </div>
-    <div class="ath-actions">
-      <button type="button" id="ath-login-button" class="ath-button">Đăng nhập</button>
-      <button type="button" id="ath-signup-button" class="ath-button ath-outline">Tạo tài khoản</button>
-      <button type="button" id="ath-forgot-button" class="ath-text-button">Quên mật khẩu?</button>
-    </div>
-    <div class="ath-note">Chỉ người học được phép tham gia mới sử dụng AI Lab. Không sử dụng chung tài khoản.</div>
+
+    <form id="ath-login-form" autocomplete="on">
+      <div class="ath-form-grid">
+        <div class="ath-field">
+          <label for="ath-email">Email</label>
+          <input id="ath-email" name="email" type="email" autocomplete="username" inputmode="email" spellcheck="false"
+            placeholder="Ví dụ: thuha@hub.edu.vn" required>
+        </div>
+        <div class="ath-field">
+          <label for="ath-password">Mật khẩu</label>
+          <div class="ath-password-wrap">
+            <input id="ath-password" name="password" type="password" autocomplete="current-password" placeholder="Mật khẩu ATH" required>
+            <button type="button" class="ath-password-toggle" data-password-target="ath-password" aria-label="Hiện mật khẩu" aria-pressed="false">Hiện</button>
+          </div>
+        </div>
+      </div>
+      <div class="ath-actions">
+        <button type="submit" id="ath-login-button" class="ath-button">Đăng nhập</button>
+        <button type="button" id="ath-forgot-button" class="ath-text-button">Quên mật khẩu?</button>
+      </div>
+    </form>
+
+    <form id="ath-register-form" autocomplete="on" hidden>
+      <div class="ath-form-grid">
+        <div class="ath-field">
+          <label for="ath-register-email">Email đăng ký</label>
+          <input id="ath-register-email" name="email" type="email" autocomplete="email" inputmode="email" spellcheck="false"
+            placeholder="Email đã được ATH cấp quyền" required>
+        </div>
+        <div class="ath-field">
+          <label for="ath-register-password">Mật khẩu mới</label>
+          <div class="ath-password-wrap">
+            <input id="ath-register-password" name="new-password" type="password" autocomplete="new-password" minlength="8" maxlength="72" required placeholder="Ít nhất 8 ký tự">
+            <button type="button" class="ath-password-toggle" data-password-target="ath-register-password" aria-label="Hiện mật khẩu" aria-pressed="false">Hiện</button>
+          </div>
+        </div>
+        <div class="ath-field">
+          <label for="ath-register-confirm">Xác nhận mật khẩu</label>
+          <div class="ath-password-wrap">
+            <input id="ath-register-confirm" name="confirm-password" type="password" autocomplete="new-password" minlength="8" maxlength="72" required placeholder="Nhập lại mật khẩu">
+            <button type="button" class="ath-password-toggle" data-password-target="ath-register-confirm" aria-label="Hiện mật khẩu xác nhận" aria-pressed="false">Hiện</button>
+          </div>
+        </div>
+      </div>
+      <p id="ath-register-feedback" class="ath-register-feedback" role="status" aria-live="polite">Tối thiểu 8 ký tự. Không sử dụng mật khẩu dùng chung.</p>
+      <div class="ath-actions">
+        <button type="submit" id="ath-complete-signup" class="ath-button">Tạo tài khoản &amp; xác nhận email</button>
+        <button type="button" id="ath-back-to-login" class="ath-button ath-outline">Quay lại đăng nhập</button>
+      </div>
+      <div class="ath-note">Sau khi tạo, mở email xác nhận từ Supabase Auth, kiểm tra cả Spam. Không gửi mật khẩu cho giảng viên hay người hỗ trợ.</div>
+    </form>
+    <div class="ath-note">Nếu bạn đã có tài khoản, không cần đăng ký lại. Chọn <strong>Quên mật khẩu?</strong> để đặt mật khẩu mới qua email. Câu trả lời PRE/POST được lưu trên Google Forms.</div>
   </div>
 
-  <div id="ath-member-panel" class="ath-panel" hidden>
+<div id="ath-member-panel" class="ath-panel" hidden>
     <div class="ath-member-head">
       <div><div class="ath-kicker">Google Forms · Pilot</div><h3>Khảo sát học thuật</h3><span class="ath-account" id="ath-member-email"></span></div>
       <button type="button" id="ath-logout" class="ath-button ath-outline">Đăng xuất</button>
@@ -2215,6 +2282,6 @@ window.appendMessage = function(text, className) {
 
 // Anti-tamper debugging block removed so login, password reset, and browser testing work normally.
 </script>
-<script type="module" src="./ath-experiment.js?v=20261125-staff-access-v1"></script>
+<script type="module" src="./ath-experiment.js?v=20261125-auth-chat-v3"></script>
 </body>
 </html>
