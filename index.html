@@ -1294,7 +1294,7 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
   <div id="ath-login-panel" class="ath-panel">
     <div class="ath-kicker">Tài khoản nghiên cứu</div>
     <h3>Đăng nhập ATH</h3>
-    <p class="ath-copy">Dùng email trường để kết nối bài viết với mã tham gia nghiên cứu. Google Forms thu thập câu trả lời khảo sát riêng biệt.</p>
+    <p class="ath-copy">Dùng email trường để đăng nhập. Mật khẩu là mật khẩu ATH do bạn tự đặt khi chọn <strong>Tạo tài khoản</strong>; nếu quên, hãy chọn <strong>Quên mật khẩu?</strong>. Google Forms lưu câu trả lời khảo sát riêng biệt.</p>
     <div class="ath-form-grid">
       <div class="ath-field"><label for="ath-email">Email trường</label><input id="ath-email" type="email" autocomplete="email" placeholder="mssv@st.buh.edu.vn hoặc @st.ueh.edu.vn"/></div>
       <div class="ath-field"><label for="ath-password">Mật khẩu ATH</label><input id="ath-password" type="password" autocomplete="current-password" placeholder="Mật khẩu ATH"/></div>
@@ -1316,7 +1316,7 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
     <p class="ath-steps"><strong>Quy trình:</strong> Google Form PRE → Black-box AI → Google Form POST.</p>
     <div class="ath-tabs" role="tablist" aria-label="Chọn Google Forms">
       <button type="button" id="ath-pre-tab" class="ath-tab" aria-selected="true">01 · PRE<span id="ath-pre-done"></span></button>
-      <button type="button" id="ath-post-tab" class="ath-tab" aria-selected="false" disabled>02 · POST<span id="ath-post-done"></span></button>
+      <button type="button" id="ath-post-tab" class="ath-tab" aria-selected="false" hidden disabled>02 · POST<span id="ath-post-done"></span></button>
     </div>
     <h3 class="ath-section-title" id="ath-phase-title">PRE — Trước khi viết bài</h3>
     <p class="ath-copy" id="ath-phase-intro">Hoàn thành Google Form PRE trước khi sử dụng AI.</p>
@@ -1346,7 +1346,7 @@ nav.open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate
   <div class="esp-ai-header">
     <div class="section-eyebrow eyebrow-purple-light" style="color:var(--gold-light);margin-bottom:.8rem;">Phòng thí nghiệm AI · Giai đoạn Black-box</div>
     <h3>Công cụ đánh giá bài viết ESP</h3>
-    <p>Nhập bài viết tiếng Anh chuyên ngành để nhận <strong>điểm đánh giá (/100)</strong> và <strong>bài viết đã chỉnh sửa</strong>. Không hiển thị giải thích, nhận xét hay phân tích lỗi.</p>
+    <p>Nhập bài viết tiếng Anh chuyên ngành để nhận <strong>điểm đánh giá (/100)</strong> và <strong>bài viết đã chỉnh sửa</strong>.</p>
     <div class="ath-ai-message" id="ath-ai-message" role="status">Vui lòng đăng nhập ở phần khảo sát bên trên trước khi sử dụng.</div>
     <div class="ath-ai-account" id="ath-ai-signed-in"></div>
     <div class="esp-ai-disclaimer" style="margin-top:1rem">Đánh giá AI chỉ có giá trị tham khảo cho học tập và nghiên cứu, không thay thế kết quả chấm thi chính thức.</div>
@@ -2215,6 +2215,6 @@ window.appendMessage = function(text, className) {
 
 // Anti-tamper debugging block removed so login, password reset, and browser testing work normally.
 </script>
-<script type="module" src="./ath-experiment.js?v=20261123-google-forms-v1"></script>
+<script type="module" src="./ath-experiment.js?v=20261125-ai-gated-post-v2"></script>
 </body>
 </html>
