@@ -21,15 +21,16 @@ main{width:min(920px,calc(100% - 30px));margin:10px auto 60px}.hero{text-align:c
 .checkrow{display:flex;align-items:start;gap:11px;font-size:12px;color:#405d46;margin:16px 0}.checkrow input{flex:none;margin-top:5px;width:16px;height:16px;accent-color:var(--green)}.notes{background:#f8f9f5;border-left:3px solid var(--gold);padding:12px 14px;margin:15px 0;font-size:12px}
 .footer{text-align:center;color:#9aab9c;font-size:11px;padding:20px}.hidden,[hidden]{display:none!important}
 @media(max-width:610px){.form-grid{grid-template-columns:1fr}.box{padding:19px}.question{padding:14px}.ratings{gap:5px}.rating{padding:9px 0}.sitebar{padding:18px 16px}.sitebar .logo{font-size:11px}.hero{padding:10px 0 14px}}
+.ath-password-wrap{position:relative;display:flex;align-items:center}.ath-password-wrap input{padding-right:75px!important}.ath-toggle{position:absolute;right:5px;top:50%;transform:translateY(-50%);border:0;border-radius:7px;padding:7px 10px;background:#e8f2e8;color:#174b35;font-weight:700;cursor:pointer}
 </style></head>
 <body>
 <header class="sitebar"><div class="logo">ATH · RESEARCH PLATFORM</div><a class="home" href="./index.html#academics">← Về website cô Thư</a></header>
 <main>
 <div class="hero"><div class="eyebrow">ESP-XAI · Pilot study</div><h1>Khảo sát trước & sau phản hồi AI</h1><p>Chỉ dành cho sinh viên đã đồng ý tham gia nghiên cứu. Các câu trả lời được lưu riêng theo tài khoản và không ảnh hưởng đến điểm học phần.</p></div>
 <div id="alert" class="alert" role="status" aria-live="polite"></div>
-<section id="auth-panel" class="box"><h2>Đăng nhập / Kích hoạt tài khoản</h2><p class="small">Dùng email trường của bạn (ví dụ: mã sinh viên@st.buh.edu.vn). Nếu chưa có tài khoản Supabase ATH, chọn “Tạo tài khoản” và xác minh email trước khi đăng nhập.</p>
-<div class="form-grid"><div class="field"><label for="email">Email trường</label><input id="email" autocomplete="email" type="email" placeholder="mssv@st.buh.edu.vn"></div><div class="field"><label for="password">Mật khẩu</label><input id="password" autocomplete="current-password" type="password" minlength="8" placeholder="Tối thiểu 8 ký tự"></div></div>
-<div class="actions"><button class="btn" id="login" type="button">Đăng nhập</button><button class="btn outline" id="signup" type="button">Tạo tài khoản</button><button class="linkbutton" id="forgot" type="button">Quên mật khẩu?</button><button class="linkbutton" id="switch-account" type="button">Đổi tài khoản / Đăng xuất</button></div>
+<section id="auth-panel" class="box"><h2>Đăng nhập / Kích hoạt tài khoản</h2><p class="small">Dùng email được ATH cấp quyền (sinh viên BUH/UEH hoặc giảng viên thuha@hub.edu.vn). Bạn tự đặt mật khẩu. Khảo sát Google Forms và AI Lab chính thức nằm ở <a href="./index.html#academics">website ATH</a>.</p>
+<div class="form-grid"><div class="field"><label for="email">Email trường</label><input id="email" autocomplete="email" type="email" placeholder="mssv@st.buh.edu.vn"></div><div class="field"><label for="password">Mật khẩu</label><div class="ath-password-wrap"><input id="password" autocomplete="current-password" type="password" minlength="8" placeholder="Tối thiểu 8 ký tự"><button type="button" class="ath-toggle" data-target="password">Hiện</button></div></div></div>
+<div id="signup-confirm-wrap" class="field hidden"><label for="signup-confirm">Nhập lại mật khẩu để tạo tài khoản</label><div class="ath-password-wrap"><input id="signup-confirm" type="password" autocomplete="new-password" minlength="8" placeholder="Nhập lại mật khẩu"><button type="button" class="ath-toggle" data-target="signup-confirm">Hiện</button></div></div><div class="actions"><button class="btn" id="login" type="button">Đăng nhập</button><button class="btn outline" id="signup" type="button">Tạo tài khoản</button><button class="btn light hidden" id="cancel-signup" type="button">Hủy</button><button class="linkbutton" id="forgot" type="button">Quên mật khẩu?</button><button class="linkbutton" id="switch-account" type="button">Đổi tài khoản / Đăng xuất</button></div>
 <div class="notice">Tài khoản Firebase trước đây chưa được chuyển sang Supabase. Nếu chưa từng đăng ký ATH trên Supabase, hãy tạo tài khoản mới bằng email trường. Hệ thống chỉ cho phép các email có tên trong danh sách đồng ý tham gia truy cập khảo sát.</div>
 </section>
 <section id="recovery-panel" class="box hidden"><h2>Đặt mật khẩu mới</h2><p class="small">Bạn đã mở liên kết khôi phục/kích hoạt tài khoản. Hãy tự tạo mật khẩu mới; tuyệt đối không chia sẻ mật khẩu với giảng viên hoặc quản trị viên.</p>
@@ -60,10 +61,33 @@ const gotoUrl=location.origin+location.pathname;
 function notify(msg,good=false){alertEl.textContent=msg;alertEl.className='alert visible'+(good?' ok':'');alertEl.scrollIntoView({behavior:'smooth',block:'nearest'});}
 function hideNotice(){alertEl.className='alert';alertEl.textContent='';}
 function schoolEmail(email){return /^(?:[^\s@]+@(st\.buh\.edu\.vn|st\.ueh\.edu\.vn)|thuha@hub\.edu\.vn)$/i.test(email);}
-async function signup(){hideNotice();const email=$('email').value.trim().toLowerCase(),password=$('password').value;
- if(!schoolEmail(email))return notify('Vui lòng sử dụng email sinh viên trường BUH hoặc UEH.');
- if(password.length<8)return notify('Mật khẩu cần ít nhất 8 ký tự.');
- const b=$('signup');b.disabled=true;try{const {error}=await db.auth.signUp({email,password,options:{emailRedirectTo:gotoUrl}});if(error)throw error;notify('Đã xử lý đăng ký. Nếu tài khoản cần xác minh, hãy mở email trường và nhấn liên kết xác nhận rồi quay lại đăng nhập. Chỉ các sinh viên có trong danh sách đồng ý mới được mở khảo sát.',true);}catch(e){notify('Không thể tạo tài khoản: '+e.message);}finally{b.disabled=false;}
+function cancelSignup(){
+ $('signup-confirm-wrap').classList.add('hidden');
+ $('cancel-signup').classList.add('hidden');
+ $('signup').textContent='Tạo tài khoản';
+ $('signup-confirm').value='';
+}
+async function signup(){
+ hideNotice();
+ if($('signup-confirm-wrap').classList.contains('hidden')){
+  $('signup-confirm-wrap').classList.remove('hidden');
+  $('cancel-signup').classList.remove('hidden');
+  $('signup').textContent='Xác nhận & tạo tài khoản';
+  $('password').setAttribute('autocomplete','new-password');
+  return;
+ }
+ const email=$('email').value.trim().toLowerCase(),password=$('password').value,confirm=$('signup-confirm').value;
+ if(!schoolEmail(email))return notify('Email chưa được hỗ trợ. Giảng viên: thuha@hub.edu.vn; sinh viên: email trường BUH/UEH.');
+ if(password.length<8||password.length>72)return notify('Mật khẩu cần từ 8 đến 72 ký tự.');
+ if(password!==confirm)return notify('Mật khẩu xác nhận chưa trùng khớp.');
+ const b=$('signup');b.disabled=true;
+ try{
+   const {error}=await db.auth.signUp({email,password,options:{emailRedirectTo:gotoUrl}});
+   if(error)throw error;
+   $('password').value='';cancelSignup();
+   notify('Đã tiếp nhận đăng ký. Kiểm tra email xác minh Supabase Auth (và Spam), sau đó về website ATH đăng nhập. Nếu đã có tài khoản, hãy dùng Quên mật khẩu?.',true);
+ }catch(e){notify('Không thể tạo tài khoản: '+e.message)}
+ finally{b.disabled=false;}
 }
 async function login(){hideNotice();const email=$('email').value.trim().toLowerCase(),password=$('password').value;
  if(!email||!password)return notify('Nhập email và mật khẩu để đăng nhập.');
@@ -109,7 +133,7 @@ async function submitSurvey(ev){ev.preventDefault();if(!user||!questions.length)
  if(phase==='POST'&&!$('feedback-read').checked)return notify('Chỉ gửi POST sau khi bạn đã đọc phản hồi AI.');
  const b=$('submit-survey');b.disabled=true;try{const record={user_id:user.id,phase,instrument_version:'pilot_2026_11',answers,consent_confirmed:true,feedback_read_confirmed:phase==='POST'&&$('feedback-read').checked,gender:phase==='PRE'?$('gender').value:null,ai_usage_frequency:phase==='PRE'?$('ai-frequency').value:null,open_response:$('open-response').value.trim()||null,pilot_clarity_note:$('pilot-feedback').value.trim()||null};const {error}=await db.from('survey_submissions').insert(record);if(error)throw error;submitted.add(phase);notify('Đã lưu câu trả lời '+phase+' thành công. Cảm ơn bạn!',true);await refresh();}catch(e){notify('Không lưu được khảo sát: '+(e.code==='23505'?'Bạn đã nộp khảo sát này.':e.message));}finally{b.disabled=false;}
 }
-$('signup').addEventListener('click',signup);$('login').addEventListener('click',login);$('switch-account').addEventListener('click',async()=>{await db.auth.signOut();user=null;submitted.clear();showAuth();notify('Đã đăng xuất. Bạn có thể dùng email khác.',true);});$('forgot').addEventListener('click',forgot);$('set-password').addEventListener('click',updatePassword);
+$('signup').addEventListener('click',signup);$('cancel-signup').addEventListener('click',cancelSignup);$('login').addEventListener('click',login);for(const btn of document.querySelectorAll('.ath-toggle'))btn.addEventListener('click',()=>{const el=$(btn.dataset.target),show=el.type==='password';el.type=show?'text':'password';btn.textContent=show?'Ẩn':'Hiện';});$('switch-account').addEventListener('click',async()=>{await db.auth.signOut();user=null;submitted.clear();showAuth();notify('Đã đăng xuất. Bạn có thể dùng email khác.',true);});$('forgot').addEventListener('click',forgot);$('set-password').addEventListener('click',updatePassword);
 $('logout').addEventListener('click',async()=>{await db.auth.signOut();user=null;submitted.clear();showAuth();notify('Đã đăng xuất.',true);});
 $('tab-pre').addEventListener('click',()=>setPhase('PRE'));$('tab-post').addEventListener('click',()=>setPhase('POST'));
 $('survey-form').addEventListener('submit',submitSurvey);
