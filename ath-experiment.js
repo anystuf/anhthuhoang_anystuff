@@ -68,23 +68,80 @@ async function refresh(){
  }catch(error){notify("Không tải được tài khoản: "+(error?.message||"Lỗi kết nối"));updateAiAccess()}
  finally{refreshing=false}
 }
+// Authentication forms are separate: never treat the login password as a new password.
+let authMode="login";
+function showAuthMode(mode){
+ authMode=mode==="register"?"register":"login";
+ const registering=authMode==="register";
+ byId("ath-login-form").hidden=registering;
+ byId("ath-register-form").hidden=!registering;
+ byId("ath-mode-login").setAttribute("aria-pressed",String(!registering));
+ byId("ath-mode-register").setAttribute("aria-pressed",String(registering));
+ byId("ath-auth-heading").textContent=registering?"Tạo tài khoản ATH":"Đăng nhập ATH";
+ clearNotice();
+ if(registering&&!byId("ath-register-email").value){
+   byId("ath-register-email").value=byId("ath-email").value.trim();
+ } else if(!registering&&!byId("ath-email").value){
+   byId("ath-email").value=byId("ath-register-email").value.trim();
+ }
+}
+function registerFeedback(){
+ const pass=byId("ath-register-password").value,confirm=byId("ath-register-confirm").value;
+ const label=byId("ath-register-feedback");
+ label.classList.remove("ath-valid","ath-invalid");
+ if(!pass&&!confirm){label.textContent="Tạo mật khẩu ít nhất 8 ký tự, sau đó nhập lại để xác nhận.";return false}
+ if(pass.length<8){label.textContent="Mật khẩu phải có ít nhất 8 ký tự.";label.classList.add("ath-invalid");return false}
+ if(pass.length>72){label.textContent="Mật khẩu không được dài quá 72 ký tự.";label.classList.add("ath-invalid");return false}
+ if(!confirm){label.textContent="Vui lòng nhập lại mật khẩu để xác nhận.";return false}
+ if(pass!==confirm){label.textContent="Hai mật khẩu chưa trùng khớp.";label.classList.add("ath-invalid");return false}
+ label.textContent="✓ Hai mật khẩu trùng khớp.";label.classList.add("ath-valid");return true;
+}
 async function signIn(){
- clearNotice();const email=byId("ath-email").value.trim().toLowerCase(),password=byId("ath-password").value;
- if(!validEmail.test(email)||!password)return notify("Nhập đúng email trường và mật khẩu.");
+ clearNotice();
+ const email=byId("ath-email").value.trim().toLowerCase();
+ const password=byId("ath-password").value;
+ if(!validEmail.test(email))return notify("Email chưa hợp lệ. Giảng viên: thuha@hub.edu.vn; sinh viên: email BUH/UEH đã đăng ký.");
+ if(!password)return notify("Hãy nhập mật khẩu ATH bạn đã tự tạo. Nếu quên, chọn Quên mật khẩu?");
  const b=byId("ath-login-button");b.disabled=true;
- try{const {error}=await db.auth.signInWithPassword({email,password});if(error)throw error;await refresh();}
- catch(error){notify("Đăng nhập không thành công: "+(error?.message||"Lỗi đăng nhập"))}
- finally{b.disabled=false}
+ try{
+   const {error}=await db.auth.signInWithPassword({email,password});
+   if(error)throw error;
+   byId("ath-password").value="";
+   await refresh();
+ }catch(error){
+   const message=(error?.message||"Lỗi đăng nhập");
+   notify(message.toLowerCase().includes("invalid login credentials")
+     ?"Email hoặc mật khẩu không đúng, hoặc tài khoản chưa xác minh email. Nếu quên mật khẩu, chọn Quên mật khẩu?."
+     :"Đăng nhập không thành công: "+message);
+ }finally{b.disabled=false}
 }
 async function signUp(){
- clearNotice();const email=byId("ath-email").value.trim().toLowerCase(),password=byId("ath-password").value;
- if(!validEmail.test(email))return notify("Vui lòng dùng email sinh viên BUH/UEH hoặc email staff được cấp quyền.");
- if(password.length<8)return notify("Mật khẩu phải có ít nhất 8 ký tự.");
- const b=byId("ath-signup-button");b.disabled=true;
+ clearNotice();
+ const email=byId("ath-register-email").value.trim().toLowerCase();
+ if(!validEmail.test(email))return notify("Email đăng ký chưa hợp lệ. Chỉ cho phép email sinh viên BUH/UEH đã đăng ký và email giảng viên thuha@hub.edu.vn.");
+ if(!registerFeedback())return notify("Kiểm tra lại mật khẩu và ô xác nhận mật khẩu.");
+ const password=byId("ath-register-password").value;
+ const b=byId("ath-complete-signup");b.disabled=true;
  try{
-  const {error}=await db.auth.signUp({email,password,options:{emailRedirectTo:activateRedirect}});if(error)throw error;
-  notify("Đã gửi yêu cầu đăng ký. Vui lòng kiểm tra email trường để xác minh nếu được yêu cầu.",true);
- }catch(error){notify("Không tạo được tài khoản: "+(error?.message||"Lỗi đăng ký"))}finally{b.disabled=false}
+   const {data,error}=await db.auth.signUp({email,password,options:{emailRedirectTo:activateRedirect}});
+   if(error)throw error;
+   byId("ath-register-password").value="";
+   byId("ath-register-confirm").value="";
+   registerFeedback();
+   byId("ath-email").value=email;
+   showAuthMode("login");
+   if(data?.user&&data?.session){
+     notify("Tài khoản đã được tạo và đăng nhập. Đang kiểm tra quyền truy cập...",true);
+     await refresh();
+   }else{
+     notify("Đã tiếp nhận đăng ký. Hãy mở email xác nhận từ Supabase Auth (kiểm tra cả Spam), bấm xác nhận rồi quay lại đăng nhập. Nếu email đã đăng ký, hãy dùng Quên mật khẩu?.",true);
+   }
+ }catch(error){
+   const msg=(error?.message||"Lỗi đăng ký");
+   notify(msg.toLowerCase().includes("already registered")
+     ?"Email này đã có tài khoản. Hãy đăng nhập hoặc chọn Quên mật khẩu?."
+     :"Đăng ký chưa thành công: "+msg);
+ }finally{b.disabled=false}
 }
 async function forgotPassword(){
  const email=byId("ath-email").value.trim().toLowerCase();
@@ -233,11 +290,26 @@ function resetEssay() {
   byId("ath-post-go").hidden = true;
 }
 
-byId("ath-login-button").addEventListener("click",signIn);
-byId("ath-signup-button").addEventListener("click",signUp);
+byId("ath-login-form").addEventListener("submit",event=>{event.preventDefault();signIn()});
+byId("ath-register-form").addEventListener("submit",event=>{event.preventDefault();signUp()});
+byId("ath-mode-login").addEventListener("click",()=>showAuthMode("login"));
+byId("ath-mode-register").addEventListener("click",()=>showAuthMode("register"));
+byId("ath-back-to-login").addEventListener("click",()=>showAuthMode("login"));
 byId("ath-forgot-button").addEventListener("click",forgotPassword);
 byId("ath-logout").addEventListener("click",signOut);
-for(const id of ["ath-email","ath-password"])byId(id).addEventListener("keydown",e=>{if(e.key==="Enter")signIn()});
+for(const id of ["ath-register-password","ath-register-confirm"]){
+ byId(id).addEventListener("input",registerFeedback);
+}
+for(const toggle of document.querySelectorAll("#ath-login-panel .ath-password-toggle")){
+ toggle.addEventListener("click",()=>{
+   const input=byId(toggle.dataset.passwordTarget);
+   const reveal=input.type==="password";
+   input.type=reveal?"text":"password";
+   toggle.textContent=reveal?"Ẩn":"Hiện";
+   toggle.setAttribute("aria-pressed",String(reveal));
+   toggle.setAttribute("aria-label",reveal?"Ẩn mật khẩu":"Hiện mật khẩu");
+ });
+}
 byId("ath-pre-tab").addEventListener("click",()=>selectPhase("PRE"));
 byId("ath-post-tab").addEventListener("click",()=>selectPhase("POST"));
 byId("ath-google-confirm-button").addEventListener("click",confirmGoogleForm);
